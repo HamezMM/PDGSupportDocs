@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fee Proposal Calculator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-2: #f0efe9;
+      --border: rgba(0,0,0,0.12);
+      --border-strong: rgba(0,0,0,0.22);
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b67;
+      --text-tertiary: #a0a09b;
+      --info-bg: #e6f1fb;
+      --info-text: #185fa5;
+      --warn-bg: #faeeda;
+      --warn-text: #854f0b;
+      --danger-bg: #fcebeb;
+      --danger-text: #a32d2d;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --surface: #242422;
+        --surface-2: #2c2c2a;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.18);
+        --text-primary: #e8e8e2;
+        --text-secondary: #9b9b95;
+        --text-tertiary: #636360;
+        --info-bg: #042c53;
+        --info-text: #85b7eb;
+        --warn-bg: #412402;
+        --warn-text: #fac775;
+        --danger-bg: #501313;
+        --danger-text: #f09595;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+      max-width: 900px;
+    }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+      .summary-col { order: -1; }
+    }
+
+    .sec {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .base-amt {
+      display: flex;
+      align-items: center;
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+
+    .base-amt span {
+      font-size: 15px;
+      color: var(--text-tertiary);
+      padding: 0 10px;
+    }
+
+    .base-amt input {
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 500;
+      width: 100%;
+      padding: 10px 12px 10px 0;
+      outline: none;
+      color: var(--text-primary);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 128px 30px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="number"] {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 7px 10px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: var(--border-strong);
+    }
+
+    input::placeholder { color: var(--text-tertiary); }
+
+    .amt-wrap {
+      display: flex;
+      align-items: center;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface-2);
+      transition: border-color 0.15s;
+    }
+
+    .amt-wrap:focus-within { border-color: var(--border-strong); }
+
+    .amt-wrap span {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      padding: 0 7px;
+    }
+
+    .amt-wrap input {
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-align: right;
+      width: 100%;
+      padding: 7px 8px 7px 0;
+      outline: none;
+    }
+
+    .rm {
+      background: none;
+      border: 0.5px solid var(--border);
+      cursor: pointer;
+      color: var(--text-tertiary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .rm:hover {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-color: transparent;
+    }
+
+    .add-btn {
+      background: none;
+      border: 0.5px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      margin-top: 6px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .add-btn:hover {
+      background: var(--surface-2);
+      color: var(--text-primary);
+    }
+
+    .sum-panel {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+
+    .sum-panel-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+    }
+
+    .sum-label { font-size: 13px; color: var(--text-secondary); }
+    .sum-val { font-family: var(--font-mono); font-size: 13px; }
+    .sum-div { border: none; border-top: 0.5px solid var(--border); margin: 8px 0; }
+    .sum-strong { font-size: 14px; font-weight: 500; }
+    .sum-strong-val { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+
+    .total-box {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .total-label { font-size: 14px; font-weight: 500; }
+    .total-val { font-family: var(--font-mono); font-size: 22px; font-weight: 500; }
+
+    .dash { color: var(--text-tertiary); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Fee proposal calculator</h1>
+    <p>Enter fees and vendors below — breakdown updates automatically.</p>
+  </header>
+
+  <div class="layout">
+
+    <div class="inputs-col">
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-title">Base fee</span></div>
+        <div class="base-amt">
+          <span>$</span>
+          <input type="number" id="base-fee" min="0" step="1" placeholder="0" oninput="recalc()">
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <span class="sec-title">Buried vendors</span>
+          <span class="badge" style="background:var(--surface-2);color:var(--text-secondary);">hidden in invoice</span>
+        </div>
+        <div id="buried-list"></div>
+        <button class="add-btn" onclick="addItem('buried','Vendor name')">+ Add vendor</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <span class="sec-title">Disbursed vendors</span>
+          <span class="badge" style="background:var(--info-bg);color:var(--info-text);">identified in invoice</span>
+        </div>
+        <div id="disbursed-vendors-list"></div>
+        <button class="add-btn" onclick="addItem('disbursed-vendors','Vendor name')">+ Add vendor</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <span class="sec-title">Disbursed fees</span>
+          <span class="badge" style="background:var(--warn-bg);color:var(--warn-text);">identified in invoice</span>
+        </div>
+        <div id="disbursed-fees-list"></div>
+        <button class="add-btn" onclick="addItem('disbursed-fees','Fee name')">+ Add fee</button>
+      </div>
+
+    </div>
+
+    <div class="summary-col">
+      <div class="sum-panel">
+        <p class="sum-panel-title">Breakdown</p>
+
+        <div class="sum-row">
+          <span class="sum-label">Base fee</span>
+          <span class="sum-val dash" id="s-base">—</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-label">Buried vendors</span>
+          <span class="sum-val dash" id="s-buried">—</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-label">Disbursed vendors</span>
+          <span class="sum-val dash" id="s-dv">—</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-label">Disbursed fees</span>
+          <span class="sum-val dash" id="s-df">—</span>
+        </div>
+
+        <hr class="sum-div">
+        <div class="sum-row">
+          <span class="sum-strong">Subtotal</span>
+          <span class="sum-strong-val dash" id="s-subtotal">—</span>
+        </div>
+        <hr class="sum-div">
+
+        <div class="sum-row">
+          <span class="sum-label">Admin handling (8%)</span>
+          <span class="sum-val dash" id="s-ahf">—</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-strong">Subtotal + AHF</span>
+          <span class="sum-strong-val dash" id="s-with-ahf">—</span>
+        </div>
+        <hr class="sum-div">
+
+        <div class="sum-row">
+          <span class="sum-label">GST (5%)</span>
+          <span class="sum-val dash" id="s-gst">—</span>
+        </div>
+
+        <div class="total-box">
+          <span class="total-label">Total</span>
+          <span class="total-val dash" id="s-total">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var counts = { buried: 0, 'disbursed-vendors': 0, 'disbursed-fees': 0 };
+
+    function fmt(n) {
+      return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function setVal(id, val, hasData) {
+      var el = document.getElementById(id);
+      if (hasData) {
+        el.textContent = fmt(val);
+        el.classList.remove('dash');
+      } else {
+        el.textContent = '—';
+        el.classList.add('dash');
+      }
+    }
+
+    function addItem(sec, ph) {
+      var id = counts[sec]++;
+      var list = document.getElementById(sec + '-list');
+      var row = document.createElement('div');
+      row.className = 'row';
+      row.id = sec + '-row-' + id;
+      row.innerHTML =
+        '<input type="text" placeholder="' + ph + '" oninput="recalc()">' +
+        '<div class="amt-wrap"><span>$</span><input type="number" min="0" step="1" placeholder="0" oninput="recalc()"></div>' +
+        '<button class="rm" onclick="removeItem(\'' + sec + '\',' + id + ')" title="Remove">' +
+          '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+          '<path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+        '</button>';
+      list.appendChild(row);
+      row.querySelector('input[type="text"]').focus();
+      recalc();
+    }
+
+    function removeItem(sec, id) {
+      var row = document.getElementById(sec + '-row-' + id);
+      if (row) row.remove();
+      recalc();
+    }
+
+    function sumList(listId) {
+      var list = document.getElementById(listId);
+      var t = 0;
+      list.querySelectorAll('.amt-wrap input').forEach(function(inp) {
+        t += parseFloat(inp.value) || 0;
+      });
+      return t;
+    }
+
+    function recalc() {
+      var base    = parseFloat(document.getElementById('base-fee').value) || 0;
+      var buried  = sumList('buried-list');
+      var dv      = sumList('disbursed-vendors-list');
+      var df      = sumList('disbursed-fees-list');
+      var any     = base || buried || dv || df;
+
+      var subtotal  = base + buried + dv + df;
+      var ahf       = subtotal * 0.08;
+      var withAhf   = subtotal + ahf;
+      var gst       = withAhf * 0.05;
+      var total     = withAhf + gst;
+
+      setVal('s-base',     base,     any);
+      setVal('s-buried',   buried,   any);
+      setVal('s-dv',       dv,       any);
+      setVal('s-df',       df,       any);
+      setVal('s-subtotal', subtotal, any);
+      setVal('s-ahf',      ahf,      any);
+      setVal('s-with-ahf', withAhf,  any);
+      setVal('s-gst',      gst,      any);
+      setVal('s-total',    total,    any);
+    }
+  </script>
+
+</body>
+</html>

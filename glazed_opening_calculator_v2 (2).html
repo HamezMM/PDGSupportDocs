@@ -1,0 +1,181 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1.5rem 0 2rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:12px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{font-size:13px;color:var(--color-text-secondary);display:block;margin-bottom:6px}
+.field input{width:100%;font-size:15px;font-weight:500}
+.field .unit{font-size:12px;color:var(--color-text-tertiary);margin-top:4px}
+.result-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1.25rem;text-align:center;margin-top:12px}
+.result-num{font-size:40px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.result-sub{font-size:12px;color:var(--color-text-secondary);margin-top:6px}
+.interp{font-size:12px;color:var(--color-text-secondary);margin-top:10px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:2px solid var(--color-border-secondary);border-radius:0}
+.tbl-wrap{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+th{background:var(--color-background-secondary);font-weight:500;font-size:11px;padding:6px 4px;text-align:center;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+td{padding:5px 4px;text-align:center;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);font-size:12px}
+td.area-col{font-weight:500;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+td.highlight{background:var(--color-background-info);color:var(--color-text-info);font-weight:500}
+tr:hover td{background:var(--color-background-secondary)}
+tr:hover td.area-col{background:var(--color-background-tertiary)}
+.warn{color:var(--color-text-warning);font-size:12px;margin-top:8px}
+</style>
+<div class="wrap">
+
+<div class="card">
+  <div class="section-label">Inputs</div>
+  <div class="input-grid">
+    <div class="field">
+      <label>Limiting distance</label>
+      <input type="number" id="dist" value="1.35" min="0" step="0.05">
+      <div class="unit">metres (m)</div>
+    </div>
+    <div class="field">
+      <label>Exposing building face area</label>
+      <input type="number" id="area" value="30" min="1" step="1">
+      <div class="unit">square metres (m²)</div>
+    </div>
+  </div>
+  <div class="result-card">
+    <div class="result-num" id="result-num">—</div>
+    <div class="result-sub">maximum aggregate glazed opening area<br>as % of exposing building face</div>
+  </div>
+  <div class="interp" id="interp-note"></div>
+</div>
+
+<div class="card">
+  <div class="section-label">NBC Table 9.10.15.4 — reference</div>
+  <div class="tbl-wrap">
+    <table id="ref-table">
+      <thead>
+        <tr>
+          <th style="width:70px">Area (m²)</th>
+          <th>&lt;1.2</th>
+          <th>1.2</th>
+          <th>1.5</th>
+          <th>2.0</th>
+          <th>4.0</th>
+          <th>6.0</th>
+          <th>8.0</th>
+          <th>10.0</th>
+          <th>12.0</th>
+          <th>16.0</th>
+          <th>20.0</th>
+          <th>25.0</th>
+        </tr>
+      </thead>
+      <tbody id="tbl-body"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+<script>
+const DIST_COLS = [1.2,1.5,2.0,4.0,6.0,8.0,10.0,12.0,16.0,20.0,25.0];
+const AREA_KEYS = [30,40,50,100,999];
+const AREA_LABELS = ['30','40','50','100','Over 100'];
+const RAW = {
+  30:  [7,9,12,39,88,100,100,100,100,100,100],
+  40:  [7,8,11,32,69,100,100,100,100,100,100],
+  50:  [7,8,10,28,57,100,100,100,100,100,100],
+  100: [7,8,9,18,34,56,84,100,100,100,100],
+  999: [7,7,8,12,19,28,40,55,92,100,100]
+};
+const ORIG = {
+  30:  [null,7,9,12,39,88,100,'—','—','—','—','—'],
+  40:  [null,7,8,11,32,69,100,'—','—','—','—','—'],
+  50:  [null,7,8,10,28,57,100,'—','—','—','—','—'],
+  100: [null,7,8,9,18,34,56,84,100,'—','—','—'],
+  999: [null,7,7,8,12,19,28,40,55,92,100,'—']
+};
+
+function rowVal(areaKey, distIdx) {
+  return RAW[areaKey][distIdx];
+}
+function getRowValues(area, distIdx) {
+  if(area<=30) return rowVal(30,distIdx);
+  if(area>100) return rowVal(999,distIdx);
+  let lo,hi;
+  for(let i=0;i<AREA_KEYS.length-1;i++){
+    if(area<=AREA_KEYS[i+1]){lo=AREA_KEYS[i];hi=AREA_KEYS[i+1];break;}
+  }
+  const t=(area-lo)/(hi-lo);
+  return rowVal(lo,distIdx)+t*(rowVal(hi,distIdx)-rowVal(lo,distIdx));
+}
+function calc(dist,area){
+  if(dist<1.2) return {pct:0,note:'Limiting distance < 1.2 m — glazed openings not permitted (0%)',loD:null,hiD:null,loA:null,hiA:null};
+  if(dist>=25) return {pct:100,note:'Limiting distance ≥ 25.0 m — no restriction applies (100%)',loD:null,hiD:null,loA:null,hiA:null};
+  let loIdx=-1;
+  for(let i=0;i<DIST_COLS.length-1;i++){
+    if(dist>=DIST_COLS[i]&&dist<=DIST_COLS[i+1]){loIdx=i;break;}
+  }
+  const loD=DIST_COLS[loIdx], hiD=DIST_COLS[loIdx+1];
+  const td=(dist-loD)/(hiD-loD);
+  const loV=getRowValues(area,loIdx);
+  const hiV=getRowValues(area,loIdx+1);
+  const pct=Math.min(100,loV+td*(hiV-loV));
+  let loA,hiA;
+  if(area<=30){loA=30;hiA=null;}
+  else if(area>100){loA=null;hiA=999;}
+  else{
+    for(let i=0;i<AREA_KEYS.length-1;i++){
+      if(area<=AREA_KEYS[i+1]){loA=AREA_KEYS[i];hiA=AREA_KEYS[i+1];break;}
+    }
+  }
+  const areaNote = area<=30?'area row: 30 m²':area>100?'area row: Over 100':
+    `area interpolated between ${loA} m² (${getRowValues(loA,loIdx).toFixed(1)}%→${getRowValues(loA,loIdx+1).toFixed(1)}%) and ${hiA} m² (${getRowValues(hiA,loIdx).toFixed(1)}%→${getRowValues(hiA,loIdx+1).toFixed(1)}%)`;
+  const note=`Interpolated between ${loD} m (${loV.toFixed(1)}%) and ${hiD} m (${hiV.toFixed(1)}%) — ${areaNote}`;
+  return {pct,note,loD,hiD,loA,hiA,loIdx,hiIdx:loIdx+1};
+}
+
+function buildTable(){
+  const tbody=document.getElementById('tbl-body');
+  tbody.innerHTML='';
+  AREA_KEYS.forEach((ak,ri)=>{
+    const tr=document.createElement('tr');
+    let html=`<td class="area-col">${AREA_LABELS[ri]}</td>`;
+    html+=`<td>0</td>`;
+    ORIG[ak].slice(1).forEach(v=>{html+=`<td>${v}</td>`;});
+    tr.innerHTML=html;
+    tr.dataset.areaKey=ak;
+    tbody.appendChild(tr);
+  });
+}
+
+function highlightTable(res,dist,area){
+  document.querySelectorAll('#tbl-body td').forEach(td=>td.classList.remove('highlight'));
+  if(res.loIdx==null) return;
+  const rows=document.querySelectorAll('#tbl-body tr');
+  const activeAreas=[];
+  if(area<=30) activeAreas.push(0);
+  else if(area>100) activeAreas.push(4);
+  else{
+    for(let i=0;i<AREA_KEYS.length-1;i++){
+      if(area>AREA_KEYS[i]&&area<=AREA_KEYS[i+1]){activeAreas.push(i,i+1);break;}
+    }
+  }
+  activeAreas.forEach(ri=>{
+    const tds=rows[ri].querySelectorAll('td');
+    tds[res.loIdx+2].classList.add('highlight');
+    tds[res.hiIdx+2].classList.add('highlight');
+  });
+}
+
+function update(){
+  const dist=parseFloat(document.getElementById('dist').value)||0;
+  const area=parseFloat(document.getElementById('area').value)||0;
+  const res=calc(dist,area);
+  const pct=Math.round(res.pct*10)/10;
+  document.getElementById('result-num').textContent=pct+'%';
+  document.getElementById('interp-note').textContent=res.note;
+  highlightTable(res,dist,area);
+}
+
+buildTable();
+document.getElementById('dist').addEventListener('input',update);
+document.getElementById('area').addEventListener('input',update);
+update();
+</script>

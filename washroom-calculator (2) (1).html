@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Washroom Compliance Calculator — NBC 2023 AE</title>
+  <style>
+    :root {
+      --bg:#f5f4f0; --surface:#ffffff; --surface-2:#f0efe9;
+      --border:rgba(0,0,0,0.12); --border-strong:rgba(0,0,0,0.22);
+      --text-primary:#1a1a18; --text-secondary:#6b6b67; --text-tertiary:#a0a09b;
+      --info-bg:#e6f1fb; --info-text:#185fa5;
+      --warn-bg:#faeeda; --warn-text:#854f0b;
+      --danger-bg:#fcebeb; --danger-text:#a32d2d;
+      --success-bg:#eaf3de; --success-text:#3b6d11;
+      --radius-md:8px; --radius-lg:12px;
+      --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      --font-mono:'SFMono-Regular','Consolas','Liberation Mono',monospace;
+    }
+    @media(prefers-color-scheme:dark){:root{
+      --bg:#1c1c1a;--surface:#242422;--surface-2:#2c2c2a;
+      --border:rgba(255,255,255,0.10);--border-strong:rgba(255,255,255,0.18);
+      --text-primary:#e8e8e2;--text-secondary:#9b9b95;--text-tertiary:#636360;
+      --info-bg:#042c53;--info-text:#85b7eb;--warn-bg:#412402;--warn-text:#fac775;
+      --danger-bg:#501313;--danger-text:#f09595;--success-bg:#173404;--success-text:#c0dd97;
+    }}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--font-sans);background:var(--bg);color:var(--text-primary);min-height:100vh;padding:2rem 1.5rem;}
+    header{margin-bottom:2rem;max-width:960px;}
+    header h1{font-size:20px;font-weight:500;}
+    header p{font-size:13px;color:var(--text-secondary);margin-top:4px;}
+    .layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;max-width:960px;}
+    @media(max-width:680px){.layout{grid-template-columns:1fr;}.summary-col{order:-1;}}
+    .full-width{max-width:960px;}
+    .sec{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:12px;}
+    .sec-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .sec-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;}
+    .section-divider{display:flex;align-items:center;gap:12px;margin:24px 0 14px;}
+    .section-divider span{font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.09em;white-space:nowrap;}
+    .section-divider hr{flex:1;border:none;border-top:0.5px solid var(--border);}
+    .badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500;white-space:nowrap;}
+    .badge--info{background:var(--info-bg);color:var(--info-text);}
+    .badge--warn{background:var(--warn-bg);color:var(--warn-text);}
+    input[type="text"],input[type="number"],select{font-family:var(--font-sans);font-size:13px;color:var(--text-primary);background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;width:100%;outline:none;transition:border-color 0.15s;}
+    input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:var(--border-strong);}
+    input::placeholder{color:var(--text-tertiary);}
+    select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a0a09b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+    .field-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;}
+    .field-helper{font-size:11px;color:var(--text-tertiary);margin-top:5px;line-height:1.5;}
+    .field-helper.warn{color:var(--warn-text);}
+    .field-helper.info{color:var(--info-text);}
+    .field-group{margin-bottom:14px;}
+    .warn-banner{background:var(--warn-bg);color:var(--warn-text);border:0.5px solid var(--warn-text);border-radius:var(--radius-md);font-size:12px;padding:8px 12px;margin-top:8px;display:none;line-height:1.5;}
+    .warn-banner.visible{display:block;}
+
+    /* sex ratio */
+    .ratio-wrap{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;}
+    .ratio-wrap input[type="range"]{width:100%;padding:0;background:none;border:none;accent-color:var(--text-primary);}
+    .ratio-num{width:60px;text-align:center;font-family:var(--font-mono);}
+    .ratio-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text-tertiary);margin-top:4px;}
+    .btn-ghost{background:none;border:0.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;font-family:var(--font-sans);font-size:11px;color:var(--text-secondary);padding:5px 10px;white-space:nowrap;transition:background 0.12s;}
+    .btn-ghost:hover{background:var(--surface-2);color:var(--text-primary);}
+
+    /* summary panel */
+    .sum-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;}
+    .sum-panel-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;}
+    .sum-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;}
+    .sum-label{font-size:13px;color:var(--text-secondary);}
+    .sum-val{font-family:var(--font-mono);font-size:13px;}
+    .sum-div{border:none;border-top:0.5px solid var(--border);margin:8px 0;}
+    .dash{color:var(--text-tertiary);}
+
+    /* buttons */
+    .add-btn{background:none;border:0.5px dashed var(--border-strong);border-radius:var(--radius-md);cursor:pointer;font-family:var(--font-sans);font-size:12px;color:var(--text-secondary);padding:6px 12px;margin-top:6px;transition:background 0.12s,color 0.12s;}
+    .add-btn:hover{background:var(--surface-2);color:var(--text-primary);}
+    .rm{background:none;border:0.5px solid var(--border);cursor:pointer;color:var(--text-tertiary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;transition:background 0.12s,color 0.12s;}
+    .rm:hover{background:var(--danger-bg);color:var(--danger-text);border-color:transparent;}
+    .btn-primary{background:var(--text-primary);color:var(--bg);border:none;border-radius:var(--radius-md);font-family:var(--font-sans);font-size:13px;font-weight:500;padding:10px 18px;cursor:pointer;width:100%;transition:opacity 0.15s;}
+    .btn-primary:disabled{opacity:0.35;cursor:not-allowed;}
+    .btn-primary:not(:disabled):hover{opacity:0.8;}
+
+    /* location card */
+    .loc-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:14px;}
+    .loc-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .loc-name{font-size:13px;font-weight:500;flex:1;margin-right:10px;}
+    .fixture-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
+    .fix-col-head{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border);}
+    .fix-col-head.men{color:var(--info-text);}
+    .fix-col-head.women{color:#7b4fa6;}
+    .fix-field{margin-bottom:8px;}
+    .fix-field label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;}
+    .calc-chip{background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;font-size:12px;color:var(--text-secondary);margin-top:4px;font-family:var(--font-mono);}
+    .calc-chip b{color:var(--text-primary);}
+    .bf-flag{background:var(--warn-bg);border-radius:var(--radius-md);padding:8px 10px;font-size:11px;color:var(--warn-text);line-height:1.5;margin-top:8px;}
+    .unisex-sec{background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:12px;}
+    .unisex-head{font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+    .unisex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+    .check-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);margin-bottom:8px;}
+    .check-row input[type="checkbox"]{width:15px;height:15px;flex-shrink:0;margin-top:1px;accent-color:var(--text-primary);cursor:pointer;border:none;background:none;padding:0;}
+    .check-lbl{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+    .check-lbl strong{color:var(--text-primary);font-weight:500;}
+    .art-ref{font-family:var(--font-mono);font-size:11px;color:var(--info-text);background:var(--info-bg);padding:1px 5px;border-radius:4px;display:inline-block;margin-bottom:3px;}
+    .check-row.row-disabled{opacity:0.4;pointer-events:none;}
+
+    /* compliance section */
+    .pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;}
+    .pill--pass{background:var(--success-bg);color:var(--success-text);}
+    .pill--fail{background:var(--danger-bg);color:var(--danger-text);}
+    .pill--warn{background:var(--warn-bg);color:var(--warn-text);}
+    .pill--info{background:var(--info-bg);color:var(--info-text);}
+    .pill--na{background:var(--surface-2);color:var(--text-tertiary);}
+    .pill--link{background:var(--info-bg);color:var(--info-text);cursor:pointer;}
+    .flag-row{display:flex;align-items:center;gap:8px;padding:5px 0;}
+    .flag-row + .flag-row{border-top:0.5px solid var(--border);}
+    .flag-lbl{font-size:12px;color:var(--text-secondary);flex:1;}
+    .loc-comp{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:12px;}
+    .loc-comp-head{font-size:13px;font-weight:500;margin-bottom:10px;}
+    .comp-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .comp-col-head{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid var(--border);}
+    .comp-col-head.men{color:var(--info-text);}
+    .comp-col-head.women{color:#7b4fa6;}
+    .gate-status{font-size:12px;color:var(--text-secondary);margin-top:8px;line-height:1.5;text-align:center;}
+    .gate-status.blocked{color:var(--danger-text);}
+    .gate-status.clear{color:var(--success-text);}
+    .copy-feedback{font-size:11px;color:var(--success-text);text-align:center;margin-top:6px;height:16px;}
+
+    /* modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;max-width:560px;width:calc(100% - 3rem);max-height:80vh;overflow-y:auto;}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .modal-title{font-size:14px;font-weight:500;}
+    .modal-close{background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:18px;line-height:1;padding:4px;}
+    .modal-close:hover{color:var(--text-primary);}
+    .modal-sec{margin-bottom:16px;}
+    .modal-sec-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+    .modal-item{font-size:12px;color:var(--text-secondary);padding:4px 0 4px 12px;border-left:2px solid var(--border);margin-bottom:4px;line-height:1.5;}
+    .modal-item strong{color:var(--text-primary);}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Washroom Compliance Calculator</h1>
+  <p>NBC 2023 Alberta Edition — Part 3 &nbsp;·&nbsp; Sections 3.7.2 &amp; 3.8.2</p>
+</header>
+
+<!-- ══ SECTION 1 ══════════════════════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="inputs-col">
+    <div class="section-divider" style="margin-top:0;"><span>Section 1 — Fixture Requirements</span><hr></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="sec-title">Occupancy Classification</span></div>
+      <div class="field-group">
+        <label class="field-label" for="primaryOcc">Primary Occupancy</label>
+        <select id="primaryOcc" onchange="onPrimaryChange()">
+          <option value="">— Select occupancy —</option>
+          <option value="assembly">Assembly — Group A</option>
+          <option value="business">Business &amp; Personal Services — Group D</option>
+          <option value="mercantile">Mercantile — Group E</option>
+          <option value="care_residential">Care or Residential — Group B / C</option>
+          <option value="industrial">Industrial — Group F</option>
+        </select>
+      </div>
+      <div class="field-group" id="secondaryGroup" style="display:none;">
+        <label class="field-label" for="secondaryOcc">Sub-type</label>
+        <select id="secondaryOcc" onchange="onSecondaryChange()"></select>
+        <p class="field-helper info" id="secondaryHelper" style="display:none;"></p>
+      </div>
+      <div class="warn-banner" id="staffOnlyBanner">
+        ⚠ <strong>Staff count only:</strong> For suites ≤ 500 m² of mercantile occupancy the water closet count is permitted to be based solely on the total number of staff (NBC 3.7.2.2.(14)). Enter the number of staff below — not the general public occupant load.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="sec-title">Occupant Load &amp; Sex Ratio</span></div>
+      <div class="field-group">
+        <label class="field-label" for="occupantLoad" id="occupantLoadLabel">Occupant Load</label>
+        <input type="number" id="occupantLoad" min="1" placeholder="Enter number of persons" oninput="calculate()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Sex Ratio — Male %</label>
+        <div class="ratio-wrap">
+          <input type="range" id="ratioSlider" min="0" max="100" value="50" oninput="onSlider()">
+          <input type="number" id="ratioNum" class="ratio-num" min="0" max="100" value="50" oninput="onRatioNum()">
+          <button class="btn-ghost" onclick="resetRatio()">Reset 50/50</button>
+        </div>
+        <div class="ratio-labels"><span>0% M / 100% F</span><span>50 / 50</span><span>100% M / 0% F</span></div>
+        <div id="splitDisplay" style="display:none;margin-top:8px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:500;color:var(--info-text);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Male occupants</div>
+              <div id="splitM" style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary);">—</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:500;color:#7b4fa6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Female occupants</div>
+              <div id="splitF" style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary);">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="warn-banner" id="ratioBanner">
+          ⚠ <strong>Departure from 50/50:</strong> NBC 3.7.2.2.(1) requires water closets be provided for each sex assuming equal division unless the proportion of each sex can be determined with reasonable accuracy. Ensure a documented justification is on file before using this split.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-col">
+    <div class="sum-panel">
+      <p class="sum-panel-title">Required Fixtures</p>
+      <div class="sum-row"><span class="sum-label">Men's water closets</span><span class="sum-val dash" id="reqWCM">—</span></div>
+      <div class="sum-row"><span class="sum-label">Women's water closets</span><span class="sum-val dash" id="reqWCF">—</span></div>
+      <hr class="sum-div">
+      <div class="sum-row"><span class="sum-label">Men's lavatories</span><span class="sum-val dash" id="reqLavM">—</span></div>
+      <div class="sum-row"><span class="sum-label">Women's lavatories</span><span class="sum-val dash" id="reqLavF">—</span></div>
+      <hr class="sum-div">
+      <div class="sum-row">
+        <span class="sum-label" style="font-size:11px;color:var(--text-tertiary);">Urinal substitution (M)</span>
+        <span class="sum-val dash" id="reqUrinal" style="font-size:11px;color:var(--text-tertiary);">—</span>
+      </div>
+      <div id="singleWCPanel" style="display:none;margin-top:10px;">
+        <div style="background:var(--info-bg);color:var(--info-text);border-radius:var(--radius-md);font-size:11px;padding:8px 10px;line-height:1.5;">
+          NBC 3.7.2.2.(2): Occupant load ≤ 10 — a single unisex water closet is permitted to serve both sexes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SECTION 2 ══════════════════════════════════════════════════════════════ -->
+<div class="full-width">
+  <div class="section-divider"><span>Section 2 — Washroom Locations</span><hr></div>
+  <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+    List each washroom location in the building. Lavatories are checked per room. Water closet counts are pooled across all locations for building totals.
+  </p>
+  <div id="locationsContainer"></div>
+  <button class="add-btn" onclick="addLocation()">+ Add washroom location</button>
+</div>
+
+
+<!-- ══ SECTION 3 ══════════════════════════════════════════════════════════════ -->
+<div class="full-width">
+  <div class="section-divider"><span>Section 3 — Compliance Report</span><hr></div>
+  <div class="layout">
+    <div class="inputs-col">
+      <div class="sec">
+        <div class="sec-head"><span class="sec-title">Building Fixture Totals</span></div>
+        <div class="sum-row"><span class="sum-label">Men's water closets</span><span id="totalWCMDisp" class="sum-val dash">0 / —</span></div>
+        <div class="sum-row"><span class="sum-label">Women's water closets</span><span id="totalWCFDisp" class="sum-val dash">0 / —</span></div>
+        <hr class="sum-div">
+        <div class="sum-row"><span class="sum-label">Men's lavatories</span><span id="totalLavMDisp" class="sum-val dash">0 / —</span></div>
+        <div class="sum-row"><span class="sum-label">Women's lavatories</span><span id="totalLavFDisp" class="sum-val dash">0 / —</span></div>
+      </div>
+      <div id="locationComplianceList"></div>
+    </div>
+    <div class="summary-col">
+      <div class="sum-panel">
+        <p class="sum-panel-title">Export Report</p>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">Copy the compliance summary as plain text to paste into a Word document or project file.</p>
+        <button class="btn-primary" id="copyBtn" onclick="copyReport()" disabled>Copy Report to Clipboard</button>
+        <p class="gate-status blocked" id="gateStatus">Complete Section 1 and add at least one washroom location to unlock.</p>
+        <p class="copy-feedback" id="copyFeedback"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ BF MODAL ════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="bfModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Barrier-Free Design Requirements</span>
+      <button class="modal-close" onclick="closeBFModal()">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">NBC 2023 AE Subsection 3.8.3 — verify each item during design development.</p>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Universal Washroom — 3.8.3.13</p>
+      <div class="modal-item">Served by a barrier-free path of travel</div>
+      <div class="modal-item">Door: lever/loop hardware 900–1100 mm AFF; lockable inside, emergency release outside</div>
+      <div class="modal-item">One lavatory conforming to 3.8.3.16; one WC conforming to 3.8.3.14 (centreline 460–480 mm from side wall)</div>
+      <div class="modal-item">Clear lateral transfer space: ≥ 1500 mm from rear wall × ≥ 900 mm from WC seat edge</div>
+      <div class="modal-item">L-shaped grab bar on side wall: horizontal + vertical ≥ 760 mm; horizontal 750–850 mm AFF; vertical 150 mm in front of WC</div>
+      <div class="modal-item">Rear grab bar: ≥ 600 mm centred over WC (or 2 × 300 mm either side of flush valve)</div>
+      <div class="modal-item">Coat hook ≤ 1200 mm AFF; TP dispenser 600–800 mm AFF, closest edge 300 mm from front of WC</div>
+      <div class="modal-item">Shelf ≤ 1200 mm AFF (unless counter provided); wheelchair turning circle ≥ 1700 mm diameter</div>
+      <div class="modal-item"><strong>Power door operator required at entrance — NBC 3.8.2.7.(1)(c)</strong></div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Accessible WC — 3.8.3.14</p>
+      <div class="modal-item">Seat height: 430–460 mm AFF</div>
+      <div class="modal-item">Flush: automatic or lever/loop at 500–900 mm AFF, ≤ 350 mm from transfer side</div>
+      <div class="modal-item">Seat lid or back support; securely attached tank top where tank-type</div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Accessible WC Stall — 3.8.3.12 &nbsp;<span style="font-size:10px;font-weight:400;">(1 per 10 stalls or part thereof — 3.8.2.8.(5))</span></p>
+      <div class="modal-item">Wheelchair turning space ≥ 1500 mm diameter; clear floor in front: 1700 × 1700 mm</div>
+      <div class="modal-item">Door: lever hardware 900–1100 mm; clear opening ≥ 850 mm; outward swing; self-closing ≤ 50 mm ajar; D-pull inside ≥ 140 mm at 200–300 mm from hinge, 800–1000 mm AFF</div>
+      <div class="modal-item">WC centreline 460–480 mm from side wall; L-shaped grab bar on side wall + rear bar</div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Stall for Limited Mobility — 3.8.3.15 &nbsp;<span style="font-size:10px;font-weight:400;">(1 per 10 stalls or part thereof — 3.8.2.8.(7))</span></p>
+      <div class="modal-item">Stall: ≥ 1500 mm deep × 890–940 mm wide</div>
+      <div class="modal-item">Door: lever hardware; clear opening ≥ 850 mm; outward swing unless no overlap; self-closing; pulls both sides 900–1100 mm AFF</div>
+      <div class="modal-item">WC conforming to 3.8.3.14, centred; horizontal grab bar each side 750–850 mm AFF, begins ≤ 300 mm from rear wall, extends ≥ 450 mm in front of seat</div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Accessible Urinal — 3.8.3.15(2) &nbsp;<span style="font-size:10px;font-weight:400;">(1 per 10 urinals or part thereof — 3.8.2.8.(6))</span></p>
+      <div class="modal-item">Wall-mounted; rim ≤ 430 mm AFF; no step in front</div>
+      <div class="modal-item">Clear approach: ≥ 800 mm wide × 1350 mm long, centred, unobstructed</div>
+      <div class="modal-item">Flush: automatic or lever 900–1100 mm AFF; vertical grab bar each side ≥ 600 mm, centreline 1000 mm AFF, ≤ 380 mm from urinal centreline</div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Accessible Lavatory &amp; Mirror — 3.8.3.16</p>
+      <div class="modal-item">Faucets: automatic or lever/loop; no continuous-force hold; metered ≥ 10 s</div>
+      <div class="modal-item">Centreline ≥ 460 mm from side wall; rim ≤ 865 mm AFF; clear floor: ≥ 800 mm wide × 1350 mm long (≤ 430 mm under lav)</div>
+      <div class="modal-item">Under-sink clearance: 800 mm wide; 735 mm at front edge; 685 mm at 200 mm back; 230 mm over 280–430 mm range; pipes insulated</div>
+      <div class="modal-item">Soap dispenser: automatic or lever ≤ 1100 mm AFF within 500 mm of front; towel/dryer ≤ 1200 mm AFF</div>
+      <div class="modal-item">Mirror: bottom edge ≤ 1000 mm AFF or inclined for wheelchair use</div>
+    </div>
+
+    <div class="modal-sec">
+      <p class="modal-sec-title">Change Space — 3.8.2.8.(15) / 3.8.3.13.(2) &nbsp;<span style="font-size:10px;font-weight:400;">(Groups A / B-Div.2 / E with OL &gt; 500)</span></p>
+      <div class="modal-item">One universal WR on barrier-free entrance storey shall include adult change table</div>
+      <div class="modal-item">Clear space: 810 × 1830 mm (non-overlapping); transfer space adjacent to long side: 900 × 1350 mm</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══ OCCUPANCY DATA ════════════════════════════════════════════════════════════
+const SUBTYPES = {
+  assembly:[
+    {value:'assembly_general', label:'General assembly (A1/A2/A3/A4)',           note:'Table 3.7.2.2.-A applies.', staffOnly:false},
+    {value:'assembly_school',  label:'Primary school or daycare centre',          note:'NBC 3.7.2.2.(5): 1 WC per 30 males, 1 per 25 females.', staffOnly:false},
+    {value:'assembly_worship', label:'Place of worship or undertaking premises',  note:'NBC 3.7.2.2.(6): 1 WC per 150 persons of each sex.', staffOnly:false},
+  ],
+  mercantile:[
+    {value:'mercantile_general', label:'General mercantile',               note:'NBC 3.7.2.2.(11): 1 WC per 300 males, 1 per 150 females.', staffOnly:false},
+    {value:'mercantile_small',   label:'Small suite ≤ 500 m² (staff only)', note:'NBC 3.7.2.2.(14): Based on staff only. Table 3.7.2.2.-B applies.', staffOnly:true},
+  ],
+};
+
+// Lookup tables
+function tableA_M(n){ if(n<=0) return 0; if(n<=50) return 1; if(n<=100) return 2; if(n<=150) return 3; if(n<=200) return 4; if(n<=300) return 5; if(n<=400) return 6; return 7+Math.ceil((n-400)/200); }
+function tableA_F(n){ if(n<=0) return 0; if(n<=25) return 1; if(n<=50) return 2; if(n<=75) return 3; if(n<=100) return 4; if(n<=125) return 5; if(n<=150) return 6; if(n<=175) return 7; if(n<=200) return 8; if(n<=250) return 9; if(n<=300) return 10; if(n<=350) return 11; if(n<=400) return 12; return 13+Math.ceil((n-400)/100); }
+function tableB(n){ if(n<=0) return 0; if(n<=25) return 1; if(n<=50) return 2; return 3+Math.ceil((n-50)/50); }
+function tableC(n){ if(n<=0) return 0; if(n<=10) return 1; if(n<=25) return 2; if(n<=50) return 3; if(n<=75) return 4; if(n<=100) return 5; return 6+Math.ceil((n-100)/30); }
+function calcLav(fixtures){ return fixtures<=0 ? 0 : Math.ceil(fixtures/2); }
+
+// ══ STATE ══════════════════════════════════════════════════════════════════════
+let locations=[], locId=0;
+let reqWCM=0, reqWCF=0, reqLavM=0, reqLavF=0, calculated=false;
+
+// ══ RATIO CONTROLS ════════════════════════════════════════════════════════════
+function getRatio(){ return parseInt(document.getElementById('ratioSlider').value)||50; }
+function onSlider(){
+  const v=parseInt(document.getElementById('ratioSlider').value);
+  document.getElementById('ratioNum').value=v;
+  document.getElementById('ratioBanner').classList.toggle('visible',v!==50);
+  calculate();
+}
+function onRatioNum(){
+  let v=parseInt(document.getElementById('ratioNum').value);
+  if(isNaN(v)) v=50;
+  v=Math.max(0,Math.min(100,v));
+  document.getElementById('ratioNum').value=v;
+  document.getElementById('ratioSlider').value=v;
+  document.getElementById('ratioBanner').classList.toggle('visible',v!==50);
+  calculate();
+}
+function resetRatio(){
+  document.getElementById('ratioSlider').value=50;
+  document.getElementById('ratioNum').value=50;
+  document.getElementById('ratioBanner').classList.remove('visible');
+  calculate();
+}
+
+// ══ OCCUPANCY DROPDOWNS ═══════════════════════════════════════════════════════
+function onPrimaryChange(){
+  const p=document.getElementById('primaryOcc').value;
+  const sg=document.getElementById('secondaryGroup');
+  const sel=document.getElementById('secondaryOcc');
+  sel.innerHTML='';
+  document.getElementById('staffOnlyBanner').classList.remove('visible');
+  sg.style.display='none';
+  if(SUBTYPES[p]){
+    sg.style.display='block';
+    SUBTYPES[p].forEach(st=>{ const o=document.createElement('option'); o.value=st.value; o.textContent=st.label; sel.appendChild(o); });
+    onSecondaryChange();
+  }
+  calculate();
+}
+function onSecondaryChange(){
+  const p=document.getElementById('primaryOcc').value;
+  const sv=document.getElementById('secondaryOcc').value;
+  const helper=document.getElementById('secondaryHelper');
+  const banner=document.getElementById('staffOnlyBanner');
+  banner.classList.remove('visible'); helper.style.display='none';
+  if(SUBTYPES[p]){
+    const st=SUBTYPES[p].find(s=>s.value===sv);
+    if(st){
+      helper.textContent=st.note; helper.style.display='block';
+      document.getElementById('occupantLoadLabel').textContent=st.staffOnly?'Staff Count':'Occupant Load';
+      if(st.staffOnly) banner.classList.add('visible');
+    }
+  }
+  calculate();
+}
+
+// ══ CALCULATE REQUIREMENTS ═════════════════════════════════════════════════════
+function calculate(){
+  const p=document.getElementById('primaryOcc').value;
+  const sv=document.getElementById('secondaryOcc').value;
+  const ol=parseInt(document.getElementById('occupantLoad').value)||0;
+  const ratio=getRatio();
+  document.getElementById('singleWCPanel').style.display='none';
+  const splitDisp=document.getElementById('splitDisplay');
+  const mN=Math.round(ol*ratio/100), fN=ol-mN;
+  if(ol>0){ splitDisp.style.display='block'; document.getElementById('splitM').textContent=mN; document.getElementById('splitF').textContent=fN; }
+  else { splitDisp.style.display='none'; }
+  if(!p||ol<=0){ setReqs(null,null,null,null); calculated=false; updateReport(); return; }
+  let wcM=0,wcF=0;
+  const singleOK=['assembly','business','mercantile','care_residential','industrial'].includes(p);
+  if(singleOK&&ol<=10) document.getElementById('singleWCPanel').style.display='block';
+  if(p==='assembly'){
+    if(sv==='assembly_school'){ wcM=Math.ceil(mN/30); wcF=Math.ceil(fN/25); }
+    else if(sv==='assembly_worship'){ wcM=Math.ceil(mN/150); wcF=Math.ceil(fN/150); }
+    else { wcM=tableA_M(mN); wcF=tableA_F(fN); }
+  } else if(p==='business'){ wcM=tableB(mN); wcF=tableB(fN); }
+  else if(p==='mercantile'){
+    if(sv==='mercantile_small'){ wcM=tableB(mN); wcF=tableB(fN); }
+    else { wcM=Math.max(mN>0?1:0,Math.ceil(mN/300)); wcF=Math.max(fN>0?1:0,Math.ceil(fN/150)); }
+  } else if(p==='care_residential'){ wcM=Math.ceil(mN/10); wcF=Math.ceil(fN/10); }
+  else if(p==='industrial'){ wcM=tableC(mN); wcF=tableC(fN); }
+  if(mN>0&&wcM<1) wcM=1; if(fN>0&&wcF<1) wcF=1;
+  setReqs(wcM, wcF, calcLav(wcM), calcLav(wcF));
+  calculated=true; updateReport();
+}
+
+function setReqs(wm,wf,lm,lf){
+  reqWCM=wm||0; reqWCF=wf||0; reqLavM=lm||0; reqLavF=lf||0;
+  const fmt=v=>v===null?'—':String(v);
+  const s=(id,v)=>{ const e=document.getElementById(id); e.textContent=fmt(v); e.classList.toggle('dash',v===null); };
+  s('reqWCM',wm); s('reqWCF',wf); s('reqLavM',lm); s('reqLavF',lf);
+  if(wm!==null&&wm>0){
+    const sub=wm===2?1:Math.floor(wm*2/3);
+    document.getElementById('reqUrinal').textContent=`Up to ${sub} urinal${sub!==1?'s':''} may substitute`;
+    document.getElementById('reqUrinal').classList.remove('dash');
+  } else { document.getElementById('reqUrinal').textContent='—'; document.getElementById('reqUrinal').classList.add('dash'); }
+}
+
+// ══ LOCATIONS ══════════════════════════════════════════════════════════════════
+function addLocation(){
+  const id=++locId;
+  locations.push({id,name:'',wcM:0,urinalM:0,lavM:0,wcF:0,lavF:0,universal:0,unisex:0,unisexCounts:true,bfPath:true,relaxation:false});
+  renderLocations();
+}
+function removeLocation(id){ locations=locations.filter(l=>l.id!==id); renderLocations(); }
+
+function renderLocations(){
+  const c=document.getElementById('locationsContainer');
+  c.innerHTML='';
+  locations.forEach(loc=>{
+    const mFix=loc.wcM+loc.urinalM;
+    const fFix=loc.wcF;
+    const reqLM=calcLav(mFix);
+    const reqLF=calcLav(fFix);
+    const lavMOK=loc.lavM>=reqLM;
+    const lavFOK=loc.lavF>=reqLF;
+    const bfActive=loc.bfPath&&!loc.relaxation;
+    const flagM=bfActive&&mFix>2;
+    const flagF=bfActive&&fFix>2;
+    const uF=Math.ceil(loc.unisex/2), uM=Math.floor(loc.unisex/2);
+
+    const d=document.createElement('div');
+    d.className='loc-card';
+    d.innerHTML=`
+      <div class="loc-card-head">
+        <input type="text" class="loc-name" placeholder="Washroom location name (e.g. Level 1 — Core)" value="${esc(loc.name)}" oninput="lSet(${loc.id},'name',this.value)">
+        <button class="rm" onclick="removeLocation(${loc.id})" title="Remove"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+
+      <div class="fixture-cols">
+        <div>
+          <div class="fix-col-head men">Men's</div>
+          <div class="fix-field"><label>Water closets</label><input type="number" min="0" value="${loc.wcM}" oninput="lNum(${loc.id},'wcM',this.value)"></div>
+          <div class="fix-field"><label>Urinals</label><input type="number" min="0" value="${loc.urinalM}" oninput="lNum(${loc.id},'urinalM',this.value)"></div>
+          <div class="fix-field"><label>Lavatories provided</label><input type="number" min="0" value="${loc.lavM}" oninput="lNum(${loc.id},'lavM',this.value)"></div>
+          <div class="calc-chip">Req: <b>${reqLM}</b> lav${reqLM!==1?'s':''} for ${mFix} fixture${mFix!==1?'s':''}</div>
+          ${!lavMOK&&mFix>0?`<p class="field-helper warn" style="margin-top:5px;">⚠ ${reqLM-loc.lavM} more lavator${(reqLM-loc.lavM)!==1?'ies':'y'} needed in this room</p>`:''}
+          ${flagM?`<div class="bf-flag"><strong>BF required (${mFix} fixtures):</strong> 1 accessible WC stall per 10 stalls (3.8.2.8.(5)) · 1 limited mobility stall per 10 stalls (3.8.2.8.(7))${loc.urinalM>0?' · 1 accessible urinal per 10 urinals (3.8.2.8.(6))':''}</div>`:''}
+        </div>
+        <div>
+          <div class="fix-col-head women">Women's</div>
+          <div class="fix-field"><label>Water closets</label><input type="number" min="0" value="${loc.wcF}" oninput="lNum(${loc.id},'wcF',this.value)"></div>
+          <div class="fix-field"><label>Lavatories provided</label><input type="number" min="0" value="${loc.lavF}" oninput="lNum(${loc.id},'lavF',this.value)"></div>
+          <div class="calc-chip">Req: <b>${reqLF}</b> lav${reqLF!==1?'s':''} for ${fFix} fixture${fFix!==1?'s':''}</div>
+          ${!lavFOK&&fFix>0?`<p class="field-helper warn" style="margin-top:5px;">⚠ ${reqLF-loc.lavF} more lavator${(reqLF-loc.lavF)!==1?'ies':'y'} needed in this room</p>`:''}
+          ${flagF?`<div class="bf-flag"><strong>BF required (${fFix} fixtures):</strong> 1 accessible WC stall per 10 stalls (3.8.2.8.(5)) · 1 limited mobility stall per 10 stalls (3.8.2.8.(7))</div>`:''}
+        </div>
+      </div>
+
+      <div class="unisex-sec">
+        <div class="unisex-head">Universal &amp; Unisex Fixtures</div>
+        <div class="unisex-grid">
+          <div class="fix-field"><label>Universal washrooms <span style="font-size:10px;color:var(--text-tertiary);">(single-occupant BF)</span></label><input type="number" min="0" value="${loc.universal}" oninput="lNum(${loc.id},'universal',this.value)"></div>
+          <div class="fix-field"><label>Unisex washrooms <span style="font-size:10px;color:var(--text-tertiary);">(multi-fixture)</span></label><input type="number" min="0" value="${loc.unisex}" oninput="lNum(${loc.id},'unisex',this.value)"></div>
+        </div>
+        ${loc.unisex>0?`
+        <div class="check-row" style="margin-bottom:0;">
+          <input type="checkbox" id="uCount-${loc.id}" ${loc.unisexCounts?'checked':''} onchange="lBool(${loc.id},'unisexCounts',this.checked)">
+          <label class="check-lbl" for="uCount-${loc.id}">
+            <strong>Count unisex fixtures toward building total</strong> — ${loc.unisex} unisex fixture${loc.unisex!==1?'s':''} split as <strong>${uF}F + ${uM}M</strong> (female-heavy, ceil/floor of n÷2).
+          </label>
+        </div>`:''}
+      </div>
+
+      ${loc.bfPath && !loc.relaxation && loc.universal === 0 ? `
+      <div style="background:var(--danger-bg);color:var(--danger-text);border:0.5px solid var(--danger-text);border-radius:var(--radius-md);font-size:12px;padding:8px 12px;margin-bottom:8px;line-height:1.5;">
+        ⚠ <strong>No universal washroom provided at this location.</strong> NBC 3.8.2.8.(1) requires at least one universal washroom complying with 3.8.3.13 at each location on a barrier-free storey. Add a universal washroom count above or submit a relaxation request.
+      </div>` : ''}
+
+      <div class="check-row">
+        <input type="checkbox" id="bfPath-${loc.id}" ${loc.bfPath?'checked':''} onchange="lBool(${loc.id},'bfPath',this.checked);syncRelax(${loc.id})">
+        <label class="check-lbl" for="bfPath-${loc.id}">
+          <span class="art-ref">NBC 3.8.2.8.(1) &amp; (2)</span><br>
+          <strong>Barrier-free path of travel:</strong> This washroom is on a storey served by a barrier-free path of travel. Where more than 2 water closets or more than 1 WC + 1 urinal are provided, the washroom shall be barrier-free and include a universal washroom.
+        </label>
+      </div>
+
+      <div class="check-row ${loc.bfPath?'':'row-disabled'}" id="relaxRow-${loc.id}">
+        <input type="checkbox" id="relax-${loc.id}" ${loc.relaxation?'checked':''} ${loc.bfPath?'':'disabled'} onchange="lBool(${loc.id},'relaxation',this.checked)">
+        <label class="check-lbl" for="relax-${loc.id}">
+          <strong>Barrier-free relaxation:</strong> The intended occupants of this location will not require accessible accommodation. A barrier-free relaxation request will be submitted to the Province of Alberta.
+        </label>
+      </div>
+    `;
+    c.appendChild(d);
+  });
+  updateReport();
+}
+
+function syncRelax(id){
+  const loc=locations.find(l=>l.id===id);
+  if(!loc) return;
+  if(!loc.bfPath) loc.relaxation=false;
+  const row=document.getElementById(`relaxRow-${id}`);
+  const cb=document.getElementById(`relax-${id}`);
+  if(row) row.classList.toggle('row-disabled',!loc.bfPath);
+  if(cb){ cb.disabled=!loc.bfPath; cb.checked=loc.relaxation; }
+  updateReport();
+}
+
+function lSet(id,f,v){ const l=locations.find(l=>l.id===id); if(l){ l[f]=v; updateReport(); } }
+function lNum(id,f,v){ const l=locations.find(l=>l.id===id); if(l){ l[f]=Math.max(0,parseInt(v)||0); renderLocations(); } }
+function lBool(id,f,v){ const l=locations.find(l=>l.id===id); if(l){ l[f]=v; renderLocations(); } }
+
+// ══ TOTALS & GATE ══════════════════════════════════════════════════════════════
+function getTotals(){
+  let tWCM=0,tWCF=0,tLavM=0,tLavF=0;
+  locations.forEach(loc=>{
+    let wm=loc.wcM, wf=loc.wcF;
+    // Universal: counts for both (1 universal = 1M + 1F, but a fixture can only be counted once)
+    // Design intent: universal satisfies BF requirement, but we count it once toward each sex
+    wm+=loc.universal; wf+=loc.universal;
+    // Unisex split: ceil→F, floor→M
+    if(loc.unisexCounts&&loc.unisex>0){ wf+=Math.ceil(loc.unisex/2); wm+=Math.floor(loc.unisex/2); }
+    tWCM+=wm; tWCF+=wf;
+    tLavM+=loc.lavM; tLavF+=loc.lavF;
+  });
+  return {tWCM,tWCF,tLavM,tLavF};
+}
+
+function updateReport(){
+  const {tWCM,tWCF,tLavM,tLavF}=getTotals();
+  const fmt=(p,r)=>r>0?`${p} / ${r}`:`${p} / —`;
+  document.getElementById('totalWCMDisp').textContent=fmt(tWCM,reqWCM);
+  document.getElementById('totalWCFDisp').textContent=fmt(tWCF,reqWCF);
+  document.getElementById('totalLavMDisp').textContent=fmt(tLavM,reqLavM);
+  document.getElementById('totalLavFDisp').textContent=fmt(tLavF,reqLavF);
+
+  // Per-location compliance cards
+  const list=document.getElementById('locationComplianceList');
+  list.innerHTML='';
+  locations.forEach(loc=>{
+    const mFix=loc.wcM+loc.urinalM, fFix=loc.wcF;
+    const rLM=calcLav(mFix), rLF=calcLav(fFix);
+    const lavMOK=loc.lavM>=rLM, lavFOK=loc.lavF>=rLF;
+    let bfHtml='';
+    if(!loc.bfPath){
+      bfHtml=`<div class="flag-row"><span class="flag-lbl">Barrier-free</span><span class="pill pill--na">Not required</span></div>`;
+    } else if(loc.relaxation){
+      bfHtml=`<div class="flag-row"><span class="flag-lbl">Barrier-free</span><span class="pill pill--warn">Relaxation required</span></div>`;
+    } else {
+      const univOK = loc.universal > 0;
+      bfHtml=`<div class="flag-row"><span class="flag-lbl">Universal washroom</span><span class="pill ${univOK?'pill--pass pill--link':'pill--fail'}" ${univOK?'onclick="openBFModal()" style="cursor:pointer;"':''}>${univOK?'Provided — View Reqs':'Missing'}</span></div>`;
+      if(mFix>2) bfHtml+=`<div class="flag-row"><span class="flag-lbl">Men's: accessible + limited mobility stall</span><span class="pill pill--info">Required</span></div>`;
+      if(fFix>2) bfHtml+=`<div class="flag-row"><span class="flag-lbl">Women's: accessible + limited mobility stall</span><span class="pill pill--info">Required</span></div>`;
+    }
+    const div=document.createElement('div');
+    div.className='loc-comp';
+    div.innerHTML=`
+      <div class="loc-comp-head">${esc(loc.name||'Unnamed location')}</div>
+      <div class="comp-cols">
+        <div>
+          <div class="comp-col-head men">Men's</div>
+          <div class="flag-row"><span class="flag-lbl">Lavatories (${loc.lavM} / ${rLM} req.)</span><span class="pill ${lavMOK?'pill--pass':'pill--fail'}">${lavMOK?'Pass':'Fail'}</span></div>
+        </div>
+        <div>
+          <div class="comp-col-head women">Women's</div>
+          <div class="flag-row"><span class="flag-lbl">Lavatories (${loc.lavF} / ${rLF} req.)</span><span class="pill ${lavFOK?'pill--pass':'pill--fail'}">${lavFOK?'Pass':'Fail'}</span></div>
+        </div>
+      </div>
+      <hr class="sum-div">
+      ${bfHtml}
+    `;
+    list.appendChild(div);
+  });
+
+  // Gate
+  const gate=document.getElementById('gateStatus');
+  const btn=document.getElementById('copyBtn');
+  if(!calculated||locations.length===0){
+    gate.textContent='Complete Section 1 and add at least one washroom location to unlock.';
+    gate.className='gate-status blocked'; btn.disabled=true; return;
+  }
+  const fails=[];
+  if(tWCM<reqWCM) fails.push(`${reqWCM-tWCM} more men's water closet${reqWCM-tWCM!==1?'s':''}`);
+  if(tWCF<reqWCF) fails.push(`${reqWCF-tWCF} more women's water closet${reqWCF-tWCF!==1?'s':''}`);
+  if(tLavM<reqLavM) fails.push(`${reqLavM-tLavM} more men's lavator${reqLavM-tLavM!==1?'ies':'y'}`);
+  if(tLavF<reqLavF) fails.push(`${reqLavF-tLavF} more women's lavator${reqLavF-tLavF!==1?'ies':'y'}`);
+  if(fails.length>0){
+    gate.textContent=`Add ${fails.join(', ')} to unlock report.`;
+    gate.className='gate-status blocked'; btn.disabled=true;
+  } else {
+    gate.textContent='All fixture requirements met — report ready.';
+    gate.className='gate-status clear'; btn.disabled=false;
+  }
+}
+
+// ══ COPY REPORT ════════════════════════════════════════════════════════════════
+function copyReport(){
+  const p=document.getElementById('primaryOcc');
+  const pL=p.options[p.selectedIndex]?.text||'—';
+  const s=document.getElementById('secondaryOcc');
+  const sL=(s&&s.options[s.selectedIndex])?s.options[s.selectedIndex].text:null;
+  const ol=document.getElementById('occupantLoad').value||'—';
+  const ratio=getRatio();
+  const mN=Math.round(parseInt(ol)*ratio/100), fN=parseInt(ol)-mN;
+  const {tWCM,tWCF,tLavM,tLavF}=getTotals();
+  const ok=tWCM>=reqWCM&&tWCF>=reqWCF&&tLavM>=reqLavM&&tLavF>=reqLavF;
+  const L=[];
+  L.push('WASHROOM COMPLIANCE SUMMARY');
+  L.push('NBC 2023 Alberta Edition — Part 3');
+  L.push('Sections 3.7.2 (Plumbing Facilities) & 3.8.2 (Accessibility)');
+  L.push('');
+  L.push('──────────────────────────────────────────');
+  L.push('BUILDING INFORMATION');
+  L.push('──────────────────────────────────────────');
+  L.push(`  Occupancy:     ${pL}${sL?' — '+sL:''}`);
+  L.push(`  Occupant Load: ${ol} persons (${mN} male / ${fN} female)`);
+  if(ratio!==50) L.push(`  ⚠ Sex ratio ${ratio}% M / ${100-ratio}% F — departure from 50/50 requires documented justification per NBC 3.7.2.2.(1).`);
+  L.push('');
+  L.push('──────────────────────────────────────────');
+  L.push('REQUIRED FIXTURES (BY CODE)');
+  L.push('──────────────────────────────────────────');
+  L.push(`  Men's water closets required:    ${reqWCM}`);
+  L.push(`  Women's water closets required:  ${reqWCF}`);
+  L.push(`  Men's lavatories required:       ${reqLavM}`);
+  L.push(`  Women's lavatories required:     ${reqLavF}`);
+  if(parseInt(ol)<=10) L.push(`  NOTE: OL ≤ 10 — single unisex WC permitted per NBC 3.7.2.2.(2).`);
+  L.push('');
+  L.push('──────────────────────────────────────────');
+  L.push('WASHROOM LOCATIONS');
+  L.push('──────────────────────────────────────────');
+  locations.forEach((loc,i)=>{
+    const name=loc.name||`Location ${i+1}`;
+    const mFix=loc.wcM+loc.urinalM, fFix=loc.wcF;
+    const rLM=calcLav(mFix), rLF=calcLav(fFix);
+    const uF=Math.ceil(loc.unisex/2), uM=Math.floor(loc.unisex/2);
+    L.push('');
+    L.push(`  ${name.toUpperCase()}`);
+    L.push(`    Men's:`);
+    L.push(`      Water closets:  ${loc.wcM}`);
+    L.push(`      Urinals:        ${loc.urinalM}`);
+    L.push(`      Lavatories:     ${loc.lavM} provided / ${rLM} required — ${loc.lavM>=rLM?'PASS':'FAIL'}`);
+    if(loc.lavM<rLM) L.push(`      ⚠ DEFICIENCY: ${rLM-loc.lavM} additional lavator${(rLM-loc.lavM)!==1?'ies':'y'} required in this room.`);
+    L.push(`    Women's:`);
+    L.push(`      Water closets:  ${loc.wcF}`);
+    L.push(`      Lavatories:     ${loc.lavF} provided / ${rLF} required — ${loc.lavF>=rLF?'PASS':'FAIL'}`);
+    if(loc.lavF<rLF) L.push(`      ⚠ DEFICIENCY: ${rLF-loc.lavF} additional lavator${(rLF-loc.lavF)!==1?'ies':'y'} required in this room.`);
+    if(loc.universal>0) L.push(`    Universal washrooms: ${loc.universal}`);
+    if(loc.unisex>0) L.push(`    Unisex washrooms: ${loc.unisex}${loc.unisexCounts?` (counted as ${uF}F + ${uM}M toward building total)`:' (excluded from building total)'}`);
+    L.push(`    Barrier-free:`);
+    if(!loc.bfPath){
+      L.push(`      NOT REQUIRED — Not on a barrier-free storey.`);
+    } else if(loc.relaxation){
+      L.push(`      RELAXATION REQUEST REQUIRED — Occupants will not require accessible accommodation.`);
+      L.push(`      Document justification per NBC 3.8.2.1. Submit relaxation request to Province of Alberta.`);
+    } else {
+      L.push(`      REQUIRED — Located on a barrier-free storey (NBC 3.8.2.8.(1)).`);
+      if(loc.universal===0) L.push(`      ⚠ DEFICIENCY: No universal washroom provided. NBC 3.8.2.8.(1) requires at least one universal washroom at this location.`);
+      L.push(`      Universal washroom required at this location.`);
+      L.push(`      Power door operator required at washroom entrance (NBC 3.8.2.7.(1)(c)).`);
+      if(mFix>2){
+        const aM=Math.ceil(loc.wcM/10);
+        L.push(`      Men's washroom (${mFix} fixtures) — barrier-free required (NBC 3.8.2.8.(2)):`);
+        L.push(`        - ${aM} accessible WC stall${aM!==1?'s':''} (NBC 3.8.2.8.(5))`);
+        L.push(`        - ${aM} limited mobility stall${aM!==1?'s':''} (NBC 3.8.2.8.(7))`);
+        if(loc.urinalM>0){ const aU=Math.ceil(loc.urinalM/10); L.push(`        - ${aU} accessible urinal${aU!==1?'s':''} (NBC 3.8.2.8.(6))`); }
+      }
+      if(fFix>2){
+        const aF=Math.ceil(loc.wcF/10);
+        L.push(`      Women's washroom (${fFix} fixtures) — barrier-free required (NBC 3.8.2.8.(2)):`);
+        L.push(`        - ${aF} accessible WC stall${aF!==1?'s':''} (NBC 3.8.2.8.(5))`);
+        L.push(`        - ${aF} limited mobility stall${aF!==1?'s':''} (NBC 3.8.2.8.(7))`);
+      }
+      L.push(`      Refer to NBC 3.8.3.12, 3.8.3.13, 3.8.3.14, 3.8.3.15, 3.8.3.16 for design requirements.`);
+    }
+  });
+  L.push('');
+  L.push('──────────────────────────────────────────');
+  L.push('BUILDING FIXTURE TOTALS');
+  L.push('──────────────────────────────────────────');
+  L.push(`  Men's water closets:    ${tWCM} provided / ${reqWCM} required  — ${tWCM>=reqWCM?'PASS':'FAIL'}`);
+  L.push(`  Women's water closets:  ${tWCF} provided / ${reqWCF} required  — ${tWCF>=reqWCF?'PASS':'FAIL'}`);
+  L.push(`  Men's lavatories:       ${tLavM} provided / ${reqLavM} required  — ${tLavM>=reqLavM?'PASS':'FAIL'}`);
+  L.push(`  Women's lavatories:     ${tLavF} provided / ${reqLavF} required  — ${tLavF>=reqLavF?'PASS':'FAIL'}`);
+  L.push('');
+  L.push(`OVERALL STATUS: ${ok?'COMPLIANT':'NON-COMPLIANT'}`);
+  L.push('');
+  L.push(`Generated: ${new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'})}`);
+  navigator.clipboard.writeText(L.join('\n')).then(()=>{
+    const fb=document.getElementById('copyFeedback');
+    fb.textContent='✓ Copied to clipboard';
+    setTimeout(()=>{ fb.textContent=''; },3000);
+  });
+}
+
+// ══ MODAL ══════════════════════════════════════════════════════════════════════
+function openBFModal(){ document.getElementById('bfModal').classList.add('open'); }
+function closeBFModal(){ document.getElementById('bfModal').classList.remove('open'); }
+document.getElementById('bfModal').addEventListener('click',function(e){ if(e.target===this) closeBFModal(); });
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Init
+addLocation();
+</script>
+</body>
+</html>

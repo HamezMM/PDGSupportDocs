@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBC 2023 Alberta — Building Classification</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.22);
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b67;
+  --text-tertiary: #a0a09b;
+  --info-bg: #e6f1fb;   --info-text: #185fa5;
+  --warn-bg: #faeeda;   --warn-text: #854f0b;
+  --danger-bg: #fcebeb; --danger-text: #a32d2d;
+  --success-bg: #eaf3de;--success-text: #3b6d11;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1c1a; --surface:#242422; --surface-2:#2c2c2a;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#e8e8e2; --text-secondary:#9b9b95; --text-tertiary:#636360;
+    --info-bg:#042c53;   --info-text:#85b7eb;
+    --warn-bg:#412402;   --warn-text:#fac775;
+    --danger-bg:#501313; --danger-text:#f09595;
+    --success-bg:#173404;--success-text:#c0dd97;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text-primary);min-height:100vh;padding:2rem 1.5rem}
+header{margin-bottom:2rem}
+header h1{font-size:20px;font-weight:500}
+header p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;max-width:960px}
+@media(max-width:680px){.layout{grid-template-columns:1fr}.summary-col{order:-1}}
+.sec{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:12px}
+.sec-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sec-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em}
+.section-divider{display:flex;align-items:center;gap:12px;margin:24px 0 14px}
+.section-divider span{font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.09em;white-space:nowrap}
+.section-divider hr{flex:1;border:none;border-top:0.5px solid var(--border)}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500;white-space:nowrap}
+.badge--neutral{background:var(--surface-2);color:var(--text-secondary)}
+.badge--info   {background:var(--info-bg);color:var(--info-text)}
+.badge--warn   {background:var(--warn-bg);color:var(--warn-text)}
+.badge--danger {background:var(--danger-bg);color:var(--danger-text)}
+.badge--success{background:var(--success-bg);color:var(--success-text)}
+input[type="text"],input[type="number"],select{
+  font-family:var(--font-sans);font-size:13px;color:var(--text-primary);
+  background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-md);
+  padding:7px 10px;width:100%;outline:none;transition:border-color .15s;
+  appearance:none;-webkit-appearance:none;
+}
+input:focus,select:focus{border-color:var(--border-strong)}
+input::placeholder{color:var(--text-tertiary)}
+.amt-wrap{display:flex;align-items:center;border:0.5px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-2);transition:border-color .15s}
+.amt-wrap:focus-within{border-color:var(--border-strong)}
+.amt-wrap span{font-size:13px;color:var(--text-tertiary);padding:0 7px}
+.amt-wrap input{border:none;background:transparent;font-family:var(--font-mono);font-size:13px;text-align:right;width:100%;padding:7px 8px 7px 0;outline:none}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+.toggle-label{font-size:13px;color:var(--text-primary)}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--surface-2);border:0.5px solid var(--border);border-radius:999px;cursor:pointer;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;top:2px;background:var(--text-tertiary);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--success-bg);border-color:var(--success-text)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px);background:var(--success-text)}
+.sum-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.sum-panel-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.sum-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0}
+.sum-label{font-size:13px;color:var(--text-secondary)}
+.sum-val{font-family:var(--font-mono);font-size:13px}
+.sum-div{border:none;border-top:0.5px solid var(--border);margin:8px 0}
+.total-box{background:var(--surface-2);border:0.5px solid var(--border-strong);border-radius:var(--radius-md);padding:12px 14px;margin-top:12px;display:flex;justify-content:space-between;align-items:baseline}
+.total-label{font-size:14px;font-weight:500}
+.total-val{font-family:var(--font-mono);font-size:22px;font-weight:500}
+.dash{color:var(--text-tertiary)}
+/* Result card */
+.result-card{border-radius:var(--radius-lg);overflow:hidden;border:0.5px solid var(--border);margin-bottom:12px}
+.result-header{padding:1rem 1.25rem;background:var(--success-bg);border-bottom:0.5px solid var(--border)}
+.result-article{font-size:11px;font-weight:600;color:var(--success-text);text-transform:uppercase;letter-spacing:.1em;font-family:var(--font-mono);margin-bottom:4px}
+.result-title{font-size:14px;font-weight:500;color:var(--text-primary)}
+.result-body{background:var(--surface);padding:1rem 1.25rem}
+.req-row{display:grid;grid-template-columns:100px 1fr;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.req-row:last-child{border-bottom:none}
+.req-key{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--text-tertiary);padding-top:2px}
+.req-val{font-size:13px;color:var(--text-primary);line-height:1.5}
+.note-box{background:var(--warn-bg);border:0.5px solid var(--warn-text);border-radius:var(--radius-md);padding:8px 10px;margin-top:10px}
+.note-box p{font-size:12px;color:var(--warn-text);line-height:1.5}
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--text-tertiary)}
+.empty-state svg{margin-bottom:.75rem;opacity:.4}
+.empty-state p{font-size:13px}
+.other-count{font-size:12px;color:var(--text-secondary);text-align:center;padding-top:8px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.field-group{margin-bottom:12px}
+.field-group label{display:block;font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.summary-col{position:sticky;top:1.5rem}
+.no-result-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center}
+.no-result-card p{font-size:13px;color:var(--text-secondary);margin-top:.5rem}
+.article-num{display:inline-block;background:var(--success-bg);color:var(--success-text);font-family:var(--font-mono);font-size:13px;font-weight:600;padding:4px 10px;border-radius:var(--radius-md);margin-bottom:8px}
+select optgroup{font-weight:600;font-size:12px}
+.frr-pill{display:inline-block;background:var(--info-bg);color:var(--info-text);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:var(--font-mono)}
+.frr-pill.high{background:var(--danger-bg);color:var(--danger-text)}
+.frr-pill.none{background:var(--surface-2);color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Building Classification Tool</h1>
+  <p>NBC 2023 Alberta Edition — Division B, Section 3.2.2 &nbsp;·&nbsp; Returns the most permissive qualifying article (lowest floor assembly FRR)</p>
+</header>
+
+<div class="layout">
+  <div class="inputs-col">
+
+    <div class="section-divider" style="margin-top:0"><span>Building identity</span><hr></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="sec-title">Occupancy group</span></div>
+      <div class="field-group">
+        <label for="group">Major occupancy classification</label>
+        <select id="group">
+          <optgroup label="Group A — Assembly">
+            <option value="A1">A, Division 1 — Theatres / performing arts</option>
+            <option value="A2">A, Division 2 — Schools, churches, arenas (&gt;1 000 occ.)</option>
+            <option value="A3">A, Division 3 — Museums, libraries, transit, arenas (&lt;1 000 occ.)</option>
+            <option value="A4">A, Division 4 — Open-air assembly (grandstands)</option>
+          </optgroup>
+          <optgroup label="Group B — Care or Detention">
+            <option value="B1">B, Division 1 — Detention occupancies</option>
+            <option value="B2">B, Division 2 — Treatment occupancies (hospitals)</option>
+            <option value="B3">B, Division 3 — Care / supervisory occupancies</option>
+          </optgroup>
+          <optgroup label="Group C — Residential">
+            <option value="C">C — Residential</option>
+          </optgroup>
+          <optgroup label="Group D — Business">
+            <option value="D">D — Business &amp; personal services</option>
+          </optgroup>
+          <optgroup label="Group E — Mercantile">
+            <option value="E">E — Mercantile</option>
+          </optgroup>
+          <optgroup label="Group F — Industrial">
+            <option value="F1">F, Division 1 — High-hazard industrial</option>
+            <option value="F2">F, Division 2 — Medium-hazard industrial</option>
+            <option value="F3">F, Division 3 — Low-hazard industrial</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>Building parameters</span><hr></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="sec-title">Dimensions</span></div>
+
+      <div class="field-group">
+        <label for="area">Building footprint area</label>
+        <div class="amt-wrap">
+          <span>m²</span>
+          <input type="number" id="area" placeholder="0" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group" style="margin-bottom:0">
+          <label for="storeys">Building height</label>
+          <div class="amt-wrap">
+            <span>str.</span>
+            <input type="number" id="storeys" placeholder="1" min="1" step="1">
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label for="heightM">Height (m) <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="amt-wrap">
+            <span>m</span>
+            <input type="number" id="heightM" placeholder="—" min="0" step="0.1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="sec-title">Site conditions</span></div>
+
+      <div class="field-group">
+        <label for="streets">Number of streets facing</label>
+        <select id="streets">
+          <option value="1">1 street</option>
+          <option value="2">2 streets</option>
+          <option value="3">3 streets</option>
+        </select>
+      </div>
+
+      <div class="toggle-row" style="margin-bottom:10px">
+        <span class="toggle-label">Sprinklered throughout</span>
+        <label class="toggle"><input type="checkbox" id="sprinklered"><span class="toggle-slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Building has a basement</span>
+        <label class="toggle"><input type="checkbox" id="hasBasement"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+  </div><!-- /inputs-col -->
+
+  <div class="summary-col">
+    <div id="result-panel">
+      <div class="no-result-card">
+        <div style="font-size:28px;margin-bottom:.5rem">📐</div>
+        <p>Enter building parameters to determine the applicable article.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<script>
+// ─── ARTICLE DATA ────────────────────────────────────────────────────────────
+// floorFRR: 0=none, 45=45min, 60=1h, 120=2h
+// constructionRank: 0=combustible/noncombustible, 1=heavy timber/noncombustible, 2=noncombustible only, 3=EMT/noncombustible
+// getMaxArea(storeys, streets, hasBasement) → m² or Infinity (unlimited) or null (exceeds table)
+// requiresSprinkler: true = sprinkler required to qualify; false = sprinkler optional
+
+const ARTICLES = [
+// ─── GROUP A, DIVISION 1 ──────────────────────────────────────────────────
+{id:"3.2.2.20",title:"Any Height, Any Area — Sprinklered",group:"A1",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.21",title:"One Storey, Limited Area — Sprinklered",group:"A1",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>600,floorFRR:45,mezzFRR:0,constructionRank:1,
+ req:{construction:"Heavy timber or noncombustible construction",
+  floors:"Fire separations — FRR ≥ 45 min, or heavy timber construction",mezzanines:null,
+  loadbearing:"FRR ≥ that required for the supported assembly, or heavy timber construction",
+  notes:"Building area ≤ 600 m²; occupant load ≤ 600; less than 40% of area as 2 storeys for specified support functions"}},
+
+{id:"3.2.2.22",title:"One Storey — Sprinklered",group:"A1",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"Supporting assembly requiring FRR: ≥ 45 min or noncombustible; supporting fire separation: ≥ fire separation FRR",
+  notes:"Auditorium floor no more than 5 m above or below grade; no occupancy above/below auditorium except one serving it; occupant load of auditorium ≤ 300"}},
+
+// ─── GROUP A, DIVISION 2 ──────────────────────────────────────────────────
+{id:"3.2.2.23",title:"Any Height, Any Area — Sprinklered",group:"A2",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.24",title:"Up to 6 Storeys, Any Area — Sprinklered",group:"A2",requiresSprinkler:true,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.25",title:"Up to 2 Storeys",group:"A2",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1600,2000,2400],[800,1000,1200]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.26",title:"Up to 2 Storeys, Increased Area — Sprinklered",group:"A2",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?4800:2400,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.27",title:"Up to 2 Storeys — Sprinklered",group:"A2",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,_st,b)=>{if(s===1&&!b)return 2400;if(s===1)return 1200;return 600},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",
+  notes:"Area limits: 2 400 m² (1 storey, no basement) / 1 200 m² (1 storey, with basement) / 600 m² (2 storeys)"}},
+
+{id:"3.2.2.28",title:"One Storey",group:"A2",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:(_s,st)=>[400,500,600][st-1],floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,
+  notes:"Without a basement: area limits may be doubled if a 1 h fire separation divides the building into fire compartments not exceeding the base limits"}},
+
+// ─── GROUP A, DIVISION 3 ──────────────────────────────────────────────────
+{id:"3.2.2.29",title:"Any Height, Any Area — Sprinklered",group:"A3",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.30",title:"Up to 2 Storeys",group:"A3",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[4000,5000,6000],[2000,2500,3000]];return t[s-1]?.[st-1]??null},
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly (arches may be heavy timber construction)",
+  notes:"If building area > 1 500 m² and intended for occasional trade show or exhibition use: sprinkler required"}},
+
+{id:"3.2.2.31",title:"Up to 2 Storeys — Sprinklered",group:"A3",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?12000:6000,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly (arches may be heavy timber construction)",notes:null}},
+
+{id:"3.2.2.32",title:"One Storey, Increased Area",group:"A3",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:(_s,st)=>[2400,3000,3600][st-1],floorFRR:0,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No floor assembly FRR specified",
+  mezzanines:"If combustible: FRR ≥ 45 min",loadbearing:"FRR ≥ 45 min or noncombustible",
+  notes:"If area > 1 500 m² and intended for occasional trade show or exhibition use: sprinkler required"}},
+
+{id:"3.2.2.33",title:"One Storey — Sprinklered",group:"A3",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>7200,floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:"Building area ≤ 7 200 m²"}},
+
+{id:"3.2.2.34",title:"One Storey",group:"A3",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:(_s,st)=>[1000,1250,1500][st-1],floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:null}},
+
+// ─── GROUP A, DIVISION 4 ──────────────────────────────────────────────────
+{id:"3.2.2.35",title:"Group A, Division 4",group:"A4",requiresSprinkler:false,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:0,mezzFRR:0,constructionRank:2,
+ req:{construction:"Noncombustible construction (exceptions: roof assemblies and supporting arches/columns may be heavy timber; combustible permitted if occupant load < 1 500 and limiting distance ≥ 6 m)",
+  floors:"No specific FRR required for floor assemblies",mezzanines:null,loadbearing:null,
+  notes:"Sprinklers shall be installed in all spaces below tiers of seats if used for occupancy (Art. 3.2.2.35.(4))"}},
+
+// ─── GROUP B, DIVISION 1 ──────────────────────────────────────────────────
+{id:"3.2.2.36",title:"Any Height, Any Area — Sprinklered",group:"B1",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.37",title:"Up to 3 Storeys — Sprinklered",group:"B1",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?Infinity:s===2?12000:8000,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Area unlimited for 1 storey; ≤ 12 000 m² for 2 storeys; ≤ 8 000 m² for 3 storeys"}},
+
+// ─── GROUP B, DIVISION 2 ──────────────────────────────────────────────────
+{id:"3.2.2.38",title:"Any Height, Any Area — Sprinklered",group:"B2",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.39",title:"Up to 3 Storeys — Sprinklered",group:"B2",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?Infinity:s===2?12000:8000,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Area unlimited for 1 storey; ≤ 12 000 m² for 2 storeys; ≤ 8 000 m² for 3 storeys"}},
+
+{id:"3.2.2.40",title:"Up to 2 Storeys — Sprinklered",group:"B2",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?2400:1600,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.41",title:"One Storey — Sprinklered",group:"B2",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>500,floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:"Building area ≤ 500 m²"}},
+
+// ─── GROUP B, DIVISION 3 ──────────────────────────────────────────────────
+{id:"3.2.2.42",title:"Any Height, Any Area — Sprinklered",group:"B3",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.43",title:"Up to 3 Storeys — Noncombustible, Sprinklered",group:"B3",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?Infinity:s===2?12000:8000,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.44",title:"Up to 3 Storeys — Sprinklered",group:"B3",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>[5400,2700,1800][s-1]??null,floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.45",title:"Up to 2 Storeys — Sprinklered",group:"B3",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?2400:1600,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.46",title:"One Storey — Sprinklered",group:"B3",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>600,floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:"Building area ≤ 600 m²"}},
+
+// ─── GROUP C ─────────────────────────────────────────────────────────────
+{id:"3.2.2.47",title:"Any Height, Any Area — Sprinklered",group:"C",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Dwelling units spanning >1 storey: floor assemblies within dwelling units FRR ≥ 1 h, need not be fire separations"}},
+
+{id:"3.2.2.48",title:"Up to 12 Storeys — Sprinklered",group:"C",requiresSprinkler:true,maxStoreys:12,maxHeightM:42,
+ getMaxArea:()=>6000,floorFRR:120,mezzFRR:60,constructionRank:3,
+ req:{construction:"Encapsulated mass timber or noncombustible construction",
+  floors:"Fire separations, FRR ≥ 2 h (within multi-storey dwelling units: FRR ≥ 1 h, need not be fire separations)",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Height ≤ 42 m (floor of 1st storey to uppermost floor); building area ≤ 6 000 m²"}},
+
+{id:"3.2.2.49",title:"Up to 6 Storeys — Sprinklered, Noncombustible",group:"C",requiresSprinkler:true,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:(s)=>[Infinity,Infinity,12000,9000,7200,6000][s-1]??null,
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Area unlimited for ≤ 2 storeys; dwelling units spanning >1 storey: floor assemblies within FRR ≥ 1 h, need not be fire separations"}},
+
+{id:"3.2.2.51",title:"Up to 6 Storeys — Sprinklered (Combustible Permitted)",group:"C",requiresSprinkler:true,maxStoreys:6,maxHeightM:18,
+ getMaxArea:(s)=>[9000,4500,3000,2250,1800,1500][s-1]??null,
+ floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Height ≤ 18 m (floor of 1st storey to uppermost floor); roof assemblies FRR ≥ 1 h; where roof assembly > 25 m high: noncombustible or fire-retardant-treated wood"}},
+
+{id:"3.2.2.52",title:"Up to 4 Storeys — Sprinklered",group:"C",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s)=>[7200,3600,2400,1800][s-1]??null,floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"In a building with no dwelling unit above another dwelling unit: FRR for floor assemblies within the dwelling unit is waived"}},
+
+{id:"3.2.2.55",title:"Up to 3 Storeys — Sprinklered",group:"C",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>[5400,2700,1800][s-1]??null,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"In a building with no dwelling unit above another dwelling unit: FRR for floor assemblies within the dwelling unit is waived"}},
+
+// ─── GROUP D ─────────────────────────────────────────────────────────────
+{id:"3.2.2.56",title:"Any Height, Any Area — Sprinklered",group:"D",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.57",title:"Up to 12 Storeys — Sprinklered",group:"D",requiresSprinkler:true,maxStoreys:12,maxHeightM:42,
+ getMaxArea:()=>7200,floorFRR:120,mezzFRR:60,constructionRank:3,
+ req:{construction:"Encapsulated mass timber or noncombustible construction",
+  floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Height ≤ 42 m (floor of 1st storey to uppermost floor); building area ≤ 7 200 m²"}},
+
+{id:"3.2.2.58",title:"Up to 6 Storeys",group:"D",requiresSprinkler:false,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{
+  const t=[[Infinity,Infinity,Infinity],[7200,Infinity,Infinity],[4800,6000,7200],[3600,4500,5400],[2880,3600,4320],[2400,3000,3600]];
+  return t[s-1]?.[st-1]??null},
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Roof assemblies FRR ≥ 1 h (waived in buildings ≤ 1 storey)"}},
+
+{id:"3.2.2.59",title:"Up to 6 Storeys — Sprinklered, Noncombustible",group:"D",requiresSprinkler:true,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:(s)=>[Infinity,Infinity,14400,10800,8640,7200][s-1]??null,
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Area unlimited for ≤ 2 storeys"}},
+
+{id:"3.2.2.60",title:"Up to 6 Storeys — Sprinklered (Combustible Permitted)",group:"D",requiresSprinkler:true,maxStoreys:6,maxHeightM:18,
+ getMaxArea:(s)=>[18000,9000,6000,4500,3600,3000][s-1]??null,
+ floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Height ≤ 18 m (floor of 1st storey to uppermost floor); roof assemblies FRR ≥ 1 h; where roof assembly > 25 m high: noncombustible or fire-retardant-treated wood"}},
+
+{id:"3.2.2.61",title:"Up to 4 Storeys — Sprinklered",group:"D",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:()=>3600,floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Building area ≤ 3 600 m²"}},
+
+{id:"3.2.2.62",title:"Up to 3 Storeys",group:"D",requiresSprinkler:false,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[4800,6000,7200],[2400,3000,3600],[1600,2000,2400]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",
+  notes:"Roof assemblies — if combustible: FRR ≥ 45 min (waived for 1-storey buildings with FRTW roof system and area ≤ limits)"}},
+
+{id:"3.2.2.63",title:"Up to 3 Storeys — Sprinklered",group:"D",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>[14400,7200,4800][s-1]??null,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.64",title:"Up to 2 Storeys",group:"D",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1000,1250,1500],[800,1000,1200]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.65",title:"Up to 2 Storeys — Sprinklered",group:"D",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?3000:2400,floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+// ─── GROUP E ─────────────────────────────────────────────────────────────
+{id:"3.2.2.66",title:"Any Height, Any Area — Sprinklered",group:"E",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.67",title:"Up to 4 Storeys — Sprinklered",group:"E",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:()=>1800,floorFRR:60,mezzFRR:60,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",
+  mezzanines:"FRR ≥ 1 h",loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Building area ≤ 1 800 m²"}},
+
+{id:"3.2.2.68",title:"Up to 3 Storeys",group:"E",requiresSprinkler:false,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1500,1500,1500],[1200,1500,1500],[800,1000,1500]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible; supporting fire separation: FRR ≥ fire separation",
+  notes:"Roof assemblies FRR ≥ 45 min (waived for 1-storey with noncombustible or FRTW roof)"}},
+
+{id:"3.2.2.69",title:"Up to 3 Storeys — Sprinklered",group:"E",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>[7200,3600,2400][s-1]??null,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible; supporting fire separation: FRR ≥ fire separation",notes:null}},
+
+{id:"3.2.2.70",title:"Up to 2 Storeys",group:"E",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1000,1250,1500],[600,750,900]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:null,loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.71",title:"Up to 2 Storeys — Sprinklered",group:"E",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?3000:1800,floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:null,loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+// ─── GROUP F, DIVISION 1 ──────────────────────────────────────────────────
+{id:"3.2.2.72",title:"Up to 4 Storeys — Sprinklered (Base)",group:"F1",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s)=>[9000,4500,3000,2250][s-1]??null,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.73",title:"Up to 3 Storeys — Sprinklered",group:"F1",requiresSprinkler:true,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s)=>[3600,1800,1200][s-1]??null,floorFRR:45,mezzFRR:0,constructionRank:1,
+ req:{construction:"Heavy timber or noncombustible construction",
+  floors:"Fire separations, FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.74",title:"Up to 2 Storeys — Sprinklered",group:"F1",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?2400:1200,floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.75",title:"One Storey",group:"F1",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>800,floorFRR:0,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:"Building area ≤ 800 m²"}},
+
+// ─── GROUP F, DIVISION 2 ──────────────────────────────────────────────────
+{id:"3.2.2.76",title:"Any Height, Any Area — Sprinklered",group:"F2",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.77",title:"Up to 4 Storeys, Increased Area — Sprinklered",group:"F2",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s)=>[18000,9000,6000,4500][s-1]??null,floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.78",title:"Up to 3 Storeys",group:"F2",requiresSprinkler:false,maxStoreys:3,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1500,1500,1500],[1500,1500,1500],[1070,1340,1500]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible; supporting fire separation: FRR ≥ fire separation",
+  notes:"Roof assemblies — if combustible: FRR ≥ 45 min (waived for 1-storey with FRTW roof)"}},
+
+{id:"3.2.2.79",title:"Up to 4 Storeys — Sprinklered",group:"F2",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s)=>[9600,4800,3200,2400][s-1]??null,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",floors:"Fire separations, FRR ≥ 45 min",
+  mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible; supporting fire separation: FRR ≥ fire separation",notes:null}},
+
+{id:"3.2.2.80",title:"Up to 2 Storeys",group:"F2",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1000,1250,1500],[600,750,900]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.81",title:"Up to 2 Storeys — Sprinklered",group:"F2",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?4500:1800,floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+// ─── GROUP F, DIVISION 3 ──────────────────────────────────────────────────
+{id:"3.2.2.82",title:"Any Height, Any Area — Sprinklered",group:"F3",requiresSprinkler:true,maxStoreys:Infinity,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:120,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 2 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",notes:null}},
+
+{id:"3.2.2.83",title:"Up to 6 Storeys",group:"F3",requiresSprinkler:false,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{
+  const t=[[Infinity,Infinity,Infinity],[7200,9000,10800],[4800,6000,7200],[3600,4500,5400],[2880,3600,4320],[2400,3000,3600]];
+  return t[s-1]?.[st-1]??null},
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Roof assemblies FRR ≥ 1 h; area unlimited for 1 storey"}},
+
+{id:"3.2.2.84",title:"Up to 6 Storeys — Sprinklered",group:"F3",requiresSprinkler:true,maxStoreys:6,maxHeightM:Infinity,
+ getMaxArea:(s)=>[Infinity,21600,14400,10800,8640,7200][s-1]??null,
+ floorFRR:60,mezzFRR:60,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"Fire separations, FRR ≥ 1 h",mezzanines:"FRR ≥ 1 h",
+  loadbearing:"FRR ≥ that required for the supported assembly",
+  notes:"Area unlimited for 1 storey"}},
+
+{id:"3.2.2.85",title:"Up to 4 Storeys",group:"F3",requiresSprinkler:false,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[4800,6000,7200],[2400,3000,3600],[1600,2000,2400],[1200,1500,1800]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",
+  notes:"Roof assemblies — if combustible: FRR ≥ 45 min (waived for 1-storey with FRTW roof and area ≤ limits)"}},
+
+{id:"3.2.2.86",title:"Up to 4 Storeys — Sprinklered",group:"F3",requiresSprinkler:true,maxStoreys:4,maxHeightM:Infinity,
+ getMaxArea:(s)=>[14400,7200,4800,3600][s-1]??null,floorFRR:45,mezzFRR:45,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:"If combustible: FRR ≥ 45 min",
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.87",title:"Up to 2 Storeys",group:"F3",requiresSprinkler:false,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s,st)=>{const t=[[1600,2000,2400],[800,1000,1200]];return t[s-1]?.[st-1]??null},
+ floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.88",title:"Up to 2 Storeys — Sprinklered",group:"F3",requiresSprinkler:true,maxStoreys:2,maxHeightM:Infinity,
+ getMaxArea:(s)=>s===1?7200:2400,floorFRR:45,mezzFRR:0,constructionRank:0,
+ req:{construction:"Combustible or noncombustible construction",
+  floors:"Fire separations — if combustible: FRR ≥ 45 min",mezzanines:null,
+  loadbearing:"FRR ≥ 45 min or noncombustible",notes:null}},
+
+{id:"3.2.2.89",title:"One Storey",group:"F3",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:(_s,st)=>[5600,7000,8400][st-1],floorFRR:0,mezzFRR:0,constructionRank:1,
+ req:{construction:"Heavy timber or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:null}},
+
+{id:"3.2.2.90",title:"One Storey — Sprinklered",group:"F3",requiresSprinkler:true,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>16800,floorFRR:0,mezzFRR:0,constructionRank:1,
+ req:{construction:"Heavy timber or noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,notes:"Building area ≤ 16 800 m²"}},
+
+{id:"3.2.2.91",title:"One Storey, Any Area — Low Fire Load",group:"F3",requiresSprinkler:false,maxStoreys:1,maxHeightM:Infinity,
+ getMaxArea:()=>Infinity,floorFRR:0,mezzFRR:0,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"No FRR requirement specified",
+  mezzanines:null,loadbearing:null,
+  notes:"⚠ Special use condition: building must be used solely for low fire load occupancies — power generating plants, or manufacture/storage of noncombustible materials"}},
+
+{id:"3.2.2.92",title:"Storage Garages — Open-Air Storeys, up to 22 m",group:"F3",requiresSprinkler:false,maxStoreys:Infinity,maxHeightM:22,
+ getMaxArea:()=>10000,floorFRR:0,mezzFRR:0,constructionRank:2,
+ req:{construction:"Noncombustible construction",floors:"No FRR requirement (all storeys open-air, no occupancy above)",
+  mezzanines:null,loadbearing:null,
+  notes:"⚠ Special use condition: building used as storage garage with all storeys as open-air storeys, no other occupancy above; every portion of each floor within 60 m of an exterior wall opening; height ≤ 22 m (grade to ceiling of top storey); area ≤ 10 000 m²"}}
+];
+
+// ─── RANKING HELPERS ────────────────────────────────────────────────────────
+function rankScore(a){
+  // Lower = more permissive. Primary: floorFRR. Secondary: constructionRank. Tertiary: mezzFRR.
+  return a.floorFRR*10000 + a.constructionRank*100 + a.mezzFRR;
+}
+
+function frrLabel(v){
+  if(v===0)  return "None required";
+  if(v===45) return "45 min";
+  if(v===60) return "1 h";
+  if(v===120)return "2 h";
+  return v+"min";
+}
+
+function qualifies(a, {group,storeys,area,streets,sprinklered,hasBasement,heightM}){
+  if(a.group !== group) return false;
+  if(a.requiresSprinkler && !sprinklered) return false;
+  if(storeys > a.maxStoreys) return false;
+  if(heightM !== null && heightM > a.maxHeightM) return false;
+  try{
+    const maxArea = a.getMaxArea(storeys, streets, hasBasement);
+    if(maxArea !== null && area > maxArea) return false;
+  }catch(e){ return false; }
+  return true;
+}
+
+// ─── UI UPDATE ───────────────────────────────────────────────────────────────
+function getInputs(){
+  const group      = document.getElementById('group').value;
+  const storeys    = parseInt(document.getElementById('storeys').value)||0;
+  const area       = parseFloat(document.getElementById('area').value)||0;
+  const streets    = parseInt(document.getElementById('streets').value)||1;
+  const sprinklered= document.getElementById('sprinklered').checked;
+  const hasBasement= document.getElementById('hasBasement').checked;
+  const hmRaw      = document.getElementById('heightM').value;
+  const heightM    = hmRaw === '' ? null : parseFloat(hmRaw);
+  return {group,storeys,area,streets,sprinklered,hasBasement,heightM};
+}
+
+function constructionLabel(rank){
+  const labels = ["Combustible or noncombustible","Heavy timber or noncombustible","Noncombustible only","Encapsulated mass timber or noncombustible"];
+  return labels[rank]||"—";
+}
+
+function frrPillClass(v){
+  if(v===0)  return "none";
+  if(v>=120) return "high";
+  return "";
+}
+
+function render(){
+  const inp = getInputs();
+  const panel = document.getElementById('result-panel');
+
+  if(!inp.storeys || !inp.area){
+    panel.innerHTML = `<div class="no-result-card"><div style="font-size:28px;margin-bottom:.5rem">📐</div><p>Enter building area and height to determine the applicable article.</p></div>`;
+    return;
+  }
+
+  const qualifying = ARTICLES.filter(a=>qualifies(a,inp));
+
+  if(qualifying.length === 0){
+    panel.innerHTML = `
+      <div class="no-result-card">
+        <div style="font-size:28px;margin-bottom:.5rem">⛔</div>
+        <p style="font-weight:500;margin-bottom:.4rem">No qualifying article found</p>
+        <p style="color:var(--text-tertiary)">The building parameters exceed all permitted configurations for this group. Verify inputs or consider an alternative compliance path (e.g. alternative solution under Div. C).</p>
+      </div>`;
+    return;
+  }
+
+  // Sort: lowest score first (most permissive)
+  qualifying.sort((a,b)=>rankScore(a)-rankScore(b));
+  const best = qualifying[0];
+  const others = qualifying.length - 1;
+
+  const r = best.req;
+  const floorLabel = frrLabel(best.floorFRR);
+  const mezzLabel  = best.mezzFRR > 0 ? frrLabel(best.mezzFRR) : null;
+
+  // Area limit display
+  const maxArea = best.getMaxArea(inp.storeys, inp.streets, inp.hasBasement);
+  const areaDisplay = maxArea === Infinity ? "Not limited" : maxArea ? maxArea.toLocaleString()+" m²" : "—";
+
+  const heightNote = best.maxHeightM < Infinity
+    ? `<div class="req-row"><div class="req-key">Max height</div><div class="req-val">${best.maxHeightM} m ${inp.heightM===null?'<span class="badge badge--warn">Height not verified</span>':''}</div></div>`
+    : '';
+
+  const mezzRow = r.mezzanines
+    ? `<div class="req-row"><div class="req-key">Mezzanines</div><div class="req-val">${r.mezzanines}</div></div>` : '';
+
+  const lbRow = r.loadbearing
+    ? `<div class="req-row"><div class="req-key">Loadbearing</div><div class="req-val">${r.loadbearing}</div></div>` : '';
+
+  const noteBlock = r.notes
+    ? `<div class="note-box"><p>⚠ ${r.notes}</p></div>` : '';
+
+  const otherLine = others > 0
+    ? `<p class="other-count">${others} other article${others>1?'s':''} also qualif${others>1?'y':'ies'} — this is the most permissive.</p>` : '';
+
+  const sprklBadge = best.requiresSprinkler
+    ? `<span class="badge badge--info" style="margin-left:6px">Sprinklered</span>` : '';
+
+  panel.innerHTML = `
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-article">${best.id}</div>
+        <div class="result-title">Group ${best.group.replace(/(\d)/,' Div. $1')} — ${best.title}${sprklBadge}</div>
+      </div>
+      <div class="result-body">
+        <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Sentence 2 Requirements</div>
+        <div class="req-row"><div class="req-key">Construction</div><div class="req-val">${r.construction}</div></div>
+        <div class="req-row">
+          <div class="req-key">Floors</div>
+          <div class="req-val">${r.floors} <span class="frr-pill ${frrPillClass(best.floorFRR)}" style="margin-left:4px">${floorLabel}</span></div>
+        </div>
+        ${mezzRow}
+        ${lbRow}
+        ${heightNote}
+        <div class="req-row"><div class="req-key">Max area</div><div class="req-val">${areaDisplay}</div></div>
+        ${noteBlock}
+      </div>
+    </div>
+    ${otherLine}`;
+}
+
+// Wire all inputs
+['group','storeys','area','streets','heightM'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+});
+['sprinklered','hasBasement'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', render);
+});
+</script>
+</body>
+</html>
