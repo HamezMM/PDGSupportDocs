@@ -1,3 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glazed Opening Calculator — NBC 9.10.15.4</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --surface-3: #e8e6dc;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.22);
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b67;
+  --text-tertiary: #a0a09b;
+  --info-bg: #e6f1fb;   --info-text: #185fa5;
+  --warn-bg: #faeeda;   --warn-text: #854f0b;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+
+  /* compatibility aliases for the embedded tool below */
+  --color-background-primary: var(--surface);
+  --color-background-secondary: var(--surface-2);
+  --color-background-tertiary: var(--surface-3);
+  --color-border-secondary: var(--border-strong);
+  --color-border-tertiary: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-background-info: var(--info-bg);
+  --color-text-info: var(--info-text);
+  --color-text-warning: var(--warn-text);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-md: var(--radius-md);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1c1a; --surface:#242422; --surface-2:#2c2c2a; --surface-3:#343430;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#e8e8e2; --text-secondary:#9b9b95; --text-tertiary:#636360;
+    --info-bg:#042c53;   --info-text:#85b7eb;
+    --warn-bg:#412402;   --warn-text:#fac775;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text-primary)}
+body{font-family:var(--font-sans);min-height:100vh;padding:2rem 1.5rem}
+.page{max-width:640px;margin:0 auto}
+.sitenav{font-size:12px;margin-bottom:1.25rem}
+.sitenav a{color:var(--text-secondary);text-decoration:none}
+.sitenav a:hover{color:var(--text-primary);text-decoration:underline}
+header.page-header{margin-bottom:0.5rem}
+header.page-header h1{font-size:20px;font-weight:500}
+header.page-header p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="sitenav"><a href="index.html">&larr; PDG Support Docs</a></nav>
+  <header class="page-header">
+    <h1>Glazed Opening Calculator</h1>
+    <p>NBC Table 9.10.15.4 — maximum aggregate glazed opening area by limiting distance and exposing building face area</p>
+  </header>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -179,3 +246,7 @@ document.getElementById('dist').addEventListener('input',update);
 document.getElementById('area').addEventListener('input',update);
 update();
 </script>
+
+</div>
+</body>
+</html>
