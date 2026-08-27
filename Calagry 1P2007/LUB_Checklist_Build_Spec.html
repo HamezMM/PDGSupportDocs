@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Spec — Calgary LUB Review Checklists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:290px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    display:flex;
+    min-height:100vh;
+  }
+  code, .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- sidebar (TOC) ---------- */
+  aside{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    padding:26px 0 20px 0;
+  }
+  .brand{
+    padding:0 22px 18px 22px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    margin-bottom:14px;
+  }
+  .brand .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    color:#8FA6BC;
+    text-transform:uppercase;
+  }
+  .brand h1{
+    font-size:17px;
+    line-height:1.35;
+    margin:6px 0 0 0;
+    font-weight:600;
+  }
+  nav.toc{padding:0 12px;}
+  nav.toc a{
+    display:block;
+    padding:7px 10px;
+    border-radius:4px;
+    color:#C7D1DB;
+    text-decoration:none;
+    font-size:12.5px;
+    line-height:1.4;
+  }
+  nav.toc a:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  nav.toc .toc-num{
+    display:inline-block;
+    width:20px;
+    color:#6E88A0;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+  }
+  nav.toc .toc-sub{padding-left:30px;font-size:11.5px;color:#9FB0BF;}
+
+  /* ---------- main content ---------- */
+  main{
+    flex:1;
+    max-width:900px;
+    padding:48px 56px 100px 56px;
+  }
+  .doc-header{margin-bottom:40px;}
+  .doc-header .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--blue);
+  }
+  .doc-header h1{
+    font-size:30px;
+    line-height:1.2;
+    margin:8px 0 10px 0;
+  }
+  .doc-header p{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    max-width:640px;
+  }
+
+  section{
+    margin-bottom:44px;
+    padding-top:8px;
+    scroll-margin-top:24px;
+  }
+  section h2{
+    font-size:20px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:8px;
+    margin-bottom:16px;
+  }
+  section h2 .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    color:var(--blue);
+  }
+  section h3{
+    font-size:15px;
+    margin:22px 0 8px 0;
+    color:var(--ink);
+  }
+  p{font-size:13.5px;line-height:1.65;color:var(--ink-soft);}
+  ul, ol{font-size:13.5px;line-height:1.7;color:var(--ink-soft);padding-left:22px;}
+  li{margin-bottom:5px;}
+  strong{color:var(--ink);}
+  a{color:var(--blue);}
+
+  .callout{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--blue);
+    border-radius:4px;
+    padding:12px 16px;
+    font-size:13px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:14px 0;
+  }
+  .callout b{color:var(--ink);}
+  .callout.warn{border-left-color:var(--pending);}
+  .callout.warn b{color:var(--pending);}
+  .callout.check{border-left-color:var(--pass);}
+  .callout.check b{color:var(--pass);}
+
+  pre{
+    background:#12202F;
+    color:#DCE6EE;
+    border-radius:6px;
+    padding:14px 16px;
+    overflow-x:auto;
+    font-size:12px;
+    line-height:1.6;
+    margin:12px 0;
+  }
+  pre .cmt{color:#7C93A6;}
+  pre .str{color:#9FCB9A;}
+  pre .key{color:#8FBCE0;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+    margin:14px 0;
+  }
+  th, td{
+    text-align:left;
+    padding:8px 10px;
+    border:1px solid var(--rule);
+    vertical-align:top;
+  }
+  th{
+    background:var(--paper-card);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    color:var(--ink-soft);
+  }
+  td{color:var(--ink-soft);}
+  td b, td code{color:var(--ink);}
+
+  .step-list{counter-reset:step;list-style:none;padding-left:0;}
+  .step-list > li{
+    counter-increment:step;
+    position:relative;
+    padding-left:36px;
+    margin-bottom:14px;
+  }
+  .step-list > li::before{
+    content:counter(step);
+    position:absolute;
+    left:0; top:0;
+    width:24px; height:24px;
+    background:var(--ink);
+    color:#fff;
+    border-radius:50%;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .qa-list{list-style:none;padding-left:0;}
+  .qa-list li{
+    padding-left:26px;
+    position:relative;
+    margin-bottom:8px;
+  }
+  .qa-list li::before{
+    content:"\2610";
+    position:absolute;
+    left:0;
+    color:var(--blue-dim);
+    font-size:14px;
+  }
+
+  .badge{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    padding:2px 7px;
+    border-radius:9px;
+    background:var(--paper-card);
+    border:1px solid var(--rule-dark);
+    color:var(--ink-soft);
+  }
+
+  footer{
+    max-width:900px;
+    padding:20px 56px 60px 56px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--rule);
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="brand">
+    <div class="eyebrow">PDG &middot; Internal build spec</div>
+    <h1>Calgary LUB Review Checklists — how to build one</h1>
+  </div>
+  <nav class="toc">
+    <a href="#purpose"><span class="toc-num">00</span>Purpose &amp; scope</a>
+    <a href="#architecture"><span class="toc-num">01</span>Architecture overview</a>
+    <a href="#sourcing"><span class="toc-num">02</span>Sourcing content from the bylaw</a>
+    <a href="#datamodel"><span class="toc-num">03</span>Data model &amp; ID conventions</a>
+    <a href="#ui"><span class="toc-num">04</span>UI component spec</a>
+    <a href="#useselect"><span class="toc-num">05</span>The use-selector pattern</a>
+    <a href="#session"><span class="toc-num">06</span>Session model (CSV persistence)</a>
+    <a href="#buildingcond"><span class="toc-num">07</span>Conditional building-status checkboxes</a>
+    <a href="#interaction"><span class="toc-num">08</span>Force-refresh interaction rule</a>
+    <a href="#tokens"><span class="toc-num">09</span>Visual design tokens</a>
+    <a href="#build"><span class="toc-num">10</span>Build procedure, step by step</a>
+    <a href="#qa"><span class="toc-num">11</span>QA checklist before shipping</a>
+    <a href="#naming"><span class="toc-num">12</span>File &amp; naming conventions</a>
+  </nav>
+</aside>
+
+<main>
+
+  <div class="doc-header">
+    <div class="eyebrow">Reference document — not a checklist itself</div>
+    <h1>How to build a Land Use Bylaw review checklist</h1>
+    <p>This is the build spec behind <code>IG_Zoning_Review_Checklist.html</code>, generalized so any Calgary land use district (R-CG, C-COR3, M-CG, S-SPR, etc.) can be turned into the same kind of standalone, self-contained review tool. Follow this document top to bottom when building the next one — it defines the data shape, the UI contract, the persistence model, and the QA bar every checklist in this family has to clear.</p>
+  </div>
+
+  <section id="purpose">
+    <h2><span class="num">00</span>Purpose &amp; scope</h2>
+    <p>Each checklist is a single, dependency-free <code>.html</code> file a reviewer opens locally (double-click, no server, no install) to work through every applicable Land Use Bylaw (LUB) requirement for one district on one project, track a Pass / Fail / Pending Info / N/A status against each one, and export a record of the review as CSV.</p>
+    <p>The tool is a <strong>generic template for the district</strong>, not a substitute for reading the bylaw. It should always say so explicitly (see the Instructions tab pattern in §04), and it should always point back to the current consolidated bylaw on calgary.ca for anything outside its scope: Part 1/2 definitions, subdivision requirements, Direct Control variations, registered Comprehensive Sign Programs, restrictive covenants, and Airport Vicinity Protection Area maps.</p>
+  </section>
+
+  <section id="architecture">
+    <h2><span class="num">01</span>Architecture overview</h2>
+    <p>Every checklist in this family is organized into the same four review buckets, because every Calgary land use district's rules break down the same way regardless of category. Only the content inside each bucket — and which Part/Division numbers it maps to — changes district to district.</p>
+    <table>
+      <tr><th>Tab (canonical key)</th><th>What lives here</th><th>Always applicable?</th></tr>
+      <tr><td><b>General rules</b><br><span class="badge">key: general</span></td><td>The rules that apply to <em>every</em> district in the same broad land use category as the one you're building (Residential, Commercial, Industrial, Special Purpose, etc.) — landscaping, screening, setback projections, fences, signage siting, etc.</td><td>Yes, no exceptions</td></tr>
+      <tr><td><b>District rules</b><br><span class="badge">key: district</span></td><td>The specific district's own division: purpose statement, permitted/discretionary use lists, building size, FAR, height, setbacks, screening.</td><td>Yes, no exceptions</td></tr>
+      <tr><td><b>Citywide rules</b><br><span class="badge">key: citywide</span></td><td>Rules Governing All Districts (Part 3 in the current bylaw) — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing.</td><td>Yes, identical across every district in the city, regardless of category</td></tr>
+      <tr><td><b>Use rules</b><br><span class="badge">key: use</span></td><td>Every permitted/discretionary use listed under the district, mapped to its use-definition section. Gated behind a use-selector — see §05.</td><td>Only for uses actually proposed</td></tr>
+    </table>
+    <div class="callout">
+      <b>Why this shape:</b> it mirrors how a reviewer actually works a Calgary DP file, in any category — confirm the use is allowed, confirm the district's own numeric standards, confirm the citywide overlay rules, then confirm anything use-specific. Keeping that order in the UI keeps the tool aligned with how the reviewer already thinks, independent of which category the district falls under.
+    </div>
+  </section>
+
+  <section id="sourcing">
+    <h2><span class="num">02</span>Sourcing content from the bylaw</h2>
+    <p>Before writing any code, build a small "district worksheet" mapping the four tabs to the bylaw's actual part/division numbers for that district. Land Use Bylaw 1P2007 groups districts by category, and each category's general + district rules live under a different part — confirm current numbers against the live consolidated bylaw before starting, since they do shift. As a starting reference:</p>
+    <table>
+      <tr><th>Category</th><th>Typical part</th><th>Example districts</th></tr>
+      <tr><td>Residential</td><td>Parts 5–6</td><td><code>R-CG</code>, <code>R-C1</code>, <code>RM-2</code></td></tr>
+      <tr><td>Commercial</td><td>Part 7</td><td><code>C-COR3</code>, <code>CC-X</code>, <code>C-N1</code></td></tr>
+      <tr><td>Industrial</td><td>Part 8</td><td><code>I-G</code>, <code>I-B</code>, <code>I-C</code></td></tr>
+      <tr><td>Mixed use</td><td>varies</td><td><code>M-CG</code>, <code>MU-1</code></td></tr>
+      <tr><td>Special purpose</td><td>Part 9</td><td><code>S-SPR</code>, <code>S-CS</code></td></tr>
+    </table>
+    <p>Whichever category you're working in, fill in the same worksheet fields:</p>
+    <table>
+      <tr><th>Worksheet field</th><th>Fill in with</th></tr>
+      <tr><td>District code</td><td>e.g. <code>C-COR3</code>, <code>R-CG</code>, <code>M-CG</code></td></tr>
+      <tr><td>General division</td><td>The division/part covering the whole category the district sits in — Part &amp; Division number, section range</td></tr>
+      <tr><td>District division</td><td>The division covering this district specifically — Part &amp; Division number, section range</td></tr>
+      <tr><td>Citywide part</td><td>Rules Governing All Districts — same source for every checklist regardless of category, only the section range you excerpt may differ if a rule genuinely doesn't apply (e.g. a district with no parking requirement)</td></tr>
+      <tr><td>Permitted/discretionary use list</td><td>Pulled from the district division's "Permitted Uses" / "Discretionary Uses" sub-sections, each cross-referenced to its use-definition section number</td></tr>
+    </table>
+    <h3>Per-item extraction rule</h3>
+    <p>For each bylaw section that becomes a checklist item, write a plain-English <strong>summary</strong> a reviewer can act on without opening the bylaw first — the actual pass/fail criteria, not just "see Section X." Keep the section number in its own field so it's always traceable back to source. Where the bylaw is ambiguous, reuses a number for two different rules, or was later deleted/superseded, say so directly in the summary rather than silently dropping the item.</p>
+    <div class="callout warn">
+      <b>Don't paraphrase away specificity.</b> Numbers, thresholds, and cross-references are the whole point of a review checklist — "min. 2.0 m fence" beats "adequate fencing required" every time.
+    </div>
+  </section>
+
+  <section id="datamodel">
+    <h2><span class="num">03</span>Data model &amp; ID conventions</h2>
+    <p>All checklist content lives in one JS object, <code>CHECKLIST_DATA</code>, keyed by the four canonical tab keys from §01 — <code>general</code>, <code>district</code>, <code>citywide</code>, <code>use</code>. Using these fixed keys (rather than naming them after a specific Part number) is what lets every checklist in the family share the same rendering, session, and CSV logic unchanged, regardless of which category's Part numbers actually apply. Every item is a flat object with exactly four fields:</p>
+    <pre>const CHECKLIST_DATA = {
+  <span class="key">"general"</span>: [
+    { <span class="key">"id"</span>: <span class="str">"gen-0"</span>, <span class="key">"sec"</span>: <span class="str">"897"</span>, <span class="key">"title"</span>: <span class="str">"Projections Into Setback Areas"</span>,
+      <span class="key">"summary"</span>: <span class="str">"Buildings generally can't sit in a setback. Eaves may project max 0.6 m..."</span> },
+    <span class="cmt">// ...one object per checklist item</span>
+  ],
+  <span class="key">"district"</span>: [ <span class="cmt">/* district-specific rules */</span> ],
+  <span class="key">"citywide"</span>: [ <span class="cmt">/* rules governing all districts */</span> ],
+  <span class="key">"use"</span>: [
+    { <span class="key">"id"</span>: <span class="str">"use-2"</span>, <span class="key">"sec"</span>: <span class="str">"149"</span>, <span class="key">"title"</span>: <span class="str">"Auto Body and Paint Shop"</span>,
+      <span class="key">"summary"</span>: <span class="str">"Permitted — 907(2)"</span> } <span class="cmt">// summary MUST start "Permitted" or "Discretionary"</span>
+  ]
+};</pre>
+    <table>
+      <tr><th>Field</th><th>Rule</th></tr>
+      <tr><td><code>id</code></td><td>Stable, unique, never reused — this is what the CSV round-trip (§06) matches on. Convention below.</td></tr>
+      <tr><td><code>sec</code></td><td>The bylaw section number as a string (so <code>"915 (Front Setback)"</code> or <code>"—"</code> for undefined references are both valid).</td></tr>
+      <tr><td><code>title</code></td><td>Short article name / use name, sentence case.</td></tr>
+      <tr><td><code>summary</code></td><td>The plain-English rule text. For <code>use</code> tab items specifically, this field <strong>must</strong> begin with the literal word <code>Permitted</code> or <code>Discretionary</code> — the use-selector dropdown (§05) filters on that prefix, and nothing else is allowed to appear in it.</td></tr>
+    </table>
+    <h3>ID prefix convention</h3>
+    <table>
+      <tr><th>Tab key</th><th>ID prefix</th><th>Example</th></tr>
+      <tr><td><code>general</code></td><td><code>gen-N</code></td><td><code>gen-0</code>, <code>gen-1</code>...</td></tr>
+      <tr><td><code>district</code></td><td><code>dis-N</code></td><td><code>dis-0</code>, <code>dis-1</code>...</td></tr>
+      <tr><td><code>citywide</code></td><td><code>cw-N</code></td><td><code>cw-0</code>, <code>cw-1</code>...</td></tr>
+      <tr><td><code>use</code></td><td><code>use-N</code></td><td><code>use-0</code>, <code>use-1</code>...</td></tr>
+    </table>
+    <p>These four keys and prefixes stay identical across every district and every category — Residential, Commercial, Industrial, Special Purpose, all use the same <code>general</code>/<code>district</code>/<code>citywide</code>/<code>use</code> structure. The actual Part/Division numbers for that category (from your §02 worksheet) live in the <code>TABS</code> array's label/short-code metadata, not in the key names, so nothing about the data model itself needs to change between categories. Whatever prefix scheme you use, keep it consistent within that file and never renumber an existing id once a checklist has shipped — it breaks CSV re-import for anyone with an in-progress export.</p>
+  </section>
+
+  <section id="ui">
+    <h2><span class="num">04</span>UI component spec</h2>
+    <p>Reuse this component set as-is; only the tab labels/short codes and the sidebar project fields are district-specific.</p>
+    <h3>Sidebar</h3>
+    <ul>
+      <li><b>Project fields:</b> Project number, Project name, Site address / legal desc., DP / file no., Reviewer. Project number drives the export filename (§06) — always include it, always first.</li>
+      <li><b>Tab nav:</b> Instructions + the 4 review tabs, each showing a live <code>done/total</code> count.</li>
+      <li><b>Overall progress:</b> a single ruler/percentage bar summing <code>done/total</code> across all 4 tabs.</li>
+      <li><b>Session controls:</b> Export session (.csv) / Import session (.csv), plus a visible warning that nothing autosaves (see §06 — this is not optional).</li>
+    </ul>
+    <h3>Instructions tab</h3>
+    <p>Every checklist opens on an Instructions tab covering: the intended workflow order (general → district → citywide → use), what the tool explicitly does <em>not</em> cover, the status legend, and the no-autosave warning restated in context.</p>
+    <h3>Review card (one per checklist item)</h3>
+    <ul>
+      <li>Section badge + title</li>
+      <li>Plain-English summary</li>
+      <li>Four status pills: <b>Pass</b> / <b>Fail</b> / <b>Pending Info</b> / <b>N/A</b> — click to set, click again to clear</li>
+      <li>Collapsible notes field (free text — drawing refs, follow-ups, evidence)</li>
+    </ul>
+    <h3>Panel tools</h3>
+    <p>Search box (matches section/title/summary) + "Fails only" / "Pending only" filter chips, on every tab. The <code>use</code> tab additionally gets the use-selector (§05).</p>
+    <h3>Stat strip</h3>
+    <p>Per-tab counts by status (Pass / Fail / Pending Info / N/A / Not started), computed off the <em>in-scope</em> item set for that tab — see §05 for why the <code>use</code> tab is scoped differently from the other three.</p>
+  </section>
+
+  <section id="useselect">
+    <h2><span class="num">05</span>The use-selector pattern (<code>use</code> tab)</h2>
+    <p>The <code>use</code> tab is structurally different from the other three: a district might permit 60+ uses, but only 1–3 are ever actually proposed on a given project. Don't list all of them as cards by default — gate them behind a dropdown.</p>
+    <div class="step-list">
+      <ol class="step-list">
+        <li><b>Filter to selectable uses only.</b> A <code>use</code>-tab item is offered in the dropdown only if its <code>summary</code> starts with <code>Permitted</code> or <code>Discretionary</code> (regex: <code>/^(Permitted|Discretionary)\b/i</code>). Nothing else is ever shown — no deleted/reserved entries, no non-use sections.</li>
+        <li><b>Group by status.</b> Two <code>&lt;optgroup&gt;</code>s — "Permitted uses" and "Discretionary uses" — each sorted alphabetically by title so a 60-item list stays scannable.</li>
+        <li><b>Selecting adds, it doesn't replace.</b> Picking an option sets that item's <code>proposed</code> flag true, the dropdown resets to the placeholder, and a card for that use appears below with the normal status pills/notes to test against it. Repeat to add more uses.</li>
+        <li><b>Removing is explicit.</b> Each card gets a "Remove from review" action that clears <code>proposed</code> and drops the card — no destructive click-to-toggle checkbox.</li>
+        <li><b>Scope progress to selections.</b> The <code>use</code> tab count, stat strip, and overall progress bar should only count uses that have been added — an untouched 64-use district shows <code>0/0</code> for that tab until the reviewer actually picks something, not <code>0/64</code>.</li>
+      </ol>
+    </div>
+    <div class="callout">
+      <b>Still export everything.</b> Scoping the <em>UI</em> to selected uses doesn't change what gets exported — the CSV always includes every use in the district with its Proposed Yes/No flag (§06), so the record stays a complete statement of what was and wasn't reviewed.
+    </div>
+  </section>
+
+  <section id="session">
+    <h2><span class="num">06</span>Session model — CSV is the only persistence</h2>
+    <p>This is a standalone file with no server and no guaranteed browser storage. <strong>Do not call any browser storage API</strong> (no <code>window.storage</code>, no <code>localStorage</code>) — state lives in memory for the tab only, and the CSV export/import pair is the entire persistence mechanism.</p>
+    <h3>Filename convention</h3>
+    <pre>[Project Number] - [YYYY-MM-DD] - LUB Review.csv</pre>
+    <p>Sanitize the project number for filesystem-unsafe characters (<code>\ / : * ? " &lt; &gt; |</code>) before building the filename.</p>
+    <h3>CSV shape</h3>
+    <p>One export = one file, covering <em>all</em> items across all 4 tabs, not just the ones touched. A metadata block first, a blank separator row, then one row per checklist item:</p>
+    <pre>Field,Value
+Project number,26.93
+Project name,40 Ave Distribution Facility
+Site address / legal desc.,123 40 Ave SE
+DP / file no.,DP2026-01234
+Reviewer,J. Smith
+Export date,2026-08-24
+Progress,42/132 checks completed
+
+Part,Section,Article Title,Requirement Summary,Proposed,Review Status,Notes,ID
+General Rules,897,Projections Into Setback Areas,"Buildings generally...",,Pass,,gen-0
+Use Rules,149,Auto Body and Paint Shop,Permitted — 907(2),Yes,Pending Info,"confirm paint booth ventilation",use-2</pre>
+    <table>
+      <tr><th>Rule</th><th>Why</th></tr>
+      <tr><td>Every field written through a proper RFC4180 CSV escaper (quote if it contains a comma, quote, or newline; double up embedded quotes)</td><td>Notes fields routinely contain commas and quotes</td></tr>
+      <tr><td>The item table always includes the <code>ID</code> column, exported for every item — even N/A or untouched ones</td><td>Import matches rows back to checklist items by <code>ID</code>, not by row position or title text, so reordering/edits to the source data don't break old exports</td></tr>
+      <tr><td>Import is written with a real quote-aware parser (state machine, not <code>split(",")</code>)</td><td>Naive splitting breaks on any note containing a comma</td></tr>
+      <tr><td>Import reports how many rows matched vs. were skipped</td><td>Silent partial imports are worse than a loud failure</td></tr>
+    </table>
+    <div class="callout warn">
+      <b>Test the round trip before shipping.</b> Fill in every item (including notes with embedded commas/quotes/newlines and project fields with commas/quotes), export, re-import into a fresh instance, and diff every field. Zero mismatches is the bar — see §10.
+    </div>
+  </section>
+
+  <section id="buildingcond">
+    <h2><span class="num">07</span>Conditional building-status checkboxes</h2>
+    <p>Some districts flip a use's status — or its very availability — based on a binary fact about the building itself, not about the use. The pattern first appeared in Industrial – Business (I-B): §923(2)/§924(1) makes a block of uses <b>Permitted</b> if they're in an existing approved building but <b>Discretionary</b> if the building is proposed or a proposed addition; separately, §924(3) makes a different block of uses <b>Discretionary only if</b> the building already contains one of the §923(2)-list uses — otherwise they aren't available at all. Neither condition is a use-specific fact, so it doesn't belong on any one card; it belongs to the project.</p>
+    <div class="callout warn">
+      <b>Scope — building-status facts only.</b> This pattern is for binary yes/no facts about the building (new vs. existing; already contains a listed use). Don't extend it to other conditional flips — e.g. I-G's water/sewer servicing flip (§908(1)) stays handled the old way: a plain-English rule item in the <code>district</code> tab, no live-computed logic — unless a future task explicitly asks for that to change.</p>
+    </div>
+    <h3>Where they live</h3>
+    <p>Two checkboxes in the sidebar, directly below the existing project fields, visually grouped under a small "District conditions" label so they read as project facts rather than review data — never per-use, never inside a card.</p>
+    <h3>State &amp; persistence</h3>
+    <p>Add both as booleans on <code>state.project</code> alongside the five existing project fields (e.g. <code>newBuilding</code>, <code>buildingHasListedUse</code>), and add both to <code>META_FIELDS</code> (§06) so they export and re-import exactly like every other project fact — a reloaded session must show the same computed statuses it had when exported.</p>
+    <h3>Behavior</h3>
+    <ul>
+      <li>Every affected <code>use</code>-tab item's displayed status label — and which optgroup it sorts into, or whether it's offered at all — is computed live from these booleans at render time, never hardcoded into <code>CHECKLIST_DATA</code>.</li>
+      <li>Toggling a checkbox is a state-changing action: wire it through the same shared <code>refreshEverything()</code> call (§08) as a status pill click, so the use-selector dropdown, any open cards' labels, and the stat strip all update together.</li>
+      <li>If a use has no valid path to Permitted or Discretionary under the current checkbox state, drop it from the "add a use" dropdown. But never remove a card the reviewer already added just because a checkbox changed later — re-evaluate and re-label that existing card instead of deleting their work.</li>
+      <li>Don't force a checkbox onto a condition the bylaw actually ties to a measured value (e.g. a public-area threshold in m²) rather than a yes/no fact. Leave that use's status static, spell out both thresholds in its summary text, and flag the caveat in the panel description instead of inventing a toggle for it.</li>
+    </ul>
+  </section>
+
+  <section id="interaction">
+    <h2><span class="num">08</span>Force-refresh interaction rule</h2>
+    <p>Every click that changes review data — a status pill, a use-selector pick, a "Remove from review," a filter chip — must trigger one shared <code>refreshEverything()</code> call that rebuilds the tab nav counts, the overall progress bar, and the whole main panel together, rather than patching only the element that was clicked.</p>
+    <pre><span class="cmt">// call this, not a targeted DOM patch, after any state-changing click</span>
+<span class="key">function</span> refreshEverything(){
+  <span class="key">const</span> scrollTop = main.scrollTop;   <span class="cmt">// preserve position across the rebuild</span>
+  renderTabNav();
+  renderOverallProgress();
+  renderMain();
+  <span class="cmt">// restore scrollTop via requestAnimationFrame, guarded for environments without it</span>
+}</pre>
+    <p>Preserve scroll position across the rebuild so this doesn't feel jumpy on a long card list, and guard any <code>requestAnimationFrame</code> call with a <code>typeof</code> check so a stripped-down preview environment can never throw. Text inputs (notes, search, project fields) are the one exception — those update local state directly on <code>input</code> without forcing a full rebuild, so typing never loses focus.</p>
+  </section>
+
+  <section id="tokens">
+    <h2><span class="num">09</span>Visual design tokens</h2>
+    <p>Reuse this palette and type system across every checklist in the family so they read as one product line. Only the accent usage (status colors) is fixed by meaning — don't reassign pass/fail/pending/N/A to different colors between checklists.</p>
+    <pre>:root{
+  <span class="key">--paper</span>:#F5F2E8;      <span class="cmt">/* page background */</span>
+  <span class="key">--paper-card</span>:#FBF9F2; <span class="cmt">/* card background */</span>
+  <span class="key">--ink</span>:#152538;        <span class="cmt">/* headings, sidebar bg */</span>
+  <span class="key">--ink-soft</span>:#3A4A5C;   <span class="cmt">/* body text */</span>
+  <span class="key">--blue</span>:#2C5A87;       <span class="cmt">/* primary accent / links */</span>
+  <span class="key">--blue-dim</span>:#5C7C99;
+  <span class="key">--rule</span>:#D9D2BC;        <span class="cmt">/* hairlines */</span>
+  <span class="key">--rule-dark</span>:#B9B092;
+  <span class="key">--pass</span>:#3E7A5A;  <span class="key">--pass-bg</span>:#E1EEE5;
+  <span class="key">--fail</span>:#AE4429;  <span class="key">--fail-bg</span>:#F4E2DC;
+  <span class="key">--pending</span>:#B5842A; <span class="key">--pending-bg</span>:#F3E7CE;
+  <span class="key">--na</span>:#83807A;    <span class="key">--na-bg</span>:#E7E5DE;
+}</pre>
+    <p><b>Type:</b> IBM Plex Sans for UI text, IBM Plex Mono for anything data-like (section numbers, counts, filenames, badges) — the mono/sans split is what signals "this is a reference number" vs. "this is prose" at a glance.</p>
+  </section>
+
+  <section id="build">
+    <h2><span class="num">10</span>Build procedure, step by step</h2>
+    <ol class="step-list">
+      <li><b>Fill in the district worksheet</b> from §02 — confirm current Part/Division numbers on calgary.ca for that district's category. Don't assume any category's numbering carries over to another; Residential, Commercial, Industrial, and Special Purpose are each numbered independently.</li>
+      <li><b>Extract every applicable section</b> for the general division, the district division, and the citywide rules, into plain-English summaries per §02's extraction rule.</li>
+      <li><b>Extract the full permitted + discretionary use list</b> for the district, one <code>use</code>-tab item per use, summary starting <code>Permitted —</code> or <code>Discretionary —</code> with its enabling section number and any use-specific caveat (GFA caps, adjacency conditions, etc.).</li>
+      <li><b>Copy an existing checklist file</b> (e.g. <code>IG_Zoning_Review_Checklist.html</code>) as the starting point — the CSS, the rendering engine, the session/export logic, and the use-selector logic are all built against the canonical <code>general</code>/<code>district</code>/<code>citywide</code>/<code>use</code> keys from §03, so they carry over unchanged to any category without rewriting.</li>
+      <li><b>Replace <code>CHECKLIST_DATA</code></b> with the new district's content under those same four keys, and update the <code>TABS</code> array's labels/short codes (§01/§04) to show the new category's actual Part/Division numbers and district name.</li>
+      <li><b>Update the Instructions tab copy</b> — workflow order, district name, and the "what this does not cover" list, since scope carve-outs differ district to district and category to category (a residential district's exclusions look nothing like an industrial one's).</li>
+      <li><b>Update <code>panelDescription()</code></b> for the new district's rule content.</li>
+      <li><b>Check for a binary building-status flip</b> (§07) — if the district's rules make any use's Permitted/Discretionary status, or its availability, depend on a yes/no fact about the building rather than the use, add the sidebar checkboxes and live-computed logic from §07 instead of hardcoding one status into <code>CHECKLIST_DATA</code>.</li>
+      <li><b>Run the QA checklist in §11</b> before treating it as shippable.</li>
+    </ol>
+  </section>
+
+  <section id="qa">
+    <h2><span class="num">11</span>QA checklist before shipping</h2>
+    <ul class="qa-list">
+      <li>Both inline <code>&lt;script&gt;</code> blocks parse with zero syntax errors.</li>
+      <li>No calls to <code>window.storage</code>, <code>localStorage</code>, or <code>sessionStorage</code> anywhere in the file.</li>
+      <li>Every <code>use</code>-tab item's <code>summary</code> matches <code>/^(Permitted|Discretionary)\b/i</code> — confirm the count of matches equals the total item count for that tab.</li>
+      <li>Item counts per tab match your source extraction (spot-check the total against the bylaw's own use-list count).</li>
+      <li>Export → re-import round trip: fill every item (mix of all 4 statuses + N/A), include notes with embedded commas/quotes/newlines and project fields with commas/quotes, export, import into a fresh load, diff every field — zero mismatches.</li>
+      <li>Filename produced by export matches <code>[Project Number] - [Date] - LUB Review.csv</code> exactly, with unsafe characters stripped from the project number.</li>
+      <li>Clicking a status pill updates: the card, the stat strip, the tab count badge, and the overall progress bar — all in the same click, no stale numbers anywhere on screen.</li>
+      <li>Selecting a use from the <code>use</code>-tab dropdown immediately shows its card; removing it immediately hides the card and updates counts.</li>
+      <li>Before any use is selected, the <code>use</code> tab shows <code>0/0</code>, not <code>0/</code>(total uses in the district).</li>
+      <li>File opens correctly via <code>file://</code> directly (double-click) — not just when served over <code>http://</code>.</li>
+      <li><i>If the district uses the §07 building-status checkboxes:</i> toggling either one immediately re-labels every affected use card and re-filters the "add a use" dropdown, in the same click; a use already added to the review stays on screen (re-labeled, not removed) if a later toggle makes it invalid; both checkboxes round-trip correctly through export/import.</li>
+    </ul>
+  </section>
+
+  <section id="naming">
+    <h2><span class="num">12</span>File &amp; naming conventions</h2>
+    <table>
+      <tr><th>Item</th><th>Convention</th></tr>
+      <tr><td>Tool filename</td><td><code>[DistrictCode]_Zoning_Review_Checklist.html</code> — e.g. <code>CCOR3_Zoning_Review_Checklist.html</code>, <code>RCG_Zoning_Review_Checklist.html</code></td></tr>
+      <tr><td>Export filename</td><td><code>[Project Number] - [YYYY-MM-DD] - LUB Review.csv</code> (§06)</td></tr>
+      <tr><td>Tab keys</td><td>Always the same four, regardless of category — <code>general</code>, <code>district</code>, <code>citywide</code>, <code>use</code> (§03)</td></tr>
+      <tr><td>ID prefixes</td><td>Always <code>gen-N</code> / <code>dis-N</code> / <code>cw-N</code> / <code>use-N</code> (§03), held constant for the life of that checklist file</td></tr>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  Internal reference for building the Calgary Land Use Bylaw review checklist family at PDG, generalized for any district in any category — Residential, Commercial, Industrial, Special Purpose, and beyond. The pattern was first built as <code>IG_Zoning_Review_Checklist.html</code> (I-G — Industrial General) but nothing in this spec is Industrial-specific; only the actual Part/Division content differs per category. Always confirm current Part/Division/section numbers against the live consolidated Land Use Bylaw 1P2007 on calgary.ca before building a new district's checklist — bylaw numbering is amended regularly.
+</footer>
+
+</body>
+</html>
