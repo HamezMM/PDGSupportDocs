@@ -53,7 +53,9 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 9 | C-O | ✅ `CO_Zoning_Review_Checklist.html` |
 | 10 | C-R1 | ✅ `CR1_Zoning_Review_Checklist.html` |
 | 11 | C-R2 | ✅ `CR2_Zoning_Review_Checklist.html` |
-| 12 | C-R3 | ⬜ |
+| 12 | C-R3 | ✅ `CR3_Zoning_Review_Checklist.html` |
+
+**Part 7 (Commercial) is now complete.**
 
 ## Part 8 — Industrial Districts
 
