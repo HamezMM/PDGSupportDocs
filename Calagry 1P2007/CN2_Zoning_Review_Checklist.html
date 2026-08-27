@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C-N2 District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  .district-conditions{
+    padding:14px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .district-conditions .dc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:2px;
+  }
+  .dc-check{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    cursor:pointer;
+  }
+  .dc-check input{
+    margin-top:2px;
+    accent-color:var(--blue-dim);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .dc-check span{
+    font-size:11.5px;
+    line-height:1.4;
+    color:#C7D2DC;
+  }
+  .dc-check span b{color:#EDE9DA;}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .card .computed{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink);
+    line-height:1.55;
+    background:#EAF0F6;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    padding:8px 10px;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>C-N2 District Review Checklist</h1>
+    <div class="sub">Commercial &ndash; Neighbourhood 2 &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. Corner Retail Building">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <div class="district-conditions">
+    <div class="dc-label">District conditions</div>
+    <label class="dc-check">
+      <input type="checkbox" id="dc-newbuilding">
+      <span><b>Proposed building or addition</b> &mdash; leave unchecked if the use is proposed within an <em>existing approved</em> building (&sect;722(2)/&sect;723(1)).</span>
+    </label>
+    <label class="dc-check">
+      <input type="checkbox" id="dc-priorcommercial">
+      <span><b>Existing building already has an approved commercial use</b> &mdash; only relevant when the box above is unchecked (&sect;722(2)/&sect;723(2)).</span>
+    </label>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {
+"part7div1": [
+  {"id":"d1-0","sec":"689","title":"Projections Into Setback Areas","summary":"Buildings generally can't sit in a setback. Eaves may project max 0.6 m; below-grade parking structures may extend into a setback; signs may be located in a setback per Part 3, Div. 5."},
+  {"id":"d1-1","sec":"690","title":"General Landscaped Area Rules","summary":"A landscape plan approved by the Development Authority is required with every DP application that changes the building/parcel: existing/proposed topography, vegetation retention, layout (berms, pathways, screening, slopes, hard/soft areas), plant schedule, and irrigation details. Must be maintained for the life of the development."},
+  {"id":"d1-2","sec":"691","title":"Planting Requirements","summary":"Plant material must suit Calgary's climate (CNLA standard). Min. 25% of trees coniferous. Deciduous trees: min. 50 mm caliper (50% at min. 75 mm). Coniferous trees: min. 2.0 m height (50% at min. 3.0 m). Shrubs: min. 0.6 m height/spread at planting. Soft surfaced landscaped areas may include Urban Agriculture."},
+  {"id":"d1-3","sec":"692","title":"Low Water Irrigation System","summary":"If used, only trees/shrubs are irrigated (not turf), and plants with similar water needs must be grouped."},
+  {"id":"d1-4","sec":"693","title":"Additional Landscaping Requirements","summary":"All setback area not needed for motor vehicle access, sidewalks, or another Development-Authority-approved purpose must be soft-landscaped; all other parcel area must be soft-landscaped unless the Development Authority allows otherwise. Every building needs at least one sidewalk connecting the public entrance to a public sidewalk (or nearest street if none exists) and one connecting the parking area to the public entrance(s). Sidewalks: hard-surfaced, min. 2.0 m wide, distinct surfacing from parking, raised above the parking surface when located within it."},
+  {"id":"d1-5","sec":"694","title":"Landscaping for Large Parking Area","summary":"Triggered when total parking/aisle/access surface area is ≥ 5000.0 m². Landscaping required at 0.150 m² per 1.0 m² of that surface, as hard + soft landscaping in islands and strips. Islands: start/end of every stall row and after every 20 stalls, min. 12.0 m² with one side ≥ 2.0 m, min. 1 tree + 2 shrubs, curbed. Strips: every 4 rows, perpendicular, min. 2.0 m deep, min. 1 tree per 15.0 m of length, curbed. An island/strip contiguous with a setback area is not required at that location."},
+  {"id":"d1-6","sec":"695","title":"Visibility Setback","summary":"Within a corner visibility triangle, buildings, finished grade, and vegetation must not be located between 0.75 m and 4.60 m above the lowest street elevation."},
+  {"id":"d1-7","sec":"696","title":"Mechanical Screening","summary":"Outdoor mechanical equipment must be positioned, camouflaged, or screened from view of a public space, or from a residential-district parcel within 30.0 m, using a 1.7 m eye-level sightline."},
+  {"id":"d1-8","sec":"697","title":"Garbage","summary":"Garbage/waste must be stored inside a building or in a Development-Authority-approved enclosure; enclosures can't be located in a setback area."},
+  {"id":"d1-9","sec":"698","title":"Recycling Facilities","summary":"Required for every development containing Dwelling Units. C-N2 permits Dwelling Unit and Live Work Unit as discretionary uses (§723(3)(j)/(n)) — if either is proposed, confirm a recycling facility is provided."},
+  {"id":"d1-10","sec":"699","title":"Screening","summary":"A max. 2.0 m fence is required along a property line shared with a residential or special purpose district, and along a lane (except where an opening is needed for pedestrian/vehicle access)."},
+  {"id":"d1-11","sec":"699.1","title":"Solar Collectors","summary":"Roof- or wall-mounted only. Roof pitch <4:12: max 2.0 m projection. Pitch ≥4:12: max 1.3 m projection, can't overhang the roof edge. Wall-mounted: min. 2.4 m above grade, max 0.6 m projection."},
+  {"id":"d1-12","sec":"699.2","title":"Wind Energy Conversion System","summary":"Detailed siting, colour, tower type, safety, decommissioning (remove after 6 months' disrepair/abandonment), residential setbacks (60 m Type 1 / 550 m Type 2), lighting/signage restrictions, 100 m wetland buffer, max 100 kW capacity, biophysical assessment, and DP term limits (5 yrs, renewable). Neither WECS type is a listed use in C-N2, so this section is not expected to apply — confirm no WECS is proposed."},
+  {"id":"d1-13","sec":"700","title":"Parcel Access","summary":"All developments must comply with the Controlled Streets Bylaw for access/curb cuts."}
+],
+"part7div2": [
+  {"id":"d2-0","sec":"721","title":"Purpose","summary":"Confirm project fits the intended character: small-scale commercial development; motor vehicle access to commercial uses; pedestrian connection from the public sidewalk to buildings; limited use sizes/types; limited automotive uses; setbacks/landscaping that buffer residential districts; buildings in keeping with the scale of nearby residential areas; opportunities for residential uses on upper floors above commercial. Areas of land greater than 1.2 hectares should not be designated C-N2. Unlike C-N1, this purpose statement explicitly calls for 'limited automotive uses,' and correspondingly C-N2 has no Building Location/Orientation, Building Façade, or Vehicle Access sections of its own (§708–710 in C-N1 have no C-N2 equivalent). (Informational — useful for discretionary-use judgment calls.)"},
+  {"id":"d2-1","sec":"722","title":"Permitted Uses","summary":"Permitted — 722(1): Park, Sign – Class A, Sign – Class B, Sign – Class D, Utilities (no condition, 5 uses). Permitted — 722(2): 18 further uses (see Use tab) — two more than C-N1 (Catering Service – Minor and Veterinary Clinic are added), ONLY if located in an existing approved building that already contains an approved commercial use approved after the parcel's commercial designation — see District Conditions checkboxes."},
+  {"id":"d2-2","sec":"723","title":"Discretionary Uses","summary":"Discretionary — 723(1): the same 18 §722(2) uses become discretionary if located in a proposed building/addition. Discretionary — 723(2): the same 18 uses become discretionary if proposed in an existing building without a prior approved commercial use. See District Conditions checkboxes. Discretionary — 723(3): 33 further uses (see Use tab), no building-status condition — notably including Auto Service – Minor, Car Wash – Single Vehicle, Drive Through, Gas Bar, Payday Loan, Seasonal Sales Area, and Vehicle Rental – Minor, none of which are listed uses in C-N1. Discretionary — 723(4): Place of Worship – Large and Place of Worship – Medium, but only on a parcel with an existing building already used for that purpose, and only if new development doesn't increase any assembly area — otherwise neither is an available use in C-N2."},
+  {"id":"d2-3","sec":"724","title":"Rules — Cross-References","summary":"Confirms all C-N2 uses must also meet: the General Rules for Commercial Land Use Districts referenced in Part 7, Division 1 (above); the Rules Governing All Districts referenced in Part 3; and the applicable Uses And Use Rules referenced in Part 4."},
+  {"id":"d2-4","sec":"725","title":"Parcel Area","summary":"Maximum parcel area is 1.2 hectares — same cap as C-N1."},
+  {"id":"d2-5","sec":"726","title":"Floor Area Ratio","summary":"Maximum floor area ratio for buildings is 1.0 — same as C-N1, a fixed district-wide number rather than a per-parcel map suffix."},
+  {"id":"d2-6","sec":"727","title":"Building Height","summary":"Maximum building height is 10.0 metres — same as C-N1, a fixed district-wide number rather than a per-parcel map suffix."},
+  {"id":"d2-7","sec":"728","title":"Use Area","summary":"Max. use area is 300.0 m² unless otherwise referenced, except: Convenience Food Store (alone or combined with any other use) max. 465.0 m²; Restaurant: Food Service Only / Restaurant: Licensed max. public area 150.0 m². No use area restriction at all for: Addiction Treatment, Assisted Living, Custodial Care, and Residential Care. Identical numbers to C-N1."},
+  {"id":"d2-8","sec":"729","title":"Location of Uses within Buildings","summary":"Addiction Treatment, Assisted Living, Custodial Care, Dwelling Units, and Residential Care must not be located on the ground floor. \"Commercial Uses\" (the §722/§723 use list excluding Addiction Treatment, Assisted Living, Custodial Care, Dwelling Unit, Live Work Unit, and Residential Care) and Live Work Units may share a floor with those five uses, but must not share an internal hallway with them. Identical structure to C-N1 — Live Work Unit itself is not barred from the ground floor."},
+  {"id":"d2-9","sec":"730","title":"Front Setback Area","summary":"Minimum depth 3.0 metres — unlike C-N1, which has no minimum front setback (only a 3.0 m maximum where one is provided)."},
+  {"id":"d2-10","sec":"731","title":"Rear Setback Area","summary":"Tiered by what's shared on the rear property line: commercial — no requirement; industrial 1.2 m; residential 5.0 m; special purpose 3.0 m. Lane, LRT corridor, or street (combined, no separate lane exception) — min. 3.0 m. Unlike C-N1, which gives residential a smaller 3.0 m minimum and carves out a no-requirement exception for a lane not separating from a residential district."},
+  {"id":"d2-11","sec":"732","title":"Side Setback Area","summary":"Same tiered pattern as the rear setback (§731): commercial — no requirement; industrial 1.2 m; residential 5.0 m; special purpose 3.0 m; lane, LRT corridor, or street — min. 3.0 m. Same divergence from C-N1 as the rear setback: the residential tier is 5.0 m (not 3.0 m), and there's no lane no-requirement exception."},
+  {"id":"d2-12","sec":"733","title":"Landscaping In Setback Areas","summary":"LRT-corridor or street-adjacent: soft surfaced, min. 1 tree + 2 shrubs per 35 m² (or 50 m² with low-water irrigation). Residential-district-adjacent: soft surfaced, min. 1 tree per 30 m² (or 45 m² with low-water irrigation), trees planted in a linear arrangement. Lane-adjacent OR commercial/industrial/special-purpose-district-adjacent: soft surfaced (a sidewalk along the building is optional), min. 1 tree + 2 shrubs per 35 m² (or 50 m² with low-water irrigation). Unlike C-N1, which exempts a lane-adjacent setback from any landscaping requirement where lane access is approved and requires a hard (not soft) surface for a street-adjacent setback, C-N2 requires soft landscaping along a lane in every case and treats street the same as LRT-corridor."},
+  {"id":"d2-13","sec":"734","title":"Minimum Required Motor Vehicle Parking Stalls — Deleted","summary":"Deleted — C-N2 has no district-specific minimum-stall-count override of its own here. The citywide minimum parking/loading calculation (Part 3 §121) governs, including Table 4.1's rates for Dwelling Unit / Live Work Unit — see Citywide tab. Unlike C-N1, C-N2's Table 4.1 rate is a single flat rate regardless of parcel size (grouped with C-C1/C-C2/C-COR2), not tiered by a 0.1-hectare threshold."},
+  {"id":"d2-14","sec":"735","title":"Exclusive Use of Motor Vehicle Parking Stalls","summary":"Visitor parking stalls required for visitors of Dwelling Units or Live Work Units must be identified by permanent signage as exclusively for visitors. Motor vehicle parking stalls required for residents of Dwelling Units and Live Work Units may be identified by signage as exclusively for residents. Unlike C-N1, where this section (§718) is deleted, C-N2 carries live signage-exclusivity rules here."},
+  {"id":"d2-15","sec":"736","title":"Required Bicycle Parking Stalls","summary":"Class 1: for each Dwelling Unit/Live Work Unit — none required under 20 units, 0.5 stalls/unit at 20+ units; for all other uses — the minimum referenced in Part 4. Class 2: for each Dwelling Unit/Live Work Unit — 2.0 stalls for developments of 20 units or less, 0.1 stalls/unit above 20 units; for all other uses — 5.0% of motor vehicle parking stalls. Identical rates to C-N1."},
+  {"id":"d2-16","sec":"737","title":"Exclusive Use of Bicycle Parking Stalls","summary":"Bicycle parking stalls – Class 1 provided for Dwelling Units and Live Work Units are for the exclusive use of residents. Identical to C-N1."}
+],
+"part3": [
+  {"id":"p3-0","sec":"53","title":"Public Realm Setbacks","summary":"Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to the district's own front/side/rear setback, and the Development Authority cannot relax it."},
+  {"id":"p3-1","sec":"54","title":"Airport Vicinity Regulations","summary":"If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply. Confirm against the current AVPA maps/bylaw."},
+  {"id":"p3-2","sec":"55","title":"Floodway, Flood Fringe & Overland Flow — Applicability","summary":"Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping)."},
+  {"id":"p3-3","sec":"56","title":"Floodway Regulations","summary":"If in the Floodway: new development is heavily restricted — confirm what, if anything, is permitted."},
+  {"id":"p3-4","sec":"57","title":"New Buildings and Alterations","summary":"If in the Flood Fringe: specific construction/flood-proofing requirements for new buildings and alterations."},
+  {"id":"p3-5","sec":"58","title":"Alterations to the Floodway and Riverbanks","summary":"Special review requirements for any riverbank or floodway alteration work."},
+  {"id":"p3-6","sec":"61","title":"Building Design in the Overland Flow Area","summary":"Specific design requirements if the parcel is within a mapped overland flow area."},
+  {"id":"p3-7","sec":"62","title":"Lighting Requirements","summary":"General exterior lighting standards apply to the site."},
+  {"id":"p3-8","sec":"63","title":"Shielding","summary":"Light fixtures must be shielded to control glare and light spill, particularly toward residential areas."},
+  {"id":"p3-9","sec":"64","title":"Mounting of Fixtures","summary":"Requirements for how/where lighting fixtures are mounted."},
+  {"id":"p3-10","sec":"65","title":"Height Limits (Lighting)","summary":"C-N2-specific (shared with C-N1, C-C1, C-COR1, CC-ER, I-B, I-E and all residential/mixed-use/special-purpose districts): max. mounting height for an outdoor light fixture over 100 watts is 7.5 metres (§65(1)(a)) — lower than the 12.0 m general commercial cap. No max. height for fixtures serving an Outdoor Recreation Area or Spectator Sports Facility."},
+  {"id":"p3-11","sec":"66","title":"Canopy Lighting","summary":"Specific rules for lighting under canopies. Unlike C-N1, Gas Bar and Drive Through are both listed discretionary uses in C-N2 (§723(3)(k)/(i)) — if either is proposed, confirm canopy lighting compliance."},
+  {"id":"p3-12","sec":"67-72","title":"Signs — Purpose, Classification, DP Requirements","summary":"All signs are classified Class A–G. Confirm a DP is required (most are) and whether a Comprehensive Sign Program applies to the site."},
+  {"id":"p3-13","sec":"73-76","title":"General Sign Rules, Digital Displays, Maintenance","summary":"General construction/safety/illumination standards for all signs. If any sign has a digital display: C-N2 is not individually named in §74(6)(b), so its night-time (sunset–sunrise) maximum luminance is 300 Nits per §74(6)(b)(iii) — the citywide default — versus the elevated 350 Nits allowed in C-COR1/C-COR2/C-COR3; daytime cap is 7500 Nits everywhere. Also covers ongoing sign maintenance obligations and shared signage for parcels in related function."},
+  {"id":"p3-14","sec":"77-90","title":"Class A Signs (permitted use in C-N2)","summary":"Includes Address, Art, Banner, Construction, Directional, Flag, Gas Bar, Pedestrian, Real Estate, Special Event, Show Home, Temporary, and Window sign sub-rules. Check whichever sub-types are proposed."},
+  {"id":"p3-15","sec":"91-93","title":"Class B Signs (permitted use in C-N2)","summary":"Designated signable area/location rules and fascia sign rules."},
+  {"id":"p3-16","sec":"94-97","title":"Class C Signs (discretionary use in C-N2) — Freestanding Sign","summary":"Freestanding sign rules: number allowed, size and height restrictions. C-N2 is individually named in §97(1) alongside C-N1 and C-C1: max. sign area 9.5 square metres, max. height 6.0 metres — smaller than the 14.0 m² / 9.0 m allowance most other commercial districts get under §97(3), and than C-COR3's 18.5 m² / 12.2 m."},
+  {"id":"p3-17","sec":"98-102","title":"Class D Signs (permitted use in C-N2) — Canopy / Projecting Sign","summary":"Canopy sign rules, signs mounted under canopies, and projecting sign rules. C-N2 is individually named in §102(1) alongside C-N1, C-C1, and several mixed-use/CC districts: max. Projecting Sign area is 2.3 square metres — smaller than the 4.5 m² allowance most other commercial districts get under §102(3), and than C-COR3's 9.3 m²."},
+  {"id":"p3-18","sec":"103-109","title":"Class E Signs (discretionary use in C-N2)","summary":"Includes Inflatable Sign, Painted Wall Sign, Rotating Sign, Temporary Sign Marker sub-rules."},
+  {"id":"p3-19","sec":"111-115.5","title":"Class F — Third Party Advertising Signs","summary":"Prohibited/permitted locations, siting, height and size limits, general rules, Major Parks provision, and extra rules if the sign has a digital display. Sign – Class F and Sign – Class G are not listed uses in C-N2 (unlike C-COR1/C-COR3), so this section is not expected to apply."},
+  {"id":"p3-20","sec":"116","title":"Parking — General Rules","summary":"Baseline rules governing all required parking/loading."},
+  {"id":"p3-21","sec":"117","title":"Parking Stall Signage","summary":"Signage requirements for parking stalls (e.g., accessible stalls)."},
+  {"id":"p3-22","sec":"118","title":"Location of Parking and Loading Requirements","summary":"Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings."},
+  {"id":"p3-23","sec":"119","title":"Use of Parking and Loading Stalls","summary":"Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."},
+  {"id":"p3-24","sec":"120","title":"Identification of Required Parking/Loading Stalls","summary":"How required stalls must be marked/identified on-site and on drawings."},
+  {"id":"p3-25","sec":"121","title":"Calculation of Minimum Parking/Loading Stalls","summary":"Pulls the minimum required stall counts from the applicable parking schedule for each proposed use. C-N2's own §734 override is deleted, but Table 4.1 under this section carries C-N2-specific rates for Dwelling Unit / Live Work Unit stalls — unlike C-N1, C-N2 uses a single flat rate regardless of parcel size (grouped with C-C1, C-C2, and the C-COR1-at-0.4-hectares-or-more / C-COR2 tier): Dwelling Unit 0.75 resident stalls/unit + 0.1 visitor stalls/unit; Live Work Unit 1.0 resident stalls/unit + 0.5 visitor stalls/unit. Confirm the exact rates directly against the current Table 4.1 rather than relying only on this summary. All other uses use the standard Part 4 schedule."},
+  {"id":"p3-26","sec":"122","title":"Standards for Motor Vehicle Parking Stalls","summary":"Stall/aisle dimensions and layout standards."},
+  {"id":"p3-27","sec":"123","title":"Loading Stalls","summary":"Required loading stall size and count standards."},
+  {"id":"p3-28","sec":"124","title":"Relaxations of Parking/Loading Requirements","summary":"Circumstances where the Development Authority may relax parking/loading counts."},
+  {"id":"p3-29","sec":"124.1","title":"Parking Stall Exemptions","summary":"Specific exemptions from providing required parking stalls."},
+  {"id":"p3-30","sec":"125","title":"Bicycle Parking Stalls","summary":"Required bicycle parking counts and standards from Part 4, except C-N2's own Dwelling Unit / Live Work Unit rates in §736 — see District tab."},
+  {"id":"p3-31","sec":"126","title":"Motor Vehicle Pick-Up and Drop-Off Stalls","summary":"Rules for any dedicated pick-up/drop-off stalls. Unlike C-N1, Drive Through is a listed discretionary use in C-N2 (§723(3)(i)) — if proposed, confirm this section's pick-up/drop-off stall requirements."},
+  {"id":"p3-32","sec":"129.1","title":"Infrastructure Requirements","summary":"The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development."}
+],
+"part4": [
+  {"id":"p4-0","sec":"249","title":"Park","summary":"Permitted — 722(1)"},
+  {"id":"p4-1","sec":"299","title":"Sign – Class A","summary":"Permitted — 722(1)"},
+  {"id":"p4-2","sec":"300","title":"Sign – Class B","summary":"Permitted — 722(1)"},
+  {"id":"p4-3","sec":"302","title":"Sign – Class D","summary":"Permitted — 722(1). C-N2's Projecting Sign area cap is 2.3 m² (§102(1)) — see Citywide tab."},
+  {"id":"p4-4","sec":"321","title":"Utilities","summary":"Permitted — 722(1)"},
+
+  {"id":"p4-5","sec":"164","title":"Catering Service – Minor","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes. Not a listed use in C-N1."},
+  {"id":"p4-6","sec":"174","title":"Convenience Food Store","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes. Max. use area 465.0 m², alone or combined with any other use (§728(2))."},
+  {"id":"p4-7","sec":"193","title":"Financial Institution","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-8","sec":"195","title":"Fitness Centre","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-9","sec":"204","title":"Health Care Service","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-10","sec":"206.1","title":"Home Based Child Care – Class 1","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-11","sec":"207","title":"Home Occupation – Class 1","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-12","sec":"216","title":"Information and Service Provider","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-13","sec":"217","title":"Instructional Facility","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-14","sec":"224","title":"Library","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-15","sec":"246","title":"Office","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-16","sec":"257","title":"Pet Care Service","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-17","sec":"267","title":"Print Centre","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-18","sec":"270","title":"Protective and Emergency Service","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-19","sec":"278","title":"Restaurant: Food Service Only","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes. Max. public area 150.0 m² — an absolute cap (§728(2.1))."},
+  {"id":"p4-20","sec":"286.1","title":"Retail and Consumer Service","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-21","sec":"310","title":"Specialty Food Store","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes."},
+  {"id":"p4-22","sec":"330","title":"Veterinary Clinic","summary":"Permitted — 722(2) if in an existing approved building with a prior approved commercial use; Discretionary — 723(1) if in a proposed building/addition; Discretionary — 723(2) if the existing building lacks a prior approved commercial use. Status shown below is computed from the District Conditions checkboxes. Must only provide medical treatment to small/domestic animals (§330(c)). Not a listed use in C-N1."},
+
+  {"id":"p4-23","sec":"139","title":"Addiction Treatment","summary":"Discretionary — 723(3). No use area restriction (§728(3)(a)). Must not be on the ground floor (§729(1))."},
+  {"id":"p4-24","sec":"144","title":"Artist's Studio","summary":"Discretionary — 723(3)"},
+  {"id":"p4-25","sec":"146","title":"Assisted Living","summary":"Discretionary — 723(3). No use area restriction (§728(3)(a.1)). Must not be on the ground floor (§729(1))."},
+  {"id":"p4-26","sec":"151","title":"Auto Service – Minor","summary":"Discretionary — 723(3). Not a listed use in C-N1. Max. 200.0 m² of floor area for servicing/repairing motor vehicles, excluding admin/storage (§151(b.1)); max. three vehicles serviced or repaired at a time (§151(a)(ii))."},
+  {"id":"p4-27","sec":"156.1","title":"Brewery, Winery and Distillery","summary":"Discretionary — 723(3)"},
+  {"id":"p4-28","sec":"162","title":"Car Wash – Single Vehicle","summary":"Discretionary — 723(3). Not a listed use in C-N1. One wash bay only, capable of washing a single vehicle at a time (§162(a)(ii)); vehicle exit doors must be min. 23.0 m from a residential-district property line (§162(c))."},
+  {"id":"p4-29","sec":"160.3","title":"Cannabis Store","summary":"Discretionary — 723(3)"},
+  {"id":"p4-30","sec":"165","title":"Child Care Service","summary":"Discretionary — 723(3)"},
+  {"id":"p4-31","sec":"170","title":"Computer Games Facility","summary":"Discretionary — 723(3)"},
+  {"id":"p4-32","sec":"178","title":"Custodial Care","summary":"Discretionary — 723(3). No use area restriction (§728(3)(b)). Must not be on the ground floor (§729(1))."},
+  {"id":"p4-33","sec":"184","title":"Drinking Establishment – Small","summary":"Discretionary — 723(3)"},
+  {"id":"p4-34","sec":"185","title":"Drive Through","summary":"Discretionary — 723(3). Not a listed use in C-N1. Must always be approved together with another use (§185(a)(ii)); outdoor speakers, if any, must be min. 23.0 m from a residential-district property line (§185(c)(i))."},
+  {"id":"p4-35","sec":"188","title":"Dwelling Unit","summary":"Discretionary — 723(3). Must not be on the ground floor (§729(1)). Triggers the Recycling Facilities rule (§698, General tab) and the Table 4.1 parking rate in §121 (Citywide tab)."},
+  {"id":"p4-36","sec":"198.1","title":"Food Production","summary":"Discretionary — 723(3)"},
+  {"id":"p4-37","sec":"203","title":"Gas Bar","summary":"Discretionary — 723(3). Not a listed use in C-N1. Max. 40.0 m² gross floor area for a standalone building not combined with another use (§203(a)(iii)); canopy max. 5.0 m height (§203(c))."},
+  {"id":"p4-38","sec":"208","title":"Home Occupation – Class 2","summary":"Discretionary — 723(3)"},
+  {"id":"p4-39","sec":"225","title":"Liquor Store","summary":"Discretionary — 723(3)"},
+  {"id":"p4-40","sec":"226","title":"Live Work Unit","summary":"Discretionary — 723(3). Not barred from the ground floor in C-N2 (unlike Dwelling Unit — §729(1) only lists Dwelling Unit, not Live Work Unit). Triggers the Recycling Facilities rule (§698, General tab) and the Table 4.1 parking rate in §121 (Citywide tab)."},
+  {"id":"p4-41","sec":"247","title":"Outdoor Café","summary":"Discretionary — 723(3)"},
+  {"id":"p4-42","sec":"254.1","title":"Payday Loan","summary":"Discretionary — 723(3). Not a listed use in C-N1. Must not be located within 400.0 m of another Payday Loan or similar approved use (§254.1(c)); requires min. 1.0 bicycle parking stall – Class 1 and 1.0 stall – Class 2 per 100.0 m² of gross usable floor area (§254.1(e)/(f))."},
+  {"id":"p4-43","sec":"262","title":"Place of Worship – Small","summary":"Discretionary — 723(3)"},
+  {"id":"p4-44","sec":"266","title":"Power Generation Facility – Small","summary":"Discretionary — 723(3)"},
+  {"id":"p4-45","sec":"277","title":"Residential Care","summary":"Discretionary — 723(3). No use area restriction (§728(3)(c)). Must not be on the ground floor (§729(1))."},
+  {"id":"p4-46","sec":"281","title":"Restaurant: Licensed","summary":"Discretionary — 723(3). Max. public area 150.0 m² — an absolute cap (§728(2.1)), same as Restaurant: Food Service Only."},
+  {"id":"p4-47","sec":"294","title":"Seasonal Sales Area","summary":"Discretionary — 723(3). Not a listed use in C-N1. Must always be approved together with another use (§294(a)(iii)); goods must not be fully enclosed within a building (§294(a)(ii)); does not require its own motor vehicle parking stalls (§294(c))."},
+  {"id":"p4-48","sec":"298","title":"Service Organization","summary":"Discretionary — 723(3)"},
+  {"id":"p4-49","sec":"301","title":"Sign – Class C","summary":"Discretionary — 723(3). C-N2's Freestanding Sign caps: max. area 9.5 m², max. height 6.0 m (§97(1))."},
+  {"id":"p4-50","sec":"303","title":"Sign – Class E","summary":"Discretionary — 723(3)"},
+  {"id":"p4-51","sec":"307","title":"Social Organization","summary":"Discretionary — 723(3)"},
+  {"id":"p4-52","sec":"309","title":"Special Function – Class 2","summary":"Discretionary — 723(3)"},
+  {"id":"p4-53","sec":"320.1","title":"Urban Agriculture","summary":"Discretionary — 723(3)"},
+  {"id":"p4-54","sec":"322","title":"Utility Building","summary":"Discretionary — 723(3)"},
+  {"id":"p4-55","sec":"324","title":"Vehicle Rental – Minor","summary":"Discretionary — 723(3). Not a listed use in C-N1. Max. five vehicles available for rent (§324(a)(iii)); rented vehicles' gross vehicle weight max. 4536 kg (§324(a)(ii))."},
+
+  {"id":"p4-56","sec":"260","title":"Place of Worship – Large","summary":"Discretionary — 723(4), only on a parcel with an existing building already used as a Place of Worship – Large or Place of Worship – Medium, and only if new development doesn't increase any assembly area. Otherwise not an available use in C-N2. Not a listed use in C-N1."},
+  {"id":"p4-57","sec":"261","title":"Place of Worship – Medium","summary":"Discretionary — 723(4), same qualifying condition as Place of Worship – Large — only on a parcel with an existing building already used as a Place of Worship – Large or Place of Worship – Medium, with no increase in assembly area. Not a listed use in C-N1."}
+]
+};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"part7div1", label:"Part 7 — Commercial General Rules", short:"Sec. 689–700"},
+    {key:"part7div2", label:"Part 7 — C-N2 District Rules", short:"Sec. 721–737"},
+    {key:"part3", label:"Part 3 — Citywide Rules", short:"Sec. 53–129.1"},
+    {key:"part4", label:"Part 4 — Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // The 18 uses whose Permitted/Discretionary status flips on the two
+  // building-status facts (§722(2)/§723(1)/§723(2)).
+  const CONDITIONAL_GENERAL_IDS = new Set([
+    "p4-5","p4-6","p4-7","p4-8","p4-9","p4-10","p4-11","p4-12","p4-13","p4-14",
+    "p4-15","p4-16","p4-17","p4-18","p4-19","p4-20","p4-21","p4-22"
+  ]);
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:"", newBuilding:false, priorCommercialUse:false},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+    document.getElementById("dc-newbuilding").checked = !!state.project.newBuilding;
+    document.getElementById("dc-priorcommercial").checked = !!state.project.priorCommercialUse;
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  // ---------------- Building-status computed logic (§07 pattern) ----------------
+
+  function computeGeneralConditionalStatus(){
+    if(state.project.newBuilding){
+      return {bucket:"Discretionary", label:"Discretionary — §723(1)", detail:"In a proposed building or a proposed addition to an existing building."};
+    }
+    if(!state.project.priorCommercialUse){
+      return {bucket:"Discretionary", label:"Discretionary — §723(2)", detail:"Existing building does not yet contain an approved commercial use."};
+    }
+    return {bucket:"Permitted", label:"Permitted — §722(2)", detail:"Existing approved building that already contains an approved commercial use."};
+  }
+
+  function computedStatusFor(item){
+    if(CONDITIONAL_GENERAL_IDS.has(item.id)) return computeGeneralConditionalStatus();
+    return null;
+  }
+
+  function useGroupBucket(item){
+    const computed = computedStatusFor(item);
+    if(computed) return computed.bucket;
+    return /^Permitted/i.test(item.summary || "") ? "Permitted" : "Discretionary";
+  }
+
+  function allItemsForTab(tabKey){
+    return CHECKLIST_DATA[tabKey] || [];
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  // Scoping is on `proposed` alone, NOT on isSelectableUse — an
+  // already-added card must stay visible (re-labeled, not removed) even if
+  // a later checkbox toggle changes that use's computed status.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("part4").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "part4" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["part7div1","part7div2","part3","part4"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips, district-condition checkboxes) calls
+  // this instead of touching only the element that was clicked. It rebuilds
+  // tab counts, the overall progress bar, and the whole main panel every
+  // time, so nothing in the sidebar or stat strip can ever go stale.
+  // Scroll position in the main panel is preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the C-N2 Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the C-N2 district, commercial districts generally, or all districts.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> — it's used to name your session file.</li>
+        <li>Set the two <b>District conditions</b> checkboxes to match the project: whether the use is going into a proposed building/addition or an existing approved building, and (if existing) whether that building already has an approved commercial use. These drive the computed Permitted/Discretionary status on 18 of the 58 uses in the Use tab — see §722(2)/§723(1)/§723(2).</li>
+        <li><b>Part 7 — Commercial General Rules</b> and <b>Part 7 — C-N2 District Rules</b> apply to every C-N2 project without exception. Work through these first — C-N2 carries a 1.2-hectare parcel-area cap (§725) and a minimum 3.0 m front setback (§730) that C-N1 doesn't require, but (unlike C-N1) has no dedicated Building Location/Orientation, Building Façade, or Vehicle Access section of its own.</li>
+        <li><b>Part 3 — Citywide Rules</b> applies to every district in Calgary, including C-N2. Don't skip it.</li>
+        <li><b>Part 4 — Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the detailed use-specific requirements. Restaurant: Food Service Only and Restaurant: Licensed both carry an absolute 150.0 m² public-area cap (§728(2.1)) that isn't computed here — confirm it directly. Unlike C-N1, C-N2 permits a wider range of automotive/drive-through uses (Auto Service – Minor, Car Wash – Single Vehicle, Drive Through, Gas Bar, Vehicle Rental – Minor) as discretionary uses, plus Catering Service – Minor and Veterinary Clinic in the building-status-conditional group. Dwelling Unit and Live Work Unit both trigger the citywide Recycling Facilities rule (§698) and a district-specific parking rate in Table 4.1 (§121).</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it — your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 64 fixed checks plus whichever of the 58 use-tab items you add, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope — what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the ~240 Part 4 use definitions not listed under C-N2, subdivision requirements, and site-specific overlays — Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps. Like C-N1, C-N2's floor area ratio (§726) and building height (§727) are fixed district-wide numbers rather than per-parcel map suffixes, so nothing needs to be looked up on the Land Use District Map for those two checks. Unlike C-N1, C-N2 has no Building Location/Orientation, Building Façade, or Vehicle Access section, but does carry its own minimum front setback (§730) and a non-deleted Exclusive Use of Motor Vehicle Parking Stalls rule (§735). Table 4.1's C-N2-specific Dwelling Unit / Live Work Unit parking rate (§121, a single flat rate unlike C-N1's parcel-size tiering) is reflected in the Citywide tab, but confirm it directly against the current consolidated bylaw before relying on it. Confirm all of this separately for your parcel, and always check the current consolidated bylaw on calgary.ca since it is amended regularly.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;— confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;— non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;— need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;— not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+
+    if(state.activeTab === "part4"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab…";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) — nothing else is offered. Picking one
+  // adds it to the reviewed-uses set (proposed:true) and the card for that
+  // use (with its specific rule text and pass/fail controls) appears below.
+  // Grouping (Permitted vs Discretionary optgroup) uses the LIVE computed
+  // bucket for the 18 conditional uses, not the static summary prefix.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review…";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", bucket:"Permitted"},
+      {label:"Discretionary uses", bucket:"Discretionary"},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("part4")
+        .filter(it => isSelectableUse(it) && useGroupBucket(it)===g.bucket && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const computed = computedStatusFor(it);
+        const tag = computed ? ` — ${computed.bucket}` : "";
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})${tag}`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="part7div1") return "General rules for all Commercial land use districts — landscaping, screening, setback projections, fences, solar, WECS. Always applicable.";
+    if(key==="part7div2") return "C-N2-specific rules — permitted/discretionary uses, parcel area, fixed FAR/height, use area, location of uses within buildings, setbacks, landscaping, parking-stall signage, bicycle parking. Always applicable. Unlike C-N1, C-N2 has no Building Location/Orientation, Building Façade, or Vehicle Access section, but carries its own minimum front setback (§730) and a live Exclusive Use of Motor Vehicle Parking Stalls rule (§735).";
+    if(key==="part3") return "Rules Governing All Districts — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to C-N2 the same as every other district. Sign figures shown are the same small allowances C-N1 gets, and digital sign luminance follows the citywide default rather than the elevated corridor rate.";
+    if(key==="part4") return "Add the proposed use(s) from the dropdown — only the 58 C-N2 uses (5 unconditionally permitted, 18 building-status-conditional, 33 unconditionally discretionary, and 2 discretionary only on a parcel with an existing Place of Worship – Large/Medium building) are offered. The 18 conditional uses show a live-computed status based on the sidebar's District Conditions checkboxes. Restaurant: Food Service Only and Restaurant: Licensed both carry an absolute 150.0 m² public-area cap that isn't computed — confirm it directly.";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    const refocus = ()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(refocus);
+    } else {
+      refocus();
+    }
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "part4" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "part4";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    if(isPart4){
+      const computed = computedStatusFor(item);
+      if(computed){
+        const badge = document.createElement("p");
+        badge.className = "computed";
+        badge.innerHTML = `<b>${escapeHtml(computed.label)}</b> — ${escapeHtml(computed.detail)} <span class="mono" style="color:var(--blue-dim);font-size:11px;">(computed from District Conditions)</span>`;
+        card.appendChild(badge);
+      }
+    }
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items…";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["part7div1","part7div2","part3","part4"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  // Third element is the field type: "text" (default) or "bool". C-N2
+  // carries two §07-pattern district-condition checkboxes, exported and
+  // re-imported exactly like every other project fact.
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+    ["Proposed building or addition (unchecked = existing approved building)", "newBuilding", "bool"],
+    ["Existing building has a prior approved commercial use", "priorCommercialUse", "bool"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "part4";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported — ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed — couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed — not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed — no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported — ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed — couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  function bindDistrictConditions(){
+    document.getElementById("dc-newbuilding").addEventListener("change", (e)=>{
+      state.project.newBuilding = e.target.checked;
+      refreshEverything();
+    });
+    document.getElementById("dc-priorcommercial").addEventListener("change", (e)=>{
+      state.project.priorCommercialUse = e.target.checked;
+      refreshEverything();
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindDistrictConditions();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>

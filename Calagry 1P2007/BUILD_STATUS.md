@@ -44,7 +44,7 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | Division | District Code(s) | Status |
 |---|---|---|
 | 2 | C-N1 | ✅ `CN1_Zoning_Review_Checklist.html` |
-| 3 | C-N2 | ⬜ |
+| 3 | C-N2 | ✅ `CN2_Zoning_Review_Checklist.html` |
 | 4 | C-C1 | ⬜ |
 | 5 | C-C2 | ⬜ |
 | 6 | C-COR1 | ✅ `CCOR1_Zoning_Review_Checklist.html` |
