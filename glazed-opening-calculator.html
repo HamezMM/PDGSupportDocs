@@ -195,8 +195,8 @@ function calc(dist,area){
     }
   }
   const areaNote = area<=30?'area row: 30 m²':area>100?'area row: Over 100':
-    `area interpolated between ${loA} m² (${getRowValues(loA,loIdx).toFixed(1)}%→${getRowValues(loA,loIdx+1).toFixed(1)}%) and ${hiA} m² (${getRowValues(hiA,loIdx).toFixed(1)}%→${getRowValues(hiA,loIdx+1).toFixed(1)}%)`;
-  const note=`Interpolated between ${loD} m (${loV.toFixed(1)}%) and ${hiD} m (${hiV.toFixed(1)}%) — ${areaNote}`;
+    `area interpolated between ${loA} m² (${getRowValues(loA,loIdx).toFixed(2)}%→${getRowValues(loA,loIdx+1).toFixed(2)}%) and ${hiA} m² (${getRowValues(hiA,loIdx).toFixed(2)}%→${getRowValues(hiA,loIdx+1).toFixed(2)}%)`;
+  const note=`Interpolated between ${loD} m (${loV.toFixed(2)}%) and ${hiD} m (${hiV.toFixed(2)}%) — ${areaNote}`;
   return {pct,note,loD,hiD,loA,hiA,loIdx,hiIdx:loIdx+1};
 }
 
@@ -237,7 +237,7 @@ function update(){
   const dist=parseFloat(document.getElementById('dist').value)||0;
   const area=parseFloat(document.getElementById('area').value)||0;
   const res=calc(dist,area);
-  const pct=Math.round(res.pct*10)/10;
+  const pct=Math.round(res.pct*100)/100;
   document.getElementById('result-num').textContent=pct+'%';
   document.getElementById('interp-note').textContent=res.note;
   highlightTable(res,dist,area);
