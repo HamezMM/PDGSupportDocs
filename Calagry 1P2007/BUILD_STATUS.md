@@ -5,7 +5,7 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: C-R2 (Commercial – Regional 2), Part 7, Division 11.
+Last completed: S-UN (Special Purpose – Urban Nature), Part 9, Division 2.
 
 ## Part 5 — Residential Districts
 
@@ -77,7 +77,7 @@ Last completed: C-R2 (Commercial – Regional 2), Part 7, Division 11.
 
 | Division | District Code(s) | Status |
 |---|---|---|
-| 2 | S-UN | ⬜ |
+| 2 | S-UN | ✅ `SUN_Zoning_Review_Checklist.html` |
 | 3 | S-SPR | ⬜ |
 | 4 | S-CS | ⬜ |
 | 5 | S-R | ⬜ |
