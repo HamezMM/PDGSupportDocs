@@ -82,3 +82,24 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 8 | S-URP | ⬜ |
 | 9 | S-FUD | ⬜ |
 | 10 | S-TUC | ⬜ |
+
+## Part 11–14 — Centre City (Downtown) Districts
+
+Part 10 ("Downtown") was deleted by 33P2013 in 2014 and replaced by the Centre City district
+family below — this is the current "downtown" zoning group referenced by the Land Use Bylaw.
+
+| Part | Division | District Code(s) | Status |
+|---|---|---|---|
+| 11 | 2 | CC-MH | ✅ `CCMH_Zoning_Review_Checklist.html` |
+| 11 | 3 | CC-MHX | ⬜ |
+| 11 | 5 | CC-X | ⬜ |
+| 11 | 6 | CC-COR | ⬜ |
+| 12 | 2 | CC-ET | ⬜ |
+| 12 | 3 | CC-EIR | ⬜ |
+| 12 | 4 | CC-EMU | ⬜ |
+| 12 | 5 | CC-EPR | ⬜ |
+| 12 | 6 | CC-ERR | ⬜ |
+| 12 | 7 | CC-ER | ⬜ |
+| 13 | 2–3 | CR20-C20/R20 | ⬜ |
+| 14 | 2 | MU-1 | ⬜ |
+| 14 | 3 | MU-2 | ⬜ |
