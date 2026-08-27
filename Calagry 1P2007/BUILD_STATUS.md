@@ -5,6 +5,8 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
+Last completed: C-R2 (Commercial – Regional 2), Part 7, Division 11.
+
 ## Part 5 — Residential Districts
 
 | Division | District Code(s) | Status |
