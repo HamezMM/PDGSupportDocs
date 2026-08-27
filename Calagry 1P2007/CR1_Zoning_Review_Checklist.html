@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C-R1 District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+<a href="../index.html" style="display:block;padding:14px 20px 0 20px;font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8FAFC9;text-decoration:none;text-transform:uppercase">&larr; PDG Support Docs</a>
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>C-R1 District Review Checklist</h1>
+    <div class="sub">Commercial &ndash; Regional 1 &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. 40 Ave Regional Retail Centre">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {
+"part7div1": [
+  {"id":"d1-0","sec":"689","title":"Projections Into Setback Areas","summary":"Buildings generally can't sit in a setback. Eaves may project max 0.6 m; below-grade parking structures may extend into a setback; signs may be located in a setback per Part 3, Div. 5."},
+  {"id":"d1-1","sec":"690","title":"General Landscaped Area Rules","summary":"A landscape plan approved by the Development Authority is required with every DP application that changes the building/parcel: existing/proposed topography, vegetation retention, layout (berms, pathways, screening, slopes, hard/soft areas), plant schedule, and irrigation details. Must be maintained for the life of the development."},
+  {"id":"d1-2","sec":"691","title":"Planting Requirements","summary":"Plant material must suit Calgary's climate (CNLA standard). Min. 25% of trees coniferous. Deciduous trees: min. 50 mm caliper (50% at min. 75 mm). Coniferous trees: min. 2.0 m height (50% at min. 3.0 m). Shrubs: min. 0.6 m height/spread at planting. Soft surfaced landscaped areas may include Urban Agriculture."},
+  {"id":"d1-3","sec":"692","title":"Low Water Irrigation System","summary":"If used, only trees/shrubs are irrigated (not turf), and plants with similar water needs must be grouped."},
+  {"id":"d1-4","sec":"693","title":"Additional Landscaping Requirements","summary":"All setback area not needed for motor vehicle access, sidewalks, or another Development-Authority-approved purpose must be soft-landscaped; all other parcel area must be soft-landscaped unless the Development Authority allows otherwise. Every building needs at least one sidewalk connecting the public entrance to a public sidewalk (or nearest street if none exists) and one connecting the parking area to the public entrance(s). Sidewalks: hard-surfaced, min. 2.0 m wide, distinct surfacing from parking, raised above the parking surface when located within it."},
+  {"id":"d1-5","sec":"694","title":"Landscaping for Large Parking Area","summary":"Triggered when total parking/aisle/access surface area is ≥ 5000.0 m². Landscaping required at 0.150 m² per 1.0 m² of that surface, as hard + soft landscaping in islands and strips. Islands: start/end of every stall row and after every 20 stalls, min. 12.0 m² with one side ≥ 2.0 m, min. 1 tree + 2 shrubs, curbed. Strips: every 4 rows, perpendicular, min. 2.0 m deep, min. 1 tree per 15.0 m of length, curbed. An island/strip contiguous with a setback area is not required at that location."},
+  {"id":"d1-6","sec":"695","title":"Visibility Setback","summary":"Within a corner visibility triangle, buildings, finished grade, and vegetation must not be located between 0.75 m and 4.60 m above the lowest street elevation."},
+  {"id":"d1-7","sec":"696","title":"Mechanical Screening","summary":"Outdoor mechanical equipment must be positioned, camouflaged, or screened from view of a public space, or from a residential-district parcel within 30.0 m, using a 1.7 m eye-level sightline."},
+  {"id":"d1-8","sec":"697","title":"Garbage","summary":"Garbage/waste must be stored inside a building or in a Development-Authority-approved enclosure; enclosures can't be located in a setback area."},
+  {"id":"d1-9","sec":"698","title":"Recycling Facilities","summary":"Required for every development containing Dwelling Units. C-R1 permits no residential uses, so this typically does not apply — confirm no Dwelling Units are proposed."},
+  {"id":"d1-10","sec":"699","title":"Screening","summary":"A max. 2.0 m fence is required along a property line shared with a residential or special purpose district, and along a lane (except where an opening is needed for pedestrian/vehicle access)."},
+  {"id":"d1-11","sec":"699.1","title":"Solar Collectors","summary":"Roof- or wall-mounted only. Roof pitch <4:12: max 2.0 m projection. Pitch ≥4:12: max 1.3 m projection, can't overhang the roof edge. Wall-mounted: min. 2.4 m above grade, max 0.6 m projection."},
+  {"id":"d1-12","sec":"699.2","title":"Wind Energy Conversion System","summary":"Detailed siting, colour, tower type, safety, decommissioning (remove after 6 months' disrepair/abandonment), residential setbacks (60 m Type 1 / 550 m Type 2), lighting/signage restrictions, 100 m wetland buffer, max 100 kW capacity, biophysical assessment, and DP term limits (5 yrs, renewable). Only relevant if a WECS is proposed — both Wind Energy Conversion System – Type 1 and – Type 2 are discretionary uses in C-R1."},
+  {"id":"d1-13","sec":"700","title":"Parcel Access","summary":"All developments must comply with the Controlled Streets Bylaw for access/curb cuts."}
+],
+"part7div10": [
+  {"id":"d10-0","sec":"843","title":"Purpose","summary":"Confirm project fits the intended character: large 'big box' single-entry, mostly single-use buildings; large retail sales with product displayed outdoors; large building supply contractors/garden centres selling and keeping product outdoors; locations on or near major roads/commercial corridors, or in industrial areas; primary motor vehicle access from streets; pedestrian connections between buildings; parcel/building design that limits the effect of large uses on nearby residential areas; compatibility with Industrial – Business, Industrial – Edge and Industrial – General Districts; higher design standards only where along major roads/gateways or where visibility/aesthetics are a planning concern; and building density set per-parcel via maximum floor area ratio. (Informational — useful for discretionary-use judgment calls.) §843(2) separately states areas greater than 6.0 hectares 'should not' be designated C-R1 — an aspirational rezoning guideline, distinct from the hard 6.0 hectare maximum parcel area rule in §847."},
+  {"id":"d10-1","sec":"846","title":"Rules — Cross-References","summary":"Confirms all C-R1 uses must also meet: the General Rules for Commercial Land Use Districts referenced in Part 7, Division 1 (above); the Rules Governing All Districts referenced in Part 3; and the applicable Uses And Use Rules referenced in Part 4."},
+  {"id":"d10-2","sec":"847","title":"Parcel Area","summary":"The parcel area must be a minimum of 0.5 hectares and a maximum of 6.0 hectares — a hard rule, distinct from the aspirational 6.0 hectare designation guideline in §843(2)."},
+  {"id":"d10-3","sec":"848","title":"Floor Area Ratio","summary":"Max. floor area ratio is the number following the letter 'f' indicated on the Land Use District Maps for this parcel — confirm the map designation directly."},
+  {"id":"d10-4","sec":"849","title":"Building Height","summary":"Max. building height is a fixed 15.0 metres — unlike C-R1's floor area ratio (and unlike some other commercial districts' height), this is not set per-parcel by a map 'h' suffix."},
+  {"id":"d10-5","sec":"850","title":"Buildings","summary":"(1) Every parcel must have one building equal to or exceeding 3600.0 m² gross floor area. (2) In addition, a parcel may have up to two more buildings, so long as no additional building exceeds 360.0 m² gross floor area. (3) Max. 3 buildings total per parcel."},
+  {"id":"d10-6","sec":"851","title":"Use Area","summary":"(1) Only one use area in a building must be equal to or greater than 3600.0 m². (2) Max. use area for an Office is 360.0 m². (3) Max. public area for a Restaurant: Food Service Only or Restaurant: Licensed is 300.0 m²."},
+  {"id":"d10-7","sec":"852","title":"Building Entrance Features","summary":"Public entrances must be accentuated by a minimum of one example of three or more of the following features: arcades; arches; awnings; pitched or raised cornice roof forms; porticoes; recesses or projections; or windows."},
+  {"id":"d10-8","sec":"853","title":"Front Setback Area","summary":"Min. depth of 6.0 metres."},
+  {"id":"d10-9","sec":"854","title":"Rear Setback Area","summary":"Tiered by what's shared on the rear property line: another C-R1 parcel — no requirement; any other commercial district 3.0 m; industrial district 3.0 m; residential district 6.0 m; special purpose district 6.0 m; LRT corridor or street 6.0 m; lane separating from a residential district 6.0 m; lane (all other cases) 3.0 m."},
+  {"id":"d10-10","sec":"855","title":"Side Setback Area","summary":"Same tiered pattern as the rear setback (§854): another C-R1 parcel — no requirement; any other commercial district 3.0 m; industrial district 3.0 m; residential district 6.0 m; special purpose district 6.0 m; LRT corridor or street 6.0 m; lane separating from a residential district 6.0 m; lane (all other cases) 3.0 m."},
+  {"id":"d10-11","sec":"856","title":"Landscaping In Setback Areas","summary":"Tree/shrub density varies by adjacency: LRT corridor or street — soft-surfaced, min. 1 tree + 2 shrubs per 35 m² (or 50 m² with low-water irrigation); residential district — soft-surfaced, min. 1 tree per 30 m² (or 45 m² with low-water irrigation), planted in a linear arrangement; lane, or a commercial/industrial/special purpose adjacency — soft-surfaced (sidewalk optional), min. 1 tree + 2 shrubs per 35 m² (or 50 m² with low-water irrigation)."},
+  {"id":"d10-12","sec":"857","title":"Minimum Required Motor Vehicle Parking Stalls — Deleted","summary":"Deleted — C-R1 has no district-specific parking-count provision. The citywide minimum parking/loading calculation (Part 3 §121, keyed to the Part 4 schedule for each proposed use) applies in full."},
+  {"id":"d10-13","sec":"858","title":"Excess Motor Vehicle Parking Stalls","summary":"Where the number of motor vehicle parking stalls provided for uses exceeds 6.0 stalls per 100.0 square metres of gross usable floor area, the excess stalls must be located in either underground or structured parking."},
+  {"id":"d10-14","sec":"859","title":"Exclusive Use of Motor Vehicle Parking Stalls — Deleted","summary":"Deleted — no district-specific provision."},
+  {"id":"d10-15","sec":"860","title":"Required Bicycle Parking Stalls","summary":"(1) Min. bicycle parking stalls – Class 1 for all uses is the minimum requirement referenced in Part 4. (2) Min. bicycle parking stalls – Class 2 is 5.0 per cent of the number of motor vehicle parking stalls."}
+],
+"part3": [
+  {"id":"p3-0","sec":"53","title":"Public Realm Setbacks","summary":"Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to the district's own front/side/rear setback, and the Development Authority cannot relax it."},
+  {"id":"p3-1","sec":"54","title":"Airport Vicinity Regulations","summary":"If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply. Confirm against the current AVPA maps/bylaw."},
+  {"id":"p3-2","sec":"55","title":"Floodway, Flood Fringe & Overland Flow — Applicability","summary":"Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping)."},
+  {"id":"p3-3","sec":"56","title":"Floodway Regulations","summary":"If in the Floodway: new development is heavily restricted — confirm what, if anything, is permitted."},
+  {"id":"p3-4","sec":"57","title":"New Buildings and Alterations","summary":"If in the Flood Fringe: specific construction/flood-proofing requirements for new buildings and alterations."},
+  {"id":"p3-5","sec":"58","title":"Alterations to the Floodway and Riverbanks","summary":"Special review requirements for any riverbank or floodway alteration work."},
+  {"id":"p3-6","sec":"61","title":"Building Design in the Overland Flow Area","summary":"Specific design requirements if the parcel is within a mapped overland flow area."},
+  {"id":"p3-7","sec":"62","title":"Lighting Requirements","summary":"General exterior lighting standards apply to the site."},
+  {"id":"p3-8","sec":"63","title":"Shielding","summary":"Light fixtures must be shielded to control glare and light spill, particularly toward residential areas."},
+  {"id":"p3-9","sec":"64","title":"Mounting of Fixtures","summary":"Requirements for how/where lighting fixtures are mounted."},
+  {"id":"p3-10","sec":"65","title":"Height Limits (Lighting)","summary":"Maximum height restrictions on lighting fixtures/poles."},
+  {"id":"p3-11","sec":"66","title":"Canopy Lighting","summary":"Specific rules for lighting under canopies. Gas Bar and Drive Through are both discretionary uses in C-R1 (§845(m), §845(j)), so this commonly applies to fuel-dispensing or drive-through canopies — confirm applicability directly."},
+  {"id":"p3-12","sec":"67-72","title":"Signs — Purpose, Classification, DP Requirements","summary":"All signs are classified Class A–G. Confirm a DP is required (most are) and whether a Comprehensive Sign Program applies to the site."},
+  {"id":"p3-13","sec":"73-76","title":"General Sign Rules, Digital Displays, Maintenance","summary":"General construction/safety/illumination standards for all signs. If any sign has a digital display: C-R1 is one of the districts with the elevated night-time (sunset–sunrise) maximum luminance of 350 Nits (§74(6)(b)(ii), along with C-COR1, C-COR2, C-COR3, C-R2, C-R3, S-CRI and S-FUD) — not the general 300 Nits default that applies in most other districts, and below the 500 Nits industrial-district figure; daytime cap is 7500 Nits everywhere. Also covers ongoing sign maintenance obligations and shared signage for parcels in related function."},
+  {"id":"p3-14","sec":"77-90","title":"Class A Signs (permitted use in C-R1)","summary":"Includes Address, Art, Banner, Construction, Directional, Flag, Gas Bar, Pedestrian, Real Estate, Special Event, Show Home, Temporary, and Window sign sub-rules. Check whichever sub-types are proposed."},
+  {"id":"p3-15","sec":"91-93","title":"Class B Signs (permitted use in C-R1)","summary":"Designated signable area/location rules and fascia sign rules."},
+  {"id":"p3-16","sec":"94-97","title":"Class C Signs (discretionary use in C-R1) — Freestanding Sign","summary":"Freestanding sign rules: number allowed, size and height restrictions. C-R1 has no district-specific override in Part 7, Division 10 — it falls under the 'all other commercial districts' cap in §97(3): max. 14.0 square metres sign area, max. 9.0 metres height (not the lower 9.5 m² / 6.0 m figure limited to C-N1, C-N2 and C-C1, and not C-COR3's 18.5 m² / 12.2 m)."},
+  {"id":"p3-17","sec":"98-102","title":"Class D Signs (permitted use in C-R1) — Canopy / Projecting Sign","summary":"Canopy sign rules, signs mounted under canopies, and projecting sign rules. C-R1 has no district-specific override in Part 7, Division 10 — it falls under the 'all other commercial districts' Projecting Sign area cap of 4.5 square metres (§102(3))."},
+  {"id":"p3-18","sec":"103-109","title":"Class E Signs (discretionary use in C-R1)","summary":"Includes Inflatable Sign, Painted Wall Sign, Rotating Sign, Temporary Sign Marker sub-rules."},
+  {"id":"p3-19","sec":"111-115.5","title":"Class F/G — Third Party Advertising Signs (discretionary in C-R1)","summary":"Prohibited/permitted locations, siting, height and size limits, general rules, Major Parks provision, and extra rules if the sign has a digital display."},
+  {"id":"p3-20","sec":"116","title":"Parking — General Rules","summary":"Baseline rules governing all required parking/loading."},
+  {"id":"p3-21","sec":"117","title":"Parking Stall Signage","summary":"Signage requirements for parking stalls (e.g., accessible stalls)."},
+  {"id":"p3-22","sec":"118","title":"Location of Parking and Loading Requirements","summary":"Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings."},
+  {"id":"p3-23","sec":"119","title":"Use of Parking and Loading Stalls","summary":"Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."},
+  {"id":"p3-24","sec":"120","title":"Identification of Required Parking/Loading Stalls","summary":"How required stalls must be marked/identified on-site and on drawings."},
+  {"id":"p3-25","sec":"121","title":"Calculation of Minimum Parking/Loading Stalls","summary":"Pulls the minimum required stall counts from the applicable parking schedule for each proposed use — the core parking-ratio calculation. C-R1's own parking-count provision (§857) is deleted, so this citywide calculation governs in full for every proposed use."},
+  {"id":"p3-26","sec":"122","title":"Standards for Motor Vehicle Parking Stalls","summary":"Stall/aisle dimensions and layout standards."},
+  {"id":"p3-27","sec":"123","title":"Loading Stalls","summary":"Required loading stall size and count standards."},
+  {"id":"p3-28","sec":"124","title":"Relaxations of Parking/Loading Requirements","summary":"Circumstances where the Development Authority may relax parking/loading counts."},
+  {"id":"p3-29","sec":"124.1","title":"Parking Stall Exemptions","summary":"Specific exemptions from providing required parking stalls."},
+  {"id":"p3-30","sec":"125","title":"Bicycle Parking Stalls","summary":"Required bicycle parking counts and standards from Part 4 for Class 1 stalls, except C-R1's own flat Class 2 rate — 5.0 per cent of the number of motor vehicle parking stalls — set out in §860 — see District tab."},
+  {"id":"p3-31","sec":"126","title":"Motor Vehicle Pick-Up and Drop-Off Stalls","summary":"Rules for any dedicated pick-up/drop-off stalls. Drive Through is a discretionary use in C-R1 (§845(j)) — this commonly applies whenever a drive-through function is proposed."},
+  {"id":"p3-32","sec":"129.1","title":"Infrastructure Requirements","summary":"The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development."}
+],
+"part4": [
+  {"id":"use-0","sec":"249","title":"Park","summary":"Permitted — §844(a)"},
+  {"id":"use-1","sec":"266","title":"Power Generation Facility – Small","summary":"Permitted — §844(b)"},
+  {"id":"use-2","sec":"299","title":"Sign – Class A","summary":"Permitted — §844(c)"},
+  {"id":"use-3","sec":"300","title":"Sign – Class B","summary":"Permitted — §844(d)"},
+  {"id":"use-4","sec":"302","title":"Sign – Class D","summary":"Permitted — §844(e). C-R1 has no district-specific Projecting Sign area override — see Citywide tab (§102(3))."},
+  {"id":"use-5","sec":"321","title":"Utilities","summary":"Permitted — §844(f)"},
+
+  {"id":"use-6","sec":"144","title":"Artist's Studio","summary":"Discretionary — §845(a)"},
+  {"id":"use-7","sec":"147","title":"Auction Market – Other Goods","summary":"Discretionary — §845(a.1)"},
+  {"id":"use-8","sec":"148","title":"Auction Market – Vehicles and Equipment","summary":"Discretionary — §845(b)"},
+  {"id":"use-9","sec":"150","title":"Auto Service – Major","summary":"Discretionary — §845(c)"},
+  {"id":"use-10","sec":"151","title":"Auto Service – Minor","summary":"Discretionary — §845(d)"},
+  {"id":"use-11","sec":"160.3","title":"Cannabis Store","summary":"Discretionary — §845(d.1)"},
+  {"id":"use-12","sec":"161","title":"Car Wash – Multi-Vehicle","summary":"Discretionary — §845(e)"},
+  {"id":"use-13","sec":"162","title":"Car Wash – Single Vehicle","summary":"Discretionary — §845(f)"},
+  {"id":"use-14","sec":"174","title":"Convenience Food Store","summary":"Discretionary — §845(g)"},
+  {"id":"use-15","sec":"183","title":"Drinking Establishment – Medium","summary":"Discretionary — §845(h)"},
+  {"id":"use-16","sec":"184","title":"Drinking Establishment – Small","summary":"Discretionary — §845(i)"},
+  {"id":"use-17","sec":"185","title":"Drive Through","summary":"Discretionary — §845(j). See Citywide tab (§126) for pick-up/drop-off stall rules."},
+  {"id":"use-18","sec":"195","title":"Fitness Centre","summary":"Discretionary — §845(k)"},
+  {"id":"use-19","sec":"198.1","title":"Food Production","summary":"Discretionary — §845(k.1)"},
+  {"id":"use-20","sec":"201","title":"Gaming Establishment – Bingo","summary":"Discretionary — §845(l)"},
+  {"id":"use-21","sec":"203","title":"Gas Bar","summary":"Discretionary — §845(m). See Citywide tab (§66, §99–§100) for canopy lighting/signage rules if a fuel-dispensing canopy is proposed."},
+  {"id":"use-22","sec":"211","title":"Indoor Recreation Facility","summary":"Discretionary — §845(n)"},
+  {"id":"use-23","sec":"216","title":"Information and Service Provider","summary":"Discretionary — §845(n.1)"},
+  {"id":"use-24","sec":"225","title":"Liquor Store","summary":"Discretionary — §845(o)"},
+  {"id":"use-25","sec":"246","title":"Office","summary":"Discretionary — §845(p.1)"},
+  {"id":"use-26","sec":"247","title":"Outdoor Café","summary":"Discretionary — §845(q)"},
+  {"id":"use-27","sec":"252","title":"Parking Lot – Grade","summary":"Discretionary — §845(q.1)"},
+  {"id":"use-28","sec":"253","title":"Parking Lot – Structure","summary":"Discretionary — §845(q.2)"},
+  {"id":"use-29","sec":"267","title":"Print Centre","summary":"Discretionary — §845(q.3)"},
+  {"id":"use-30","sec":"278","title":"Restaurant: Food Service Only","summary":"Discretionary — §845(r). Max. public area 300.0 m² (§851(3))."},
+  {"id":"use-31","sec":"281","title":"Restaurant: Licensed","summary":"Discretionary — §845(t). Max. public area 300.0 m² (§851(3))."},
+  {"id":"use-32","sec":"284","title":"Restored Building Products Sales Yard","summary":"Discretionary — §845(v)"},
+  {"id":"use-33","sec":"285","title":"Retail Garden Centre","summary":"Discretionary — §845(w)"},
+  {"id":"use-34","sec":"286.1","title":"Retail and Consumer Service","summary":"Discretionary — §845(x). When located in C-R1, may incorporate Amusement Arcade, Computer Games Facility, Financial Institution, Fitness Centre, Health Care Service, Office, Pet Care Service, Print Centre, Radio and Television Studio, Restaurant: Food Service Only, and Veterinary Clinic within it (§286.1(f)) — but only where those incorporated uses are in an existing approved building, in a use area of at least 3600.0 m² that contains the Retail and Consumer Service, don't exceed 10.0% of that use area, and have no direct customer access outside the Retail and Consumer Service (§286.1(g)). Confirm this carve-out directly — not computed here."},
+  {"id":"use-35","sec":"294","title":"Seasonal Sales Area","summary":"Discretionary — §845(y)"},
+  {"id":"use-36","sec":"301","title":"Sign – Class C","summary":"Discretionary — §845(z). C-R1 has no district-specific override — see Citywide tab (§97(3)): max. 14.0 m² sign area, max. 9.0 m height."},
+  {"id":"use-37","sec":"303","title":"Sign – Class E","summary":"Discretionary — §845(aa)"},
+  {"id":"use-38","sec":"304","title":"Sign – Class F","summary":"Discretionary — §845(bb)"},
+  {"id":"use-39","sec":"304.1","title":"Sign – Class G","summary":"Discretionary — §845(bb.1)"},
+  {"id":"use-40","sec":"309","title":"Special Function – Class 2","summary":"Discretionary — §845(cc)"},
+  {"id":"use-41","sec":"310","title":"Specialty Food Store","summary":"Discretionary — §845(cc.2)"},
+  {"id":"use-42","sec":"314","title":"Supermarket","summary":"Discretionary — §845(dd). Min. 465.0 m² gross floor area (§314(a)(iv)). When located in C-R1, may incorporate Amusement Arcade, Computer Games Facility, Financial Institution, Fitness Centre, Health Care Service, Office, Pet Care Service, Print Centre, Power Generation Facility – Small, Radio and Television Studio, Restaurant: Food Service Only, and Retail and Consumer Service within it (§314(c)) — but only where those incorporated uses are in an existing approved building, in a use area of at least 3600.0 m² that contains the Supermarket, don't exceed 10.0% of that use area, have no direct customer access outside the Supermarket, and (for Restaurant: Food Service Only specifically) don't exceed a 300.0 m² public area (§314(d)). Confirm this carve-out directly — not computed here."},
+  {"id":"use-43","sec":"320.1","title":"Urban Agriculture","summary":"Discretionary — §845(dd.1)"},
+  {"id":"use-44","sec":"322","title":"Utility Building","summary":"Discretionary — §845(ee)"},
+  {"id":"use-45","sec":"323","title":"Vehicle Rental – Major","summary":"Discretionary — §845(ff)"},
+  {"id":"use-46","sec":"324","title":"Vehicle Rental – Minor","summary":"Discretionary — §845(gg)"},
+  {"id":"use-47","sec":"325","title":"Vehicle Sales – Major","summary":"Discretionary — §845(hh)"},
+  {"id":"use-48","sec":"326","title":"Vehicle Sales – Minor","summary":"Discretionary — §845(ii)"},
+  {"id":"use-49","sec":"333.1","title":"Wind Energy Conversion System – Type 1","summary":"Discretionary — §845(jj). See §699.1/§699.2 in the General Rules tab for WECS siting/safety standards."},
+  {"id":"use-50","sec":"333.2","title":"Wind Energy Conversion System – Type 2","summary":"Discretionary — §845(kk). See §699.1/§699.2 in the General Rules tab for WECS siting/safety standards."}
+]
+};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"part7div1", label:"Part 7 — Commercial General Rules", short:"Sec. 689–700"},
+    {key:"part7div10", label:"Part 7 — C-R1 District Rules", short:"Sec. 843–860"},
+    {key:"part3", label:"Part 3 — Citywide Rules", short:"Sec. 53–129.1"},
+    {key:"part4", label:"Part 4 — Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:""},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  function useGroupBucket(item){
+    return /^Permitted/i.test(item.summary || "") ? "Permitted" : "Discretionary";
+  }
+
+  function allItemsForTab(tabKey){
+    return CHECKLIST_DATA[tabKey] || [];
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("part4").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "part4" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["part7div1","part7div10","part3","part4"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips) calls this instead of touching only
+  // the element that was clicked. It rebuilds tab counts, the overall
+  // progress bar, and the whole main panel every time, so nothing in the
+  // sidebar or stat strip can ever go stale. Scroll position in the main
+  // panel is preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the C-R1 Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the C-R1 district, commercial districts generally, or all districts.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> — it's used to name your session file.</li>
+        <li><b>Part 7 — Commercial General Rules</b> and <b>Part 7 — C-R1 District Rules</b> apply to every C-R1 project without exception. Work through these first.</li>
+        <li><b>Part 3 — Citywide Rules</b> applies to every district in Calgary, including C-R1. Don't skip it.</li>
+        <li><b>Part 4 — Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the detailed use-specific requirements. Retail and Consumer Service and Supermarket each carry their own use-incorporation carve-outs (§286.1(f)/(g), §314(c)/(d)) that aren't computed here — confirm both directly.</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it — your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 63 fixed checks plus whichever of the 51 use-tab items you add, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope — what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the Part 4 use definitions not listed under C-R1, subdivision requirements, and site-specific overlays — Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps. C-R1's maximum floor area ratio (§848) is set per-parcel by the 'f' suffix on the Land Use District Map — this tool doesn't look that up for you — but its maximum building height (§849) is a fixed 15.0 metres, not map-based. Parcel area (§847) is a hard 0.5–6.0 hectare range, distinct from the aspirational 'should not exceed 6.0 hectares' designation guideline in §843(2) — both are described here, but only §847 is a pass/fail rule. The Retail and Consumer Service (§286.1(f)/(g)) and Supermarket (§314(c)/(d)) use-incorporation carve-outs are plain spatial/percentage checks, not something this tool computes. C-R1 permits no residential uses, so the citywide Dwelling Unit parking table and recycling-facility rule (§698) typically don't apply — confirm no Dwelling Units are proposed. C-R1 has no district-specific sign-area/height override in Part 7, Division 10, so the general 'all other commercial districts' sign figures in the Citywide tab apply (not the lower C-N1/C-N2/C-C1 figures, and not C-COR3's higher figures) — C-R1 does, however, carry the elevated 350 Nit digital-sign luminance override. Confirm all of this separately for your parcel, and always check the current consolidated bylaw on calgary.ca since it is amended regularly.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;— confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;— non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;— need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;— not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+    if(state.activeTab === "part4"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab…";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) — nothing else is offered. Picking one
+  // adds it to the reviewed-uses set (proposed:true) and the card for that
+  // use (with its specific rule text and pass/fail controls) appears below.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review…";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", bucket:"Permitted"},
+      {label:"Discretionary uses", bucket:"Discretionary"},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("part4")
+        .filter(it => isSelectableUse(it) && useGroupBucket(it)===g.bucket && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="part7div1") return "General rules for all Commercial land use districts — landscaping, screening, setback projections, fences, solar, WECS. Always applicable.";
+    if(key==="part7div10") return "C-R1-specific rules — permitted/discretionary uses, parcel area, floor area ratio, building height, buildings/use area, entrance features, setbacks, landscaping, parking, bicycle parking. Always applicable. §848 (FAR) is set per-parcel by the map's 'f' suffix — confirm directly; building height (§849) is a fixed 15.0 m, not map-based.";
+    if(key==="part3") return "Rules Governing All Districts — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to C-R1 the same as every other district. C-R1 carries the elevated 350 Nit digital-sign luminance override, and falls under the 'all other commercial districts' freestanding (14.0 m² / 9.0 m) and projecting (4.5 m²) sign caps shown here.";
+    if(key==="part4") return "Add the proposed use(s) from the dropdown — 6 permitted and 45 discretionary uses are listed for C-R1. Retail and Consumer Service and Supermarket each carry their own use-incorporation carve-outs (§286.1(f)/(g), §314(c)/(d)) that aren't computed here — confirm directly. The two Restaurant uses carry an absolute 300.0 m² public-area cap (§851(3)).";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    const refocus = ()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(refocus);
+    } else {
+      refocus();
+    }
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "part4" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "part4";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items…";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["part7div1","part7div10","part3","part4"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "part4";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported — ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed — couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed — not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed — no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported — ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed — couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>

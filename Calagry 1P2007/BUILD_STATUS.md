@@ -51,7 +51,7 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 7 | C-COR2 | ✅ `CCOR2_Zoning_Review_Checklist.html` |
 | 8 | C-COR3 | ✅ `CCOR3_Zoning_Review_Checklist.html` |
 | 9 | C-O | ✅ `CO_Zoning_Review_Checklist.html` |
-| 10 | C-R1 | ⬜ |
+| 10 | C-R1 | ✅ `CR1_Zoning_Review_Checklist.html` |
 | 11 | C-R2 | ⬜ |
 | 12 | C-R3 | ⬜ |
 
