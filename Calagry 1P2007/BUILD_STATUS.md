@@ -33,7 +33,7 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 7 | M-2 | ✅ `M2_Zoning_Review_Checklist.html` |
 | 8 | M-H1 | ✅ `MH1_Zoning_Review_Checklist.html` |
 | 9 | M-H2 | ✅ `MH2_Zoning_Review_Checklist.html` |
-| 10 | M-H3 | ⬜ |
+| 10 | M-H3 | ✅ `MH3_Zoning_Review_Checklist.html` |
 | 11 | M-X1 | ⬜ |
 | 12 | M-X2 | ⬜ |
 
