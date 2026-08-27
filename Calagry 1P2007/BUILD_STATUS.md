@@ -35,7 +35,9 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 9 | M-H2 | ✅ `MH2_Zoning_Review_Checklist.html` |
 | 10 | M-H3 | ✅ `MH3_Zoning_Review_Checklist.html` |
 | 11 | M-X1 | ✅ `MX1_Zoning_Review_Checklist.html` |
-| 12 | M-X2 | ⬜ |
+| 12 | M-X2 | ✅ `MX2_Zoning_Review_Checklist.html` |
+
+**Part 6 (Multi-Residential) is now complete.**
 
 ## Part 7 — Commercial Districts
 
@@ -63,7 +65,7 @@ Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to th
 | 5 | I-C | ✅ `IC_Zoning_Review_Checklist.html` |
 | 6 | I-R | ✅ `IR_Zoning_Review_Checklist.html` |
 | 7 | I-O | ✅ `IO_Zoning_Review_Checklist.html` |
-| 8 | I-H | ⏳ Built, not yet downloaded to this folder |
+| 8 | I-H | ✅ `IH_Zoning_Review_Checklist.html` |
 
 **Part 8 (Industrial) is otherwise complete.**
 
