@@ -5,16 +5,33 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-COR (Centre City Commercial Corridor District), Part 11, Division 6 — shares its
-general-rules tab with CC-X (Part 11, Division 4: General Rules for Centre City Commercial Land Use
-Districts), a different general-rules division than the CC-MH/CC-MHX family (Division 1). CC-COR's
-own use list runs 21 conditional support-commercial uses (vs. CC-X's 18 — CC-COR additionally
-gates Financial Institution and Museum behind the building-status checkboxes) and 41 unconditional
-discretionary uses (vs. CC-X's 52); CC-COR has no Sign – Class G use at all, unlike CC-X's
-existing-only allowance. Before that: CC-X (Centre City Mixed Use District), Part 11, Division 5.
-Before that: CC-MHX (Centre City Multi-Residential High Rise Support Commercial), Part 11, Division
-3. S-TUC (Special Purpose – Transportation and Utility Corridor), Part 9, Division 10, merged
-alongside S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, which was built
+Last completed: CC-ET (Centre City East Village Transition District), Part 12, Division 2 — the
+first Centre City East Village district built, so it introduces its own General Rules tab sourced
+from Part 12, Division 1 (Sec. 1217–1242), distinct from both the CC-MH/CC-MHX family's Division 1
+and the CC-X/CC-COR family's Division 4. CC-ET's building-status conditional pattern (§07 of the
+build spec) is a plain two-way flip — Permitted (§1244(2), existing approved building) vs.
+Discretionary (§1245(2), proposed building/addition) — unlike CC-COR/CC-X's three-way
+§1180/§1181-style split with a second "already has a listed use" checkbox; CC-ET has no equivalent
+second condition, so only one sidebar checkbox (`newBuilding`) is needed. CC-ET's own use list runs
+13 conditional support-commercial uses plus a conditional Restaurant: Food Service Only (both
+gated on the single checkbox, with the Restaurant's 150.0 m² public-area threshold spelled out as
+static text rather than a second checkbox), one grandfather-only discretionary use (Parking Lot –
+Grade, available only if legally existing/approved before the Bylaw's effective date), and 50
+unconditional discretionary uses. CC-ET permits only Sign – Class A unconditionally (Classes B–E
+are all discretionary, unlike CC-COR/CC-X which permit A/B or A/B/D), and its Digital Message Sign
+rule is notably more restrictive than CC-COR/CC-X's — grouped with CC-MH/CC-MHX/S-SPR/etc. under
+§104(2)/(6)(b) (institutional/recreational uses only, 1.0 m² cap) rather than the general
+commercial §104(1)/(6)(a) pathway (5.0 m² cap). Before that: CC-COR (Centre City Commercial
+Corridor District), Part 11, Division 6 — shares its general-rules tab with CC-X (Part 11,
+Division 4: General Rules for Centre City Commercial Land Use Districts), a different
+general-rules division than the CC-MH/CC-MHX family (Division 1). CC-COR's own use list runs 21
+conditional support-commercial uses (vs. CC-X's 18 — CC-COR additionally gates Financial
+Institution and Museum behind the building-status checkboxes) and 41 unconditional discretionary
+uses (vs. CC-X's 52); CC-COR has no Sign – Class G use at all, unlike CC-X's existing-only
+allowance. Before that: CC-X (Centre City Mixed Use District), Part 11, Division 5. Before that:
+CC-MHX (Centre City Multi-Residential High Rise Support Commercial), Part 11, Division 3. S-TUC
+(Special Purpose – Transportation and Utility Corridor), Part 9, Division 10, merged alongside
+S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, which was built
 concurrently in a separate PR. S-URP (Division 8) and S-CRI (Division 7) were built in earlier PRs
 and are also ✅ complete.
 
@@ -111,7 +128,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 11 | 3 | CC-MHX | ✅ `CCMHX_Zoning_Review_Checklist.html` |
 | 11 | 5 | CC-X | ✅ `CCX_Zoning_Review_Checklist.html` |
 | 11 | 6 | CC-COR | ✅ `CCCOR_Zoning_Review_Checklist.html` |
-| 12 | 2 | CC-ET | ⬜ |
+| 12 | 2 | CC-ET | ✅ `CCET_Zoning_Review_Checklist.html` |
 | 12 | 3 | CC-EIR | ⬜ |
 | 12 | 4 | CC-EMU | ⬜ |
 | 12 | 5 | CC-EPR | ⬜ |
