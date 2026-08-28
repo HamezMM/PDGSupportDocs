@@ -5,11 +5,14 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-MHX (Centre City Multi-Residential High Rise Support Commercial), Part 11,
-Division 3. S-TUC (Special Purpose – Transportation and Utility Corridor), Part 9, Division 10,
-merged alongside S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, which was
-built concurrently in a separate PR. S-URP (Division 8) and S-CRI (Division 7) were built in
-earlier PRs and are also ✅ complete.
+Last completed: CC-X (Centre City Mixed Use District), Part 11, Division 5 — general-rules tab
+pulls from Part 11, Division 4 (General Rules for Centre City Commercial Land Use Districts), a
+different general-rules division than the CC-MH/CC-MHX family (Division 1); CC-X and CC-COR share
+Division 4 instead. Before that: CC-MHX (Centre City Multi-Residential High Rise Support
+Commercial), Part 11, Division 3. S-TUC (Special Purpose – Transportation and Utility Corridor),
+Part 9, Division 10, merged alongside S-FUD (Special Purpose – Future Urban Development), Part 9,
+Division 9, which was built concurrently in a separate PR. S-URP (Division 8) and S-CRI (Division
+7) were built in earlier PRs and are also ✅ complete.
 
 ## Part 5 — Residential Districts
 
@@ -102,7 +105,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 |---|---|---|---|
 | 11 | 2 | CC-MH | ✅ `CCMH_Zoning_Review_Checklist.html` |
 | 11 | 3 | CC-MHX | ✅ `CCMHX_Zoning_Review_Checklist.html` |
-| 11 | 5 | CC-X | ⬜ |
+| 11 | 5 | CC-X | ✅ `CCX_Zoning_Review_Checklist.html` |
 | 11 | 6 | CC-COR | ⬜ |
 | 12 | 2 | CC-ET | ⬜ |
 | 12 | 3 | CC-EIR | ⬜ |
