@@ -5,7 +5,48 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-EPR (Centre City East Village Primarily Residential District), Part 12, Division 5 —
+Last completed: CC-ERR (Centre City East Village River Residential District), Part 12, Division 6 —
+the simplest East Village district built so far. CC-ERR is the first district in this family with
+NO building-status conditional at all: its Permitted Uses section (§1272) has no second, conditional
+support-commercial block the way CC-EPR's §1266(2), CC-EMU's §1260(2), and CC-EIR's §1254(2) each do
+— there is no §1272(2). Every support-commercial-type use (Restaurant: Food Service Only, Restaurant:
+Licensed, Retail and Consumer Service, Hotel, etc.) is instead a flat, unconditional discretionary
+use under §1273, so this checklist needed no sidebar District Conditions checkbox and no live-computed
+use-status logic (§07 of the build spec) — `allItemsForTab` simply returns `CHECKLIST_DATA[tabKey]`
+unchanged for the Use tab. CC-ERR's own use list is also the narrowest yet: 7 permitted uses (§1272,
+the same unconditional 7 as CC-EPR's §1266(1)) plus 21 discretionary uses (§1273, letters (h), (l),
+(n) and (o) deleted) — far short of CC-EPR's 35 unconditional + 10 conditional discretionary uses or
+CC-EMU's 37 + 11. CC-ERR has no Convenience Food Store, Financial Institution, Fitness Centre,
+Information and Service Provider, Pet Care Service, Print Centre, or Specialty Food Store — the whole
+support-commercial group that sits behind CC-EPR's/CC-EMU's/CC-EIR's conditional is simply absent —
+and also no Assisted Living, Cannabis Store, Health Care Service, Instructional Facility, Liquor
+Store, Live Work Unit, Office, Place of Worship, Residential Care, School – Private, School Authority
+– School, Artist's Studio, or Community Entrance Feature, consistent with a district purpose skewed
+toward riverfront hospitality/leisure (Hotel, Brewery/Winery/Distillery, Community/Indoor Recreation
+Facility) rather than daily retail or institutional uses. Parking Lot – Grade isn't a CC-ERR use at
+all, unlike CC-EPR's grandfather-only §1267(1) allowance. CC-ERR's Density section (§1275) sets the
+lowest max. FAR of any East Village district built so far — 5.0, below CC-EMU's/CC-EPR's shared 6.65
+and CC-EIR's/CC-ET's shared 7.0 — with the shortest FAR-exclusion list yet (Child Care Service,
+Protective and Emergency Service, Social Organization, and Utilities — 4 uses to a max. cumulative
+1.0 FAR), notably NOT excluding Community Recreation Facility or Indoor Recreation Facility even
+though both are CC-ERR discretionary uses — every other East Village district built so far excludes
+at least one recreation-facility use from FAR; CC-ERR excludes neither. Its Use Area section (§1276)
+keeps the familiar 465.0 m² ground-floor baseline, and sets a single flat 300.0 m² Restaurant
+public-area cap — matching the absolute ceiling figure in CC-EIR's/CC-EMU's two-tier structure, but
+here it's the only figure, since there's no building-status split to also carry a lower
+Permitted-branch threshold (unlike CC-EIR/CC-EMU's 150.0 m² threshold-plus-cap, or CC-EPR's single
+but lower 150.0 m² cap). CC-ERR has no Health Care Service use at all, so there's no counselling
+use-area carve-out. Signage follows the family's usual Class A permitted / B–E discretionary / no
+F or G shape, and CC-ERR shares CC-EMU's/CC-EPR's conditional 7.0 m²/6.0 m Freestanding Sign cap
+(§97(4), tied to commercial multi-residential uses, with the same unresolved non-qualifying-parcel
+gap) and the family's restrictive 1.0 m² Digital Message Sign pathway (§104(2)/(6)(b)) — but its
+Projecting Sign cap is a genuine standout: CC-ERR isn't named in §102(1)'s 2.3 m² group (CC-EPR/
+CC-EIR/CC-EMU) or §102(3)'s 4.5 m² group (CC-ET), so it falls to the residual §102(4): just 1.0 m²,
+the tightest Projecting Sign figure of any East Village district built so far. Verified with an
+automated Playwright smoke test covering the use selector (add/remove), status-pill clicks and
+progress-bar updates across all four tabs, and a full CSV export/import round trip with project
+fields and notes containing embedded commas/quotes/newlines (93 checks total — 25 general + 6
+district + 34 citywide + 28 use). Before that: CC-EPR (Centre City East Village Primarily Residential District), Part 12, Division 5 —
 shares its General Rules tab with CC-ET, CC-EIR, and CC-EMU (Part 12, Division 1: Sec. 1217–1242).
 CC-EPR's own District Rules division runs Purpose through Use Area (§1265–1270, 6 sections) with no
 district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
@@ -185,7 +226,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 12 | 3 | CC-EIR | ✅ `CCEIR_Zoning_Review_Checklist.html` |
 | 12 | 4 | CC-EMU | ✅ `CCEMU_Zoning_Review_Checklist.html` |
 | 12 | 5 | CC-EPR | ✅ `CCEPR_Zoning_Review_Checklist.html` |
-| 12 | 6 | CC-ERR | ⬜ |
+| 12 | 6 | CC-ERR | ✅ `CCERR_Zoning_Review_Checklist.html` |
 | 12 | 7 | CC-ER | ⬜ |
 | 13 | 2–3 | CR20-C20/R20 | ⬜ |
 | 14 | 2 | MU-1 | ⬜ |
