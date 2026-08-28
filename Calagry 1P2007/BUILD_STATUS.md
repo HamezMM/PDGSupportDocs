@@ -5,35 +5,42 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-ET (Centre City East Village Transition District), Part 12, Division 2 — the
-first Centre City East Village district built, so it introduces its own General Rules tab sourced
-from Part 12, Division 1 (Sec. 1217–1242), distinct from both the CC-MH/CC-MHX family's Division 1
-and the CC-X/CC-COR family's Division 4. CC-ET's building-status conditional pattern (§07 of the
-build spec) is a plain two-way flip — Permitted (§1244(2), existing approved building) vs.
-Discretionary (§1245(2), proposed building/addition) — unlike CC-COR/CC-X's three-way
-§1180/§1181-style split with a second "already has a listed use" checkbox; CC-ET has no equivalent
-second condition, so only one sidebar checkbox (`newBuilding`) is needed. CC-ET's own use list runs
-13 conditional support-commercial uses plus a conditional Restaurant: Food Service Only (both
-gated on the single checkbox, with the Restaurant's 150.0 m² public-area threshold spelled out as
-static text rather than a second checkbox), one grandfather-only discretionary use (Parking Lot –
-Grade, available only if legally existing/approved before the Bylaw's effective date), and 50
-unconditional discretionary uses. CC-ET permits only Sign – Class A unconditionally (Classes B–E
-are all discretionary, unlike CC-COR/CC-X which permit A/B or A/B/D), and its Digital Message Sign
-rule is notably more restrictive than CC-COR/CC-X's — grouped with CC-MH/CC-MHX/S-SPR/etc. under
-§104(2)/(6)(b) (institutional/recreational uses only, 1.0 m² cap) rather than the general
-commercial §104(1)/(6)(a) pathway (5.0 m² cap). Before that: CC-COR (Centre City Commercial
-Corridor District), Part 11, Division 6 — shares its general-rules tab with CC-X (Part 11,
-Division 4: General Rules for Centre City Commercial Land Use Districts), a different
-general-rules division than the CC-MH/CC-MHX family (Division 1). CC-COR's own use list runs 21
-conditional support-commercial uses (vs. CC-X's 18 — CC-COR additionally gates Financial
-Institution and Museum behind the building-status checkboxes) and 41 unconditional discretionary
-uses (vs. CC-X's 52); CC-COR has no Sign – Class G use at all, unlike CC-X's existing-only
-allowance. Before that: CC-X (Centre City Mixed Use District), Part 11, Division 5. Before that:
-CC-MHX (Centre City Multi-Residential High Rise Support Commercial), Part 11, Division 3. S-TUC
-(Special Purpose – Transportation and Utility Corridor), Part 9, Division 10, merged alongside
-S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, which was built
-concurrently in a separate PR. S-URP (Division 8) and S-CRI (Division 7) were built in earlier PRs
-and are also ✅ complete.
+Last completed: CC-EIR (Centre City East Village Integrated Residential District), Part 12,
+Division 3 — shares its General Rules tab with CC-ET (Part 12, Division 1: Sec. 1217–1242), since
+both are Centre City East Village districts, but CC-EIR's own District Rules division is
+noticeably shorter than CC-ET's: it runs Purpose through Use Area (§1253–1258, 6 sections) with no
+district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
+Parking Stalls, or Parking Stall Transfer section at all — unlike CC-ET's §1249–1252 — so the
+General Rules §1233 parking baseline applies to CC-EIR directly. CC-EIR's building-status
+conditional pattern (§07 of the build spec) is the same plain two-way flip as CC-ET — Permitted
+(§1254(2), existing approved building) vs. Discretionary (§1255(2), proposed building/addition) —
+with only one sidebar checkbox (`newBuilding`) needed. CC-EIR's own use list runs 12 conditional
+support-commercial uses (one fewer than CC-ET's 13 — CC-EIR's §1254(2) list has no Catering
+Service – Minor entry) plus a conditional Restaurant: Food Service Only (both gated on the single
+checkbox, with the Restaurant's 150.0 m² public-area threshold spelled out as static text), one
+grandfather-only discretionary use (Parking Lot – Grade), and 48 unconditional discretionary uses
+— notably including Dinner Theatre and Night Club, neither available in CC-ET; CC-EIR's Night Club
+use also triggers the Part 2 §27(2)(f.1) mandatory Notice Posting requirement. CC-EIR permits only
+Sign – Class A unconditionally (Classes B–E all discretionary, no Class F/G, same shape as CC-ET),
+but its dimensional figures diverge: CC-EIR's Projecting Sign cap is a tighter 2.3 m² under
+§102(1) (grouped with CC-MH/CC-MHX/CC-EMU/CC-EPR/etc.) versus CC-ET's more permissive 4.5 m²
+carve-out under §102(3), while its Freestanding Sign (14.0 m²/9.0 m, §97(3)) and Digital Message
+Sign (1.0 m², institutional/recreational uses only, §104(2)/(6)(b)) figures match CC-ET's exactly.
+Before that: CC-ET (Centre City East Village Transition District), Part 12, Division 2 — the first
+Centre City East Village district built, so it introduced the shared General Rules tab sourced
+from Part 12, Division 1, distinct from both the CC-MH/CC-MHX family's Division 1 and the
+CC-X/CC-COR family's Division 4. Before that: CC-COR (Centre City Commercial Corridor District),
+Part 11, Division 6 — shares its general-rules tab with CC-X (Part 11, Division 4: General Rules
+for Centre City Commercial Land Use Districts), a different general-rules division than the
+CC-MH/CC-MHX family (Division 1). CC-COR's own use list runs 21 conditional support-commercial
+uses (vs. CC-X's 18 — CC-COR additionally gates Financial Institution and Museum behind the
+building-status checkboxes) and 41 unconditional discretionary uses (vs. CC-X's 52); CC-COR has no
+Sign – Class G use at all, unlike CC-X's existing-only allowance. Before that: CC-X (Centre City
+Mixed Use District), Part 11, Division 5. Before that: CC-MHX (Centre City Multi-Residential High
+Rise Support Commercial), Part 11, Division 3. S-TUC (Special Purpose – Transportation and Utility
+Corridor), Part 9, Division 10, merged alongside S-FUD (Special Purpose – Future Urban
+Development), Part 9, Division 9, which was built concurrently in a separate PR. S-URP (Division
+8) and S-CRI (Division 7) were built in earlier PRs and are also ✅ complete.
 
 ## Part 5 — Residential Districts
 
@@ -129,7 +136,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 11 | 5 | CC-X | ✅ `CCX_Zoning_Review_Checklist.html` |
 | 11 | 6 | CC-COR | ✅ `CCCOR_Zoning_Review_Checklist.html` |
 | 12 | 2 | CC-ET | ✅ `CCET_Zoning_Review_Checklist.html` |
-| 12 | 3 | CC-EIR | ⬜ |
+| 12 | 3 | CC-EIR | ✅ `CCEIR_Zoning_Review_Checklist.html` |
 | 12 | 4 | CC-EMU | ⬜ |
 | 12 | 5 | CC-EPR | ⬜ |
 | 12 | 6 | CC-ERR | ⬜ |
