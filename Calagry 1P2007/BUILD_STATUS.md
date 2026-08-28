@@ -5,7 +5,8 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: S-CI (Special Purpose – Community Institution), Part 9, Division 6.
+Last completed: S-URP (Special Purpose – University Research Park), Part 9, Division 8.
+Note: S-CRI (Division 7) was skipped ahead of and is still ⬜ Not started — S-URP was built first at explicit request.
 
 ## Part 5 — Residential Districts
 
@@ -83,7 +84,7 @@ Last completed: S-CI (Special Purpose – Community Institution), Part 9, Divisi
 | 5 | S-R | ✅ `SR_Zoning_Review_Checklist.html` |
 | 6 | S-CI | ✅ `CI_Zoning_Review_Checklist.html` |
 | 7 | S-CRI | ⬜ |
-| 8 | S-URP | ⬜ |
+| 8 | S-URP | ✅ `SURP_Zoning_Review_Checklist.html` |
 | 9 | S-FUD | ⬜ |
 | 10 | S-TUC | ⬜ |
 
