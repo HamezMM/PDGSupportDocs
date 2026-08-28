@@ -5,7 +5,54 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CR20-C20/R20 (Commercial Residential District), Part 13, Divisions 2–3 — the first
+Last completed: MU-1 (Mixed Use – General District), Part 14, Division 2 — the first district built
+in this table that isn't a Part 11–13 Centre City (Downtown) district: it introduces its own General
+Rules division (Part 14, Division 1: §1333–1364, 31 items covering 32 section numbers — §1357 is
+wholly deleted) shared only with the not-yet-built MU-2,
+distinct from every Centre City General Rules division built so far. MU-1's building-status
+conditional pattern (§07 of the build spec) needed a genuinely new two-checkbox combination:
+`newBuilding` (§1367(1) — existing approved building vs. proposed building/addition, flipping 21 of
+MU-1's 62 uses between Permitted and Discretionary) plus `groundFloor` (§1367(2) — a second, purely
+floor-based trigger that ALSO makes 8 of those 21 uses — Artist's Studio, Catering Service – Minor,
+Financial Institution, Health Care Service, Instructional Facility, Office, Service Organization,
+Veterinary Clinic — discretionary when on the ground floor of an existing building, independent of
+whether the building itself is "proposed"). That's a different shape than CR20-C20/R20's
+newBuilding+skywalk combination or CC-EMU/CC-EIR/CC-EPR's newBuilding-only pattern — here the second
+checkbox is a floor location, not a connection feature, and it only matters when the first checkbox is
+unchecked. The Restaurant pair (Food Service Only, Licensed) layers a third, non-checkbox condition on
+top of `newBuilding`: a static 150.0 m² public-area threshold (§1366(2.1)/§1367(1.1)) that the build
+spec's §07 caveat rule says not to gate behind a toggle, PLUS a genuinely MU-1/MU-2-specific citywide
+rule found while sourcing Part 4 — §278(e)/§281(e) requires either Restaurant use sit more than 45.0 m
+from a residential district whenever its public area exceeds 150.0 m² in MU-1, a separation rule that
+doesn't apply to most other districts' Restaurant uses at all. MU-1 is also the first district built
+where the dimensional standards themselves are site-specific rather than fixed: Floor Area Ratio
+(§1369), Density (§1370), and Building Height (§1371) are all "no maximum unless indicated" defaults
+that resolve to whatever number follows the letters "f", "d" and "h" on the Land Use District Maps for
+that parcel (the District's own MU-1f#h#d# naming convention) — the checklist flags all three as
+site-specific caveats rather than guessing a figure, the same treatment CR20-C20/R20's out-of-scope
+bonus-density system received, but here it's the *base* standard, not an add-on. Unlike CR20-C20/R20,
+Cannabis Store and Liquor Store are NOT exempted from the standard 300.0 m same-use/150.0 m
+school-proximity separation rules in MU-1 — flagged directly on those Use tab items. The Citywide tab
+is also the first built in a while with no unresolved Bylaw gap: MU-1 is explicitly named in §65's
+outdoor-lighting-height group, §97(3)'s Freestanding Sign group (14.0 m²/9.0 m), §102(3)'s Projecting
+Sign group (4.5 m²), §104(1)/(6)(a)'s less-restrictive Digital Message Sign pathway, and §107(1)(b.1)'s
+Roof Sign eligibility ("all mixed use districts") — every citywide sign/lighting figure resolves
+cleanly. MU-1's own use list runs 62 uses total (8 flat permitted, 11 building-status-conditional, 2
+Restaurant uses conditional on building status plus the static area/distance caveats, 8 conditional on
+both checkboxes together, and 33 flat discretionary) across a General tab of 31 items (§1333–1364,
+with §1357 — wholly deleted — folded into the adjacent §1358 Garbage item as a caveat rather than
+itemized), a District tab of 10 items (§1365–1374), and a Citywide tab of 34 items, on par with most
+of the family, now also covering the previously-uncovered §59/§60 Flood Fringe building-design
+sections and a "deleted" placeholder for §127–129's repealed cash-in-lieu parking areas (75 total
+non-use items, 137 grand total with the 62 Use tab items). Verified with an automated
+Playwright smoke test covering tab navigation (31/10/34/0 cards before any use is selected, 0/0 on the
+Use tab), the use-selector's Permitted/Discretionary optgroup counts shifting correctly under all three
+checkbox states (29/33 unchecked, 8/54 with `newBuilding` checked, 21/41 with `groundFloor` checked
+alone), status-pill clicks updating the card/stat-strip/tab badge/overall-progress bar together, and a
+full CSV export/import round trip (137 rows exported — every General/District/Citywide item plus every
+Use tab item with its Proposed Yes/No flag — with project fields and notes containing embedded commas,
+quotes, and newlines, and both District Conditions checkboxes, diffed to zero mismatches). Before that:
+CR20-C20/R20 (Commercial Residential District), Part 13, Divisions 2–3 — the first
 Downtown district built outside the Part 11/12 Centre City East Village/Multi-Residential-High-Rise
 family, and the first with three independent District Conditions checkboxes rather than one or two.
 Its own District Rules division (§1305–1331, 27 sections) runs Purpose through Location of Bicycle
@@ -270,5 +317,5 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 12 | 6 | CC-ERR | ✅ `CCERR_Zoning_Review_Checklist.html` |
 | 12 | 7 | CC-ER | ✅ `CCER_Zoning_Review_Checklist.html` |
 | 13 | 2–3 | CR20-C20/R20 | ✅ `CR20C20R20_Zoning_Review_Checklist.html` |
-| 14 | 2 | MU-1 | ⬜ |
+| 14 | 2 | MU-1 | ✅ `MU1_Zoning_Review_Checklist.html` |
 | 14 | 3 | MU-2 | ⬜ |
