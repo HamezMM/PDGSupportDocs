@@ -5,7 +5,48 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-ERR (Centre City East Village River Residential District), Part 12, Division 6 —
+Last completed: CR20-C20/R20 (Commercial Residential District), Part 13, Divisions 2–3 — the first
+Downtown district built outside the Part 11/12 Centre City East Village/Multi-Residential-High-Rise
+family, and the first with three independent District Conditions checkboxes rather than one or two.
+Its own District Rules division (§1305–1331, 27 sections) runs Purpose through Location of Bicycle
+Parking Stalls, with a full district-specific motor vehicle/bicycle parking framework (§1325–1331) —
+unlike CC-ER, it never falls back to a General Rules parking baseline. The building-status pattern
+(§07 of the build spec) needed three flags instead of the family's usual one or two: `newBuilding`
+(§1306(2)/§1307(1) flips 24 support-commercial/office uses between Permitted-if-existing and
+Discretionary-if-proposed), `skywalkSecondFloor` (§1306(3)/§1307(2) additionally makes 8 more uses —
+Catering Service – Minor, Counselling Service, Fitness Centre, Health Services Laboratory – With
+Clients, Medical Clinic, Power Generation Facility – Small, Radio and Television Studio, Service
+Organization — discretionary when on the second floor of an existing building with a +15 Skywalk
+connection, layered on top of the `newBuilding` check), and `transitionArea` (§1308 — the first
+checkbox in the family to make a use UNAVAILABLE rather than merely discretionary: Drinking
+Establishment – Large and Sign – Class G drop out of the "add a use" dropdown entirely, though an
+already-added card stays on screen re-labeled "Not available" per the build spec's re-label-don't-
+delete rule, verified directly with Playwright). CR20-C20/R20's own use list is the broadest built so
+far in the Centre City family — 95 Use tab items (6 flat permitted, 24 building-status-conditional,
+8 skywalk-conditional, 53 flat discretionary, 2 grandfather-only, 2 transition-conditional) — including
+several legacy/deemed-use terms with no standalone Part 4 section (Accessory Food Service, Accessory
+Liquor Service, Take Out Food Service, Market, Counselling Service, Medical Clinic, Cannabis
+Counselling, Health Services Laboratory – With Clients — all resolved via §134.1's deeming clauses or
+flagged with a "—" section and a caveat where no deeming exists). Two uses carry a genuinely unique
+citywide exemption: Cannabis Store (§160.3) and Liquor Store (§225) are both expressly carved out of
+the standard 300.0 m same-use and 150.0 m school-proximity separation-distance rules that apply almost
+everywhere else in the city. The Citywide tab surfaces two outright gaps in the Bylaw's own district
+lists — CR20-C20/R20 is named in neither §65's outdoor-lighting-height groups nor §97's Freestanding
+Sign area/height groups — flagged as caveats rather than guessed at, and one unique inclusion found in
+no other district: a Third Party Advertising Sign (or its digital Class G equivalent) larger than
+4.5 m² may be approved here as part of a comprehensive, building-incorporated development (§114(1.1)/
+§115.5(1.1)). Sign Classes A, B and D are flat permitted uses in this District — unlike every East
+Village district, where all sign classes are discretionary. Floor area ratio is a base 3.0, but the
+Part 13, Division 3 incentive/bonus density system (Table 8 public amenity items, up to a max. 20.0
+FAR) is deliberately out of scope for this checklist, the same treatment CC-X's Part 11, Division 7
+bonus rules received — noted as a caveat on the Floor Area Ratio item rather than itemized. Verified
+with an automated Playwright smoke test covering tab navigation, the use selector (add/remove across
+all three District Conditions states), status-pill clicks, the re-label-not-remove behavior for a
+card made unavailable by a later checkbox toggle, and a full CSV export/import round trip with project
+fields and notes containing embedded commas/quotes/newlines. Before that: CC-ER (Centre City East
+Village Recreational District), Part 12, Division 7 — the file for this district was already built and
+merged (see git history) but this status file hadn't been updated to reflect it; corrected here.
+Before that: CC-ERR (Centre City East Village River Residential District), Part 12, Division 6 —
 the simplest East Village district built so far. CC-ERR is the first district in this family with
 NO building-status conditional at all: its Permitted Uses section (§1272) has no second, conditional
 support-commercial block the way CC-EPR's §1266(2), CC-EMU's §1260(2), and CC-EIR's §1254(2) each do
@@ -227,7 +268,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 12 | 4 | CC-EMU | ✅ `CCEMU_Zoning_Review_Checklist.html` |
 | 12 | 5 | CC-EPR | ✅ `CCEPR_Zoning_Review_Checklist.html` |
 | 12 | 6 | CC-ERR | ✅ `CCERR_Zoning_Review_Checklist.html` |
-| 12 | 7 | CC-ER | ⬜ |
-| 13 | 2–3 | CR20-C20/R20 | ⬜ |
+| 12 | 7 | CC-ER | ✅ `CCER_Zoning_Review_Checklist.html` |
+| 13 | 2–3 | CR20-C20/R20 | ✅ `CR20C20R20_Zoning_Review_Checklist.html` |
 | 14 | 2 | MU-1 | ⬜ |
 | 14 | 3 | MU-2 | ⬜ |

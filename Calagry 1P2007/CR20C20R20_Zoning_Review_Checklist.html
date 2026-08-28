@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR20-C20/R20 District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  .district-conditions{
+    padding:14px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .district-conditions .dc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:2px;
+  }
+  .dc-check{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    cursor:pointer;
+  }
+  .dc-check input{
+    margin-top:2px;
+    accent-color:var(--blue-dim);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .dc-check span{
+    font-size:11.5px;
+    line-height:1.4;
+    color:#C7D2DC;
+  }
+  .dc-check span b{color:#EDE9DA;}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+<a href="../index.html" style="display:block;padding:14px 20px 0 20px;font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8FAFC9;text-decoration:none;text-transform:uppercase">&larr; PDG Support Docs</a>
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>CR20-C20/R20 District Review Checklist</h1>
+    <div class="sub">Centre City (Downtown) &ndash; Commercial Residential District &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. 40 Ave Distribution Facility">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <div class="district-conditions">
+    <div class="dc-label">District conditions &mdash; CR20-C20/R20</div>
+    <label class="dc-check">
+      <input id="f-newbuilding" type="checkbox">
+      <span><b>Proposed building, or a proposed addition to an existing building</b> (unchecked = existing approved building) &mdash; flips the &sect;1306(2) support-commercial/office uses and the &sect;1306(3) uses between Permitted and Discretionary per &sect;1307(1).</span>
+    </label>
+    <label class="dc-check">
+      <input id="f-skywalk" type="checkbox">
+      <span><b>Use located on the second floor of an existing approved building with an existing/approved +15 Skywalk System walkway</b> &mdash; makes the &sect;1306(3) uses (Catering Service &ndash; Minor, Counselling Service, Fitness Centre, Health Services Laboratory &ndash; With Clients, Medical Clinic, Power Generation Facility &ndash; Small, Radio and Television Studio, Service Organization) discretionary per &sect;1307(2) instead of permitted. Only relevant when the proposed-building checkbox above is unchecked.</span>
+    </label>
+    <label class="dc-check">
+      <input id="f-transition" type="checkbox">
+      <span><b>Parcel is located in the Transition Area illustrated on Map 11</b> &mdash; makes Drinking Establishment &ndash; Large and Sign &ndash; Class G UNAVAILABLE (&sect;1308) rather than discretionary, and changes the &sect;1313/&sect;1314 window-separation/floor-plate figures and the &sect;1316 Use Area caps on the District tab.</span>
+    </label>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {
+"part13div1": [
+  {"id":"d1-0","sec":"1294","title":"General Landscaped Area Rules","summary":"Landscaped areas must be provided per a landscape plan approved by the Development Authority. Every DP application proposing changes to the building/parcel must submit a landscape plan showing: existing/proposed topography; vegetation retention/removal; layout of berms, open space systems, pedestrian circulation, retaining walls, screening, slope, and hard/soft surfaced areas; plant types/species/sizes/numbers; irrigation details (including low water irrigation extent); and, for landscaped areas over a building, underlying slab/wall locations, waterproofing/protection/insulation/drainage cross-sections, growing medium depths, mature tree/shrub height and spread, and irrigation method. Must be maintained on the parcel for as long as the development exists. All soft surfaced landscaped areas require underground irrigation unless a low water irrigation system is used."},
+  {"id":"d1-1","sec":"1295","title":"Planting Requirements","summary":"Plant materials must suit Calgary's climate and meet Canadian Nursery Landscape Association standards. Deciduous trees: min. 50 mm caliper, with at least 50.0% at min. 75 mm caliper at planting. Coniferous trees: min. 2.0 m height. Shrubs: min. 0.6 m height or spread at planting. For landscaped areas over a building: min. soil depths of 1.2 m (trees), 0.6 m (shrubs), 0.3 m (all other planting), covering an area equal to the mature spread of the planting material. Landscaped areas may include Urban Agriculture."},
+  {"id":"d1-2","sec":"1296","title":"Low Water Irrigation System","summary":"Where provided, only trees and shrubs are irrigated, and water delivery is confined to the tree/shrub area; trees and shrubs with similar water consumption requirements must be grouped together."},
+  {"id":"d1-3","sec":"1297","title":"Additional Landscaping Rules","summary":"Unless a District states otherwise, all parcel area other than motor vehicle access/parking/loading stalls, garbage facilities, or a Development-Authority-allowed purpose must be a landscaped area. Every building needs a sidewalk connecting its public entrance to a public sidewalk (or the nearest street); a multi-use building needs each exterior-entrance use connected either to that required sidewalk or directly to a public sidewalk. Required sidewalks: run the full length of that building side where adjacent to it; hard surfaced; min. 2.0 m wide; distinct surfacing from parking areas; raised above parking-area grade where located within one."},
+  {"id":"d1-4","sec":"1298","title":"Residential Amenity Space","summary":"Min. required amenity space is 5.0 m² per unit, as common and/or private space. Private amenity space (balcony/deck/patio, min. 2.0 m dimension for a deck/patio) counts up to 5.0 m²/unit — any excess over that per-unit figure doesn't count further. Common amenity space must be accessible from all units, have a contiguous area of min. 50.0 m² with no dimension less than 6.0 m, and may be at or above grade; indoor common amenity space is capped at max. 50.0% of the required amenity space, and outdoor common amenity space needs a balcony/deck/patio plus a barbeque or seating as a permanent feature."},
+  {"id":"d1-5","sec":"1299","title":"Garbage","summary":"Garbage containers and waste material must be stored either inside a building containing another approved use, or in a screened garbage container enclosure approved by the Development Authority."},
+  {"id":"d1-6","sec":"1300","title":"Recycling Facilities","summary":"Required for every building."},
+  {"id":"d1-7","sec":"1301","title":"Mechanical Screening","summary":"Mechanical systems or equipment located outside of a building must be screened."},
+  {"id":"d1-8","sec":"1302","title":"Visibility Setback","summary":"Within a corner visibility triangle, buildings, finished parcel grade, and vegetation must not be located between 0.75 m and 4.6 m above the lowest elevation of the street."},
+  {"id":"d1-9","sec":"1303","title":"Sunlight Protection Areas","summary":"On September 21, a development must not cast greater shadow than already existed on the date the DP was applied for, at specified times, over nine named downtown public spaces: Stephen Avenue Mall (measured on the northerly 7.0 m of the Part 3 Division 1 right-of-way, 12–2 p.m.), Barclay Mall/3 Street SW (westerly 8.0 m, 12:30–1:30 p.m.; easterly 8.0 m, 1:30–2:30 p.m., both per the Part 3 Division 1 right-of-way), Olympic Plaza, Century Gardens, McDougall School, Courthouse Block, and Mewata Armoury (each 12–2 p.m.), and the Riverbank and Riverbank Promenade along the Bow River (10 a.m.–4 p.m.). Directly relevant for a CR20-C20/R20 parcel fronting any of these areas — cross-check the Part 3 Division 1 Public Realm Setback right-of-way width for the Mall frontages against the Citywide tab."},
+  {"id":"d1-10","sec":"1304","title":"Parcel Access","summary":"All developments must comply with the access requirements of the Controlled Streets Bylaw."}
+],
+"part13div2": [
+  {"id":"d2-0","sec":"1305","title":"Purpose","summary":"The Commercial Residential District (CR20-C20/R20) is intended to be characterised by: (a) developments contributing to the Downtown's role as the City's predominant business/retail/entertainment/cultural destination; (b) a mix of commercial, residential and cultural uses; (c) intensive high-rise, high-density development measured by floor area ratio; (d) pedestrian-oriented grade-level design with a high quality public realm; (e) buildings incorporating a mix of uses; (f) base density with incentive density above it to achieve mixed use, public benefit and amenities; (g) active, pedestrian-focused uses at grade and on the +15 Skywalk System level; (h) preservation/reuse of historic resources; (i) connection to the +15 Skywalk System; (j) improved/expanded public transportation; and (k) a transition of uses and building form to surrounding neighbourhoods within the Transition Area illustrated on Map 11. (Informational — useful for discretionary-use judgment calls.)"},
+  {"id":"d2-1","sec":"1306","title":"Permitted Uses","summary":"Three tiers. §1306(1): 6 uses are flat permitted regardless of building status — Park, Protective and Emergency Service, Sign – Class A, Sign – Class B, Sign – Class D, and Utilities. §1306(2): 24 support-commercial/office-type uses (Accessory Food Service through Veterinary Clinic) are permitted ONLY where located in an existing approved building — in a proposed building or a proposed addition they become discretionary per §1307(1) instead of unavailable. §1306(3): 8 uses (Catering Service – Minor through Service Organization) are permitted except where located on the second floor of an existing approved building containing an existing/approved +15 Skywalk System walkway — that combination, or a proposed building/addition, makes them discretionary per §1307(2)/(1) instead. Status for the §1306(2) and (3) groups is computed live from the District Conditions checkboxes in the sidebar — see Use tab."},
+  {"id":"d2-2","sec":"1307","title":"Discretionary Uses","summary":"§1307(1): the §1306(2) and (3) uses become discretionary when located in a proposed building or a proposed addition to an existing building. §1307(2): the §1306(3) uses are additionally discretionary when located on the second floor of an existing approved building with an existing/approved +15 Skywalk System walkway. §1307(3): 53 uses (see Use tab), Addiction Treatment through Vehicle Sales – Minor, are flat discretionary uses unconditional on building history. §1307(4): Parking Lot – Grade and Place of Worship – Large are additional discretionary uses ONLY where they were legally existing on the parcel prior to its CR20-C20/R20 designation — a grandfather clause, not available for a brand-new proposal."},
+  {"id":"d2-3","sec":"1308","title":"Transition Area","summary":"Drinking Establishment – Large and Sign – Class G are additional discretionary uses in the District EXCEPT where the parcel is located in the Transition Area illustrated on Map 11 — there, neither use is available at all. Status computed live from the Transition Area checkbox in the sidebar — see Use tab. Note also (outside this checklist's Part 2 scope, but worth flagging): Part 2 §27(2)(f.1) requires notice posting for a Night Club, and §27(2)(g) for an Outdoor Café, specifically where the parcel is within the Map 11 Transition Area, and §27(5)(e) extends notice posting to ANY discretionary use built via a new building/addition within that same Map 11 area — confirm directly."},
+  {"id":"d2-4","sec":"1309","title":"Rules","summary":"Confirms all uses in the District must also comply with: the General Rules for Commercial Residential Districts referenced in Part 13, Division 1 (General tab); the Rules Governing All Districts referenced in Part 3 (Citywide tab); and the applicable Uses and Use Rules referenced in Part 4 (Use tab)."},
+  {"id":"d2-5","sec":"1310","title":"Floor Area Ratio","summary":"Max. base floor area ratio is 3.0. May be increased under the incentive density provisions of Part 13, Division 3 to a max. total of 20.0 FAR — confirm directly (Table 8 public amenity items, Incentive Rates/Ratios, Central Business District Improvement Fund contributions, and the §1311 sunlight-preservation density transfer mechanism). Division 3's incentive-density calculation mechanics are out of scope for this checklist."},
+  {"id":"d2-6","sec":"1311","title":"Sunlight Preservation Density Transfer","summary":"A parcel with a building affected by the §1303 Sunlight Protection Area rules is deemed, solely for calculating transferable density, to have the FAR it would have achieved by providing the required/approved Table 8 incentive amenity items had those sunlight rules not existed. The resulting difference between actual and potential gross floor area may be transferred to other CR20-C20/R20 parcels, but the item 8.15 density-transfer mechanism is only available once the transferring parcel's redevelopment is complete and its Table 8/§1303 requirements are satisfied to the Development Authority's satisfaction."},
+  {"id":"d2-7","sec":"1312","title":"Building Height","summary":"No maximum building height."},
+  {"id":"d2-8","sec":"1313","title":"Residential Window Separation from the Property Line","summary":"Windows for Assisted Living, Dwelling Units, or Live Work Units must provide a horizontal separation of 9.0 m from a shared property line and 6.0 m from a lane where the parcel is in the Transition Area illustrated on Map 11; everywhere else in the District, 7.5 m and 4.5 m respectively."},
+  {"id":"d2-9","sec":"1314","title":"Floor Plate Restrictions","summary":"For a floor located partially or wholly above 36.0 m grade and containing Assisted Living, Dwelling Units, Hotel suites, or Live Work Units: max. horizontal dimension of 44.0 m where the parcel is in the Transition Area illustrated on Map 11; everywhere else in the District, max. floor plate area of 930.0 m²."},
+  {"id":"d2-10","sec":"1315","title":"Ground Floor Height","summary":"Min. 4.5 m, measured vertically floor to ceiling."},
+  {"id":"d2-11","sec":"1316","title":"Use Area","summary":"Unless stated otherwise: max. ground-floor use area is 1200.0 m². Retail and Consumer Service, Supermarket, or a Supermarket combined with another use: max. 3000.0 m². No maximum use area for Cinema, Conference and Event Facility, Dinner Theatre, Hotel, Library, Museum, Parking Lot – Structure, Performing Arts Centre, Protective and Emergency Service, or Utility Building. Where the parcel is in the Transition Area illustrated on Map 11: Night Club is capped at 300.0 m², and a ground-floor Financial Institution at 465.0 m²."},
+  {"id":"d2-12","sec":"1317","title":"Office Gross Floor Area and Location","summary":"Where the cumulative parcel area is >1812.0 m², cumulative ground-floor Office GFA must not exceed the greater of 50.0% of ground-floor GFA or 550.0 m². Where a parcel shares a property line with Centre Street S (3–8 Ave S), 3 Street SW/Barclay Mall (3–8 Ave SW), 7 Avenue SW (Centre St S–4 St SW), or the Stephen Avenue Mall Retail Area (Map 11), an Office may only sit on the ground floor where another use is located between it and that shared property line."},
+  {"id":"d2-13","sec":"1318","title":"Location of Uses within Buildings","summary":"Counselling Service, Custodial Care, Dwelling Unit, and Health Services Laboratory – Without Clients must not be located on the ground floor. Financial Institution and Office may only be on the ground floor within the Stephen Avenue Mall Retail Area (Map 12), and only where a bank/office was approved prior to this Bylaw's effective date AND the building is on the City's inventory of evaluated historic resources or is a designated Municipal Historic Resource. A list of uses (Addiction Treatment, Assisted Living, Counselling Service, Custodial Care, Dwelling Unit, Health Services Laboratory – Without Clients, Live Work Unit, Office, Place of Worship – Medium, Residential Care, School – Private, School Authority – School, Social Organization) can't be on the second floor of a +15-Skywalk-connected building unless another use sits between them and the Skywalk. Schedule A Residential Group uses, other than Hotel, may only share a hallway or an area of a parking structure with each other."},
+  {"id":"d2-14","sec":"1319","title":"Use Activities","summary":"All Vehicle Rental – Major, Vehicle Rental – Minor, and Vehicle Sales – Minor activities, except vehicle pick-up/drop-off, must be contained within a building."},
+  {"id":"d2-15","sec":"1320","title":"Lobbies at Grade","summary":"Common corridors/lobbies/entranceways at grade are capped at 35.0% of ground-floor GFA on a cumulative parcel area >1812.0 m² fronting 3 Street SW/Barclay Mall (3–8 Ave SW), Centre Street S (3–8 Ave S), or 7 Avenue SW (Centre St S–4 St SW); 70.0% everywhere else in the District. Within the Stephen Avenue Mall Retail Area (Map 12), upper-floor entranceway/lobby width is capped at the greater of 15.0% of the 8 Avenue SW frontage length or 10.0 m. Public amenity items under Part 13, Division 3, Table 8 are excluded from this cap."},
+  {"id":"d2-16","sec":"1321","title":"Street Walls","summary":"Where building height within 6.0 m of a street property line exceeds 36.0 m, the building must provide two of: massing, façade articulation, textures, materials, or a min. 3.0 m horizontal step-back between the street-facing podium and the tower above — each feature between 9.0 m and 24.0 m from grade."},
+  {"id":"d2-17","sec":"1322","title":"Stephen Avenue Mall – Building Orientation","summary":"Except for entranceways/vestibules, max. building setback from 8 Avenue SW between 4 Street SW and Macleod Trail SE is 0.0 m."},
+  {"id":"d2-18","sec":"1323","title":"Stephen Avenue Mall – Building Design","summary":"Buildings within the Stephen Avenue Mall heritage area must retain existing heritage character, and new buildings/additions must respect that character through compatible materials and architectural features."},
+  {"id":"d2-19","sec":"1324","title":"Landscaping","summary":"Except for motor vehicle access, parking stalls, loading stalls, and garbage facilities, exterior horizontal surfaces must be landscaped areas where the building contains Assisted Living, Dwelling Units, or Live Work Units above that surface, and the surface is ≤36.0 m above grade and >5.6 m² in area."},
+  {"id":"d2-20","sec":"1325","title":"Motor Vehicle Parking Stalls","summary":"Min. stalls must not be exceeded except via §1327/§1328. Assisted Living, Custodial Care, Residential Care: per the Part 4 requirement. Dwelling Units/Live Work Units: min. 0.5 stalls/unit, max. 1.0/unit (≤125.0 m² GFA) or 2.0/unit (>125.0 m² GFA), plus 0.1 visitor stalls/unit. Hotel: min. 1.0 per 3.0 guest rooms. A parking study sets requirements for Conference and Event Facility, Indoor Recreation Facility, Library, Museum, Performing Arts Centre, and Post-secondary Learning Institution. Except for Office, uses on the ground or second floor require no stalls. All other uses: 0.7 stalls per 100.0 m² gross usable floor area."},
+  {"id":"d2-21","sec":"1326","title":"Restricted Parking Area","summary":"Within the Map 13 Restricted Parking Area, min. and max. stalls both equal the §1325 minimum (subject to §1325(3) and a grandfathered allowance for a stand-alone parking structure existing since October 10, 1984). The Development Authority may relax the minimum by up to 50.0% where an off-site transportation improvements fee is paid and §124 is satisfied. Stalls provided under §1327/§1328 are exempt from this Area's rules."},
+  {"id":"d2-22","sec":"1327","title":"Short Stay Parking Stalls","summary":"Within a Map 14 Short Stay Parking Area, §1325/§1326 stalls may be increased by up to 10 additional short stay stalls (scramble parking, publicly signed), or — with adjacent-road-capacity and additional signage conditions — up to the lesser of 25.0% of the §1325 requirement or 125 stalls. The larger option requires a Special Development Agreement guaranteeing public short-stay operation at minimum 7:00 a.m.–11:00 p.m., seven days a week."},
+  {"id":"d2-23","sec":"1328","title":"Parking Stall Transfer from a Municipal Historic Resource","summary":"A Municipal Historic Resource parcel within the Map 13 Restricted Parking Area may transfer unbuilt motor vehicle parking stalls to a receiving parcel in that same Area (max. 20.0% of the receiving parcel's §1325 requirement, subject to road-capacity confirmation). The transferable amount is calculated from a 7.0 FAR potential GFA at 0.7 stalls/100.0 m² gross usable floor area, discounted to 50.0% (City-Wide Historic Resource) or 25.0% (Community Historic Resource) of that potential, less stalls already existing on the transferring parcel; must be registered as a caveat on the transferring parcel's title."},
+  {"id":"d2-24","sec":"1329","title":"Location of Motor Vehicle Parking Stalls","summary":"On a cumulative parcel area >1812.0 m², all motor vehicle parking stalls, except those associated with a Parking Lot – Structure or Parking Lot – Grade, must be located below grade."},
+  {"id":"d2-25","sec":"1330","title":"Bicycle Parking Stall Requirements","summary":"Per the Part 4 requirement unless stated otherwise. Office: min. 2.0 Class 1 and 2.0 Class 2 stalls per 1000.0 m² gross usable floor area. Dwelling Unit/Live Work Unit: min. 1.0 Class 1 stall/unit for developments of more than 20 units. Where Class 1 stalls are required for an Office in a proposed building: lockers at 1.0 per 4.0 Class 1 stalls, and — where 25.0 or more Class 1 stalls are required — change rooms and showers (each min. 0.4 m² per required stall or 20.0 m², whichever is greater) and an unobstructed bicycle maintenance area (min. 6.0 m², no dimension <2.0 m)."},
+  {"id":"d2-26","sec":"1331","title":"Location of Bicycle Parking Stalls","summary":"Class 1 bicycle parking stalls must be located at grade or within the first parkade level directly below grade."}
+],
+"part3": [
+  {"id":"p3-0","sec":"53","title":"Public Realm Setbacks","summary":"Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to the District's own front/side/rear setback, and the Development Authority cannot relax it. Note the General Rules §1303 Sunlight Protection Areas rule (General tab) measures its Stephen Avenue Mall and Barclay Mall protection zones off this same section's required right-of-way widths — confirm both apply together for a parcel fronting either Mall."},
+  {"id":"p3-1","sec":"54","title":"Airport Vicinity Regulations","summary":"If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply — unlikely for a Downtown CR20-C20/R20 parcel, but confirm against the current AVPA maps/bylaw."},
+  {"id":"p3-2","sec":"55","title":"Floodway, Flood Fringe & Overland Flow — Applicability","summary":"Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping) — relevant for CR20-C20/R20 parcels along or near the Bow River pathway edge of the Downtown core."},
+  {"id":"p3-3","sec":"56","title":"Floodway Regulations","summary":"If in the Floodway: new development is heavily restricted — confirm what, if anything, is permitted."},
+  {"id":"p3-4","sec":"57","title":"New Buildings and Alterations","summary":"If in the Flood Fringe: specific construction/flood-proofing requirements apply to new buildings and alterations."},
+  {"id":"p3-5","sec":"58","title":"Alterations to the Floodway and Riverbanks","summary":"Special review requirements apply to any riverbank or floodway alteration work."},
+  {"id":"p3-6","sec":"61","title":"Building Design in the Overland Flow Area","summary":"Specific design requirements apply if the parcel is within a mapped overland flow area."},
+  {"id":"p3-7","sec":"62","title":"Lighting Requirements","summary":"General exterior lighting standards apply to the site."},
+  {"id":"p3-8","sec":"63","title":"Shielding","summary":"Light fixtures must be shielded to control glare and light spill, particularly toward adjoining residential parcels."},
+  {"id":"p3-9","sec":"64","title":"Mounting of Fixtures","summary":"Requirements for how/where lighting fixtures are mounted."},
+  {"id":"p3-10","sec":"65","title":"Height Limits (Lighting)","summary":"CR20-C20/R20 is not explicitly named in either of §65(1)'s two district groups: subsection (a)'s 7.5 m cap lists C-N1, C-N2, C-C1, C-COR1, CC-ER, I-B, I-E and all residential/mixed use/special purpose districts; subsection (b)'s 12.0 m cap lists CC-ET, CC-EIR, CC-EMU, CC-EPR, CC-ERR '''and all other commercial and industrial districts''' — and CR20-C20/R20, a Commercial Residential District, isn'''t itself a \"commercial\" district (C-prefixed) or an industrial one by that literal reading. A genuine textual gap; confirm the applicable outdoor light fixture mounting-height cap directly with the Development Authority rather than assuming either figure. Outdoor Recreation Area and Spectator Sports Facility uses have no maximum mounting height regardless of District (§65(2)); Outdoor Recreation Area is a CR20-C20/R20 use, Spectator Sports Facility is not."},
+  {"id":"p3-11","sec":"66","title":"Canopy Lighting","summary":"Outdoor light fixtures mounted on any canopy must be recessed so the luminaire doesn't project below the canopy's underside — relevant to CR20-C20/R20's Food Kiosk, Restaurant, and building-entrance canopy uses."},
+  {"id":"p3-12","sec":"67-72","title":"Signs — Purpose, Classification, DP Requirements","summary":"All signs are classified Class A–G. Confirm a DP is required (most are) and whether a Comprehensive Sign Program applies to the site."},
+  {"id":"p3-13","sec":"73-76","title":"General Sign Rules, Digital Displays, Maintenance","summary":"General construction/safety/illumination standards for all signs; extra rules if any sign has a digital display; ongoing maintenance obligation; rules for parcels sharing signage under a related function."},
+  {"id":"p3-14","sec":"77-90","title":"Class A Signs (permitted use in CR20-C20/R20)","summary":"Includes Address, Art, Banner, Construction, Directional, Flag, Pedestrian, Real Estate, Special Event, Show Home, Temporary, and Window sign sub-rules. Sign – Class A is one of only six flat permitted uses in the District (§1306(1)(c)) — no discretionary use approval is needed for the use itself, though a DP is still required for the sign, unlike CC-ER/CC-ERR/CC-EPR/CC-EIR/CC-EMU/CC-ET, where Class A is a discretionary use."},
+  {"id":"p3-15","sec":"91-93","title":"Class B Signs (permitted use in CR20-C20/R20) — Fascia Sign","summary":"Designated signable area/location rules and fascia sign rules. Sign – Class B is also flat permitted (§1306(1)(d))."},
+  {"id":"p3-16","sec":"94-97","title":"Class C Signs (discretionary use in CR20-C20/R20) — Freestanding Sign","summary":"Sign – Class C is discretionary per §1307(3)(ll). §97's six district groupings for Freestanding Sign area/height (9.5 m²/6.0 m for C-N1/C-N2/C-C1; 18.5 m²/12.2 m for C-COR3; 14.0 m²/9.0 m for CC-ET/CC-EIR/other commercial/industrial/mixed use; 7.0 m²/6.0 m conditional for CC-EMU/CC-EPR/CC-ERR/CC-MH/CC-MHX/M-H1-3/M-X1-2; 5.0 m²/4.0 m for low density residential/H-GO/M-CG/M-C1/M-C2/M-G/M-1/M-2; 7.0 m²/6.0 m for special purpose) do not name CR20-C20/R20 at all — a genuine gap in the Bylaw. Confirm the applicable Freestanding Sign cap directly with the Development Authority."},
+  {"id":"p3-17","sec":"98-102","title":"Class D Signs (permitted use in CR20-C20/R20) — Canopy / Projecting Sign","summary":"Canopy sign rules (§99 — copy area max. 50.0% of canopy area, can't extend beyond the canopy structure), rules for signs under canopies (§100), and projecting sign rules (§101 — max. one per business per primary wall, generally max. 6.0 m height, min. 2.4 m clearance from grade, taller for a qualifying Hotel/Retail and Consumer Service/Parking Lot – Structure). Sign – Class D is flat permitted (§1306(1)(e)). §102(3) sets CR20-C20/R20's Projecting Sign area cap at 4.5 m² — grouped with CC-ET and every other commercial/industrial/mixed use district, notably more generous than CC-EPR/CC-EIR/CC-EMU's shared 2.3 m² (§102(1)) or CC-ER/CC-ERR's residual 1.0 m² (§102(4))."},
+  {"id":"p3-18","sec":"103-109","title":"Class E Signs (discretionary use in CR20-C20/R20)","summary":"Includes Digital Message Sign (§104), Inflatable Sign (§105), Painted Wall Sign (§106), Roof Sign (§107), Rotating Sign (§108), and Temporary Sign Marker (§109) sub-rules. Sign – Class E is discretionary per §1307(3)(mm). CR20-C20/R20 shares CC-ER's less-restrictive Digital Message Sign pathway under §104(1)/(6)(a) — no institutional-use association required — with a 5.0 m² cap when building-attached, the lesser of 2.5 m²/30.0% of window area as a Window Sign, and 50.0% of the applicable Freestanding Sign area (itself ambiguous here — see the Class C item above). CR20-C20/R20 is also explicitly named among the few districts permitted a Roof Sign under §107(1)(d) (with all commercial/industrial/mixed use districts and S-CI/S-SPR). The §104(7)(a) operating restriction applies: within 125.0 m of, and visible from, a building containing a Dwelling Unit, the sign must go dark (or show black) 11 p.m.–6 a.m."},
+  {"id":"p3-19","sec":"110-115","title":"Class F Signs (discretionary use in CR20-C20/R20) — Third Party Advertising Sign","summary":"Sign – Class F is discretionary per §1307(3)(nn). Generally capped at 25.0 m² sign area, 8.3 m freestanding height / 10.5 m wall-mounted height (§113), with siting separations from other signs, intersections, and major parks (§111–112). CR20-C20/R20 carries a unique exception at §114(1.1) found nowhere else in the Bylaw: a Third Party Advertising Sign with an area greater than 4.5 m² may be approved here where it forms part of a comprehensive development and is incorporated into the design of a building or structure."},
+  {"id":"p3-20","sec":"115.1-115.5","title":"Class G Signs (discretionary EXCEPT in the Transition Area) — Digital Third Party Advertising Sign","summary":"Sign – Class G is an additional discretionary use under §1308, EXCEPT where the parcel is in the Transition Area illustrated on Map 11 — there it isn't available at all. Status computed live from the Transition Area checkbox in the sidebar — see Use tab. Follows the same siting/height/area framework as Class F (§115.2–115.4), including the identical CR20-C20/R20-only exception at §115.5(1.1) allowing an area greater than 4.5 m² as part of a comprehensive, building-incorporated development."},
+  {"id":"p3-21","sec":"116","title":"Parking — General Rules","summary":"Baseline rules governing all required parking/loading."},
+  {"id":"p3-22","sec":"117","title":"Parking Stall Signage","summary":"Signage requirements for parking stalls (e.g., accessible stalls)."},
+  {"id":"p3-23","sec":"118","title":"Location of Parking and Loading Requirements","summary":"Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings."},
+  {"id":"p3-24","sec":"119","title":"Use of Parking and Loading Stalls","summary":"Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."},
+  {"id":"p3-25","sec":"120","title":"Identification of Required Parking/Loading Stalls","summary":"How required stalls must be marked/identified on-site and on drawings."},
+  {"id":"p3-26","sec":"121","title":"Calculation of Minimum Parking/Loading Stalls","summary":"Unlike CC-ER (which falls back on the General Rules §1233 baseline rate), CR20-C20/R20 has its own complete parking-stall rate structure at §1325 in the District tab — this citywide section is the general calculation mechanism behind it, not an independent standard."},
+  {"id":"p3-27","sec":"122","title":"Standards for Motor Vehicle Parking Stalls","summary":"Stall/aisle dimensions and layout standards."},
+  {"id":"p3-28","sec":"123","title":"Loading Stalls","summary":"Required loading stall size and count standards."},
+  {"id":"p3-29","sec":"124","title":"Relaxations of Parking/Loading Requirements","summary":"General relaxation mechanism. CR20-C20/R20 additionally has its own §1326(3) Restricted Parking Area relaxation — up to 50.0%, tied to an off-site transportation improvements fee — see District tab."},
+  {"id":"p3-30","sec":"124.1","title":"Parking Stall Exemptions","summary":"Specific exemptions from providing required parking stalls."},
+  {"id":"p3-31","sec":"125","title":"Bicycle Parking Stalls","summary":"CR20-C20/R20's own bicycle parking rate lives in the District tab (§1330) rather than the Part 4 default applying without modification."},
+  {"id":"p3-32","sec":"126","title":"Motor Vehicle Pick-Up and Drop-Off Stalls","summary":"CR20-C20/R20 has no Drive Through use in its permitted/discretionary list; typically N/A unless a Vehicle Rental/Sales use's pick-up/drop-off activity (§1319) is at issue."},
+  {"id":"p3-33","sec":"129.1","title":"Infrastructure Requirements","summary":"The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development."}
+],
+"part4": [
+  {"id":"p4-0","sec":"249","title":"Park","summary":"Permitted — §1306(1)(a)"},
+  {"id":"p4-1","sec":"270","title":"Protective and Emergency Service","summary":"Permitted — §1306(1)(b)"},
+  {"id":"p4-2","sec":"299","title":"Sign – Class A","summary":"Permitted — §1306(1)(c)"},
+  {"id":"p4-3","sec":"300","title":"Sign – Class B","summary":"Permitted — §1306(1)(d)"},
+  {"id":"p4-4","sec":"302","title":"Sign – Class D","summary":"Permitted — §1306(1)(e)"},
+  {"id":"p4-5","sec":"321","title":"Utilities","summary":"Permitted — §1306(1)(f)"},
+  {"id":"p4-6","sec":"—","title":"Accessory Food Service","summary":"Permitted — §1306(2)(a). Not a separately numbered defined use in Part 4, Division 2 — treat as an accessory food-service activity ancillary to another approved use in this District and confirm scope/conditions directly with the Development Authority.","condBuilding":true,"priorLetter":"a"},
+  {"id":"p4-7","sec":"—","title":"Accessory Liquor Service","summary":"Permitted — §1306(2)(b). Not a separately numbered defined use in Part 4, Division 2 — treat as an accessory liquor-service activity ancillary to another approved use in this District and confirm scope/conditions directly with the Development Authority.","condBuilding":true,"priorLetter":"b"},
+  {"id":"p4-8","sec":"144","title":"Artist's Studio","summary":"Permitted — §1306(2)(c)","condBuilding":true,"priorLetter":"c"},
+  {"id":"p4-9","sec":"156","title":"Billiard Parlour","summary":"Permitted — §1306(2)(d)","condBuilding":true,"priorLetter":"d"},
+  {"id":"p4-10","sec":"170","title":"Computer Games Facility","summary":"Permitted — §1306(2)(e)","condBuilding":true,"priorLetter":"e"},
+  {"id":"p4-11","sec":"174","title":"Convenience Food Store","summary":"Permitted — §1306(2)(f)","condBuilding":true,"priorLetter":"f"},
+  {"id":"p4-12","sec":"180","title":"Dinner Theatre","summary":"Permitted — §1306(2)(g)","condBuilding":true,"priorLetter":"g"},
+  {"id":"p4-13","sec":"193","title":"Financial Institution","summary":"Permitted — §1306(2)(h)","condBuilding":true,"priorLetter":"h"},
+  {"id":"p4-14","sec":"198","title":"Food Kiosk","summary":"Permitted — §1306(2)(i)","condBuilding":true,"priorLetter":"i"},
+  {"id":"p4-15","sec":"207","title":"Home Occupation – Class 1","summary":"Permitted — §1306(2)(j)","condBuilding":true,"priorLetter":"j"},
+  {"id":"p4-16","sec":"216","title":"Information and Service Provider","summary":"Permitted — §1306(2)(k)","condBuilding":true,"priorLetter":"k"},
+  {"id":"p4-17","sec":"224","title":"Library","summary":"Permitted — §1306(2)(l)","condBuilding":true,"priorLetter":"l"},
+  {"id":"p4-18","sec":"242","title":"Museum","summary":"Permitted — §1306(2)(m)","condBuilding":true,"priorLetter":"m"},
+  {"id":"p4-19","sec":"246","title":"Office","summary":"Permitted — §1306(2)(n)","condBuilding":true,"priorLetter":"n"},
+  {"id":"p4-20","sec":"257","title":"Pet Care Service","summary":"Permitted — §1306(2)(o)","condBuilding":true,"priorLetter":"o"},
+  {"id":"p4-21","sec":"267","title":"Print Centre","summary":"Permitted — §1306(2)(p)","condBuilding":true,"priorLetter":"p"},
+  {"id":"p4-22","sec":"278","title":"Restaurant: Food Service Only – Medium","summary":"Permitted — §1306(2)(q). Part 4's own defined use is simply \"Restaurant: Food Service Only\" (§278) — the District list's Medium/Small size split isn't a Part 4 distinction; both entries key off the same §278 definition.","condBuilding":true,"priorLetter":"q"},
+  {"id":"p4-23","sec":"278","title":"Restaurant: Food Service Only – Small","summary":"Permitted — §1306(2)(r). Same §278 defined use as Restaurant: Food Service Only – Medium above; the District list's size split isn't a Part 4 distinction.","condBuilding":true,"priorLetter":"r"},
+  {"id":"p4-24","sec":"281","title":"Restaurant: Licensed – Small","summary":"Permitted — §1306(2)(s). Part 4's own defined use is simply \"Restaurant: Licensed\" (§281) — the District list's size qualifier isn't a Part 4 distinction.","condBuilding":true,"priorLetter":"s"},
+  {"id":"p4-25","sec":"286.1","title":"Retail and Consumer Service","summary":"Permitted — §1306(2)(t)","condBuilding":true,"priorLetter":"t"},
+  {"id":"p4-26","sec":"310","title":"Specialty Food Store","summary":"Permitted — §1306(2)(u)","condBuilding":true,"priorLetter":"u"},
+  {"id":"p4-27","sec":"314","title":"Supermarket","summary":"Permitted — §1306(2)(v)","condBuilding":true,"priorLetter":"v"},
+  {"id":"p4-28","sec":"134.1","title":"Take Out Food Service","summary":"Permitted — §1306(2)(w). A legacy/deemed use term, not a standalone Part 4 definition — §134.1(11)/(12) deems it to Restaurant: Food Service Only (§278) where liquor isn't served, or Restaurant: Licensed (§281) where it is. Confirm which applies directly.","condBuilding":true,"priorLetter":"w"},
+  {"id":"p4-29","sec":"330","title":"Veterinary Clinic","summary":"Permitted — §1306(2)(x)","condBuilding":true,"priorLetter":"x"},
+  {"id":"p4-30","sec":"164","title":"Catering Service – Minor","summary":"Permitted — §1306(3)(a)","priorLetter":"a","condSkywalk":true},
+  {"id":"p4-31","sec":"204","title":"Counselling Service","summary":"Permitted — §1306(3)(b). A legacy/deemed use term — §134.1(9)(b) deems it to Health Care Service (§204).","priorLetter":"b","condSkywalk":true},
+  {"id":"p4-32","sec":"195","title":"Fitness Centre","summary":"Permitted — §1306(3)(c)","priorLetter":"c","condSkywalk":true},
+  {"id":"p4-33","sec":"204","title":"Health Services Laboratory – With Clients","summary":"Permitted — §1306(3)(d). A legacy/deemed use term — §134.1(9)(c) deems \"Health Care Services Laboratory – With Clients\" to Health Care Service (§204).","priorLetter":"d","condSkywalk":true},
+  {"id":"p4-34","sec":"204","title":"Medical Clinic","summary":"Permitted — §1306(3)(e). A legacy/deemed use term — §134.1(9)(d) deems it to Health Care Service (§204).","priorLetter":"e","condSkywalk":true},
+  {"id":"p4-35","sec":"266","title":"Power Generation Facility – Small","summary":"Permitted — §1306(3)(f)","priorLetter":"f","condSkywalk":true},
+  {"id":"p4-36","sec":"272","title":"Radio and Television Studio","summary":"Permitted — §1306(3)(g)","priorLetter":"g","condSkywalk":true},
+  {"id":"p4-37","sec":"298","title":"Service Organization","summary":"Permitted — §1306(3)(h)","priorLetter":"h","condSkywalk":true},
+  {"id":"p4-38","sec":"139","title":"Addiction Treatment","summary":"Discretionary — §1307(3)(a)"},
+  {"id":"p4-39","sec":"146","title":"Assisted Living","summary":"Discretionary — §1307(3)(b)"},
+  {"id":"p4-40","sec":"141","title":"Amusement Arcade","summary":"Discretionary — §1307(3)(c)"},
+  {"id":"p4-41","sec":"147","title":"Auction Market – Other Goods","summary":"Discretionary — §1307(3)(d)"},
+  {"id":"p4-42","sec":"156.1","title":"Brewery, Winery and Distillery","summary":"Discretionary — §1307(3)(d.1)"},
+  {"id":"p4-43","sec":"204","title":"Cannabis Counselling","summary":"Discretionary — §1307(3)(d.2). A legacy/deemed use term — §134.1(9)(a) deems it to Health Care Service (§204)."},
+  {"id":"p4-44","sec":"160.3","title":"Cannabis Store","summary":"Discretionary — §1307(3)(d.3). Unlike most Districts, CR20-C20/R20 is expressly carved out of §160.3's separation-distance rules: the 300.0 m same-use separation (§160.3(f)) and the anti-abutting-Liquor-Store rule (§160.3(g)) both name C-R2, C-R3 and CR20-C20/R20 as exceptions, and the 150.0 m Emergency Shelter/School separation (§160.3(i)) applies only in \"commercial, industrial and mixed use districts, not including... CR20-C20/R20.\" The 100.0 m school-reserve-parcel separation (§160.3(h)) still applies District-wide with no exception."},
+  {"id":"p4-45","sec":"165","title":"Child Care Service","summary":"Discretionary — §1307(3)(e)"},
+  {"id":"p4-46","sec":"166","title":"Cinema","summary":"Discretionary — §1307(3)(f)"},
+  {"id":"p4-47","sec":"169","title":"Community Recreational Facility","summary":"Discretionary — §1307(3)(g). The Bylaw lists this use as \"Community Recreational Facility\"; the Part 4 defined use is \"Community Recreation Facility\" (§169, no \"-al\") — likely the same use, but confirm the discrepancy directly rather than assuming."},
+  {"id":"p4-48","sec":"170.1","title":"Conference and Event Facility","summary":"Discretionary — §1307(3)(h)"},
+  {"id":"p4-49","sec":"178","title":"Custodial Care","summary":"Discretionary — §1307(3)(i)"},
+  {"id":"p4-50","sec":"177.1","title":"Cultural Support","summary":"Discretionary — §1307(3)(j)"},
+  {"id":"p4-51","sec":"183","title":"Drinking Establishment – Medium","summary":"Discretionary — §1307(3)(k)"},
+  {"id":"p4-52","sec":"184","title":"Drinking Establishment – Small","summary":"Discretionary — §1307(3)(l)"},
+  {"id":"p4-53","sec":"188","title":"Dwelling Unit","summary":"Discretionary — §1307(3)(m). Must not be located on the ground floor (§1318(1)(c)) or share a hallway/parking-structure area with a non-Schedule-A-Residential-Group use other than Hotel (§1318(4)/(5)). Subject to the §1313 window-separation and §1314 floor-plate rules — see District tab."},
+  {"id":"p4-54","sec":"198.1","title":"Food Production","summary":"Discretionary — §1307(3)(m.1)"},
+  {"id":"p4-55","sec":"205","title":"Health Services Laboratory – Without Clients","summary":"Discretionary — §1307(3)(n). Must not be located on the ground floor (§1318(1)(d))."},
+  {"id":"p4-56","sec":"208","title":"Home Occupation – Class 2","summary":"Discretionary — §1307(3)(o)"},
+  {"id":"p4-57","sec":"209","title":"Hotel","summary":"Discretionary — §1307(3)(p). Exempt from the Schedule A Residential Group hallway/parking-structure-sharing restriction that applies to Dwelling Units/Live Work Units/etc. (§1318(4)/(5)) — a Hotel may share either with any other Residential Group use."},
+  {"id":"p4-58","sec":"211","title":"Indoor Recreation Facility","summary":"Discretionary — §1307(3)(q)"},
+  {"id":"p4-59","sec":"217","title":"Instructional Facility","summary":"Discretionary — §1307(3)(r)"},
+  {"id":"p4-60","sec":"220","title":"Kennel","summary":"Discretionary — §1307(3)(r.1)"},
+  {"id":"p4-61","sec":"225","title":"Liquor Store","summary":"Discretionary — §1307(3)(s). Unlike most Districts, CR20-C20/R20 is expressly carved out of §225's separation-distance rules: the 300.0 m same-use separation (§225(d)) and the anti-abutting-Cannabis-Store rule (§225(e.2)) both name C-R2, C-R3 and CR20-C20/R20 as exceptions, and the 150.0 m School – Private/School Authority – School separation (§225(e)) applies only in \"commercial, industrial and mixed use districts, not including... CR20-C20/R20.\" The §225(e.1) 150.0 m Emergency Shelter separation and north-of-5-Ave-SE/west-of-4-St-SE prohibition apply District-wide as one of \"all Centre City East Village Districts\" restrictions — confirm whether CR20-C20/R20 is captured by that specific East Village reference."},
+  {"id":"p4-62","sec":"226","title":"Live Work Unit","summary":"Discretionary — §1307(3)(t). May only incorporate Artist's Studio, Health Care Service, Instructional Facility, Office, or Retail and Consumer Service (products sold must be made on-site or directly related to the service) as its business component in CR20-C20/R20 — the \"commercial districts\" version of §226(a)(ii), shared with CC-EMU, CC-ET and CC-EIR, not the narrower multi-residential/H-GO/CC-EPR list under §226(a)(iii)."},
+  {"id":"p4-63","sec":"286.1","title":"Market","summary":"Discretionary — §1307(3)(u). A legacy/deemed use term — §134.1(10) deems it to Retail and Consumer Service (§286.1)."},
+  {"id":"p4-64","sec":"245","title":"Night Club","summary":"Discretionary — §1307(3)(v). Triggers the Part 2 §27(2)(f.1) notice-posting requirement specifically where the parcel is within the Transition Area illustrated on Map 11 — confirm the parcel's Map 11 status directly."},
+  {"id":"p4-65","sec":"247","title":"Outdoor Café","summary":"Discretionary — §1307(3)(w). Triggers the Part 2 §27(2)(g) notice-posting requirement specifically where the parcel is within the Transition Area illustrated on Map 11 — confirm the parcel's Map 11 status directly."},
+  {"id":"p4-66","sec":"248","title":"Outdoor Recreation Area","summary":"Discretionary — §1307(3)(x)"},
+  {"id":"p4-67","sec":"251","title":"Park Maintenance Facility – Small","summary":"Discretionary — §1307(3)(y)"},
+  {"id":"p4-68","sec":"253","title":"Parking Lot – Structure","summary":"Discretionary — §1307(3)(z)"},
+  {"id":"p4-69","sec":"254","title":"Pawn Shop","summary":"Discretionary — §1307(3)(aa)"},
+  {"id":"p4-70","sec":"254.1","title":"Payday Loan","summary":"Discretionary — §1307(3)(aa.1)"},
+  {"id":"p4-71","sec":"255","title":"Performing Arts Centre","summary":"Discretionary — §1307(3)(bb)"},
+  {"id":"p4-72","sec":"261","title":"Place of Worship – Medium","summary":"Discretionary — §1307(3)(cc). Must not be located on the second floor of a +15-Skywalk-connected building unless another use sits between it and the Skywalk (§1318(3)(i))."},
+  {"id":"p4-73","sec":"262","title":"Place of Worship – Small","summary":"Discretionary — §1307(3)(dd)"},
+  {"id":"p4-74","sec":"263","title":"Post-Secondary Learning Institution","summary":"Discretionary — §1307(3)(ee)"},
+  {"id":"p4-75","sec":"281","title":"Restaurant: Licensed – Large","summary":"Discretionary — §1307(3)(ff). Part 4's own defined use is simply \"Restaurant: Licensed\" (§281) — the District list's size qualifier isn't a Part 4 distinction."},
+  {"id":"p4-76","sec":"281","title":"Restaurant: Licensed – Medium","summary":"Discretionary — §1307(3)(gg). Same §281 defined use as Restaurant: Licensed – Large above; the District list's size split isn't a Part 4 distinction."},
+  {"id":"p4-77","sec":"277","title":"Residential Care","summary":"Discretionary — §1307(3)(hh)"},
+  {"id":"p4-78","sec":"290","title":"School – Private","summary":"Discretionary — §1307(3)(ii). Must not be located on the second floor of a +15-Skywalk-connected building unless another use sits between it and the Skywalk (§1318(3)(k))."},
+  {"id":"p4-79","sec":"291","title":"School Authority – School","summary":"Discretionary — §1307(3)(jj). Must not be located on the second floor of a +15-Skywalk-connected building unless another use sits between it and the Skywalk (§1318(3)(l))."},
+  {"id":"p4-80","sec":"292","title":"School Authority Purpose – Major","summary":"Discretionary — §1307(3)(kk)"},
+  {"id":"p4-81","sec":"301","title":"Sign – Class C","summary":"Discretionary — §1307(3)(ll). See the Citywide tab — CR20-C20/R20 is not named in any of §97(1)-(6)'s Freestanding Sign district groups; confirm the applicable area/height cap directly."},
+  {"id":"p4-82","sec":"303","title":"Sign – Class E","summary":"Discretionary — §1307(3)(mm). See the Citywide tab — includes the Digital Message Sign, Roof Sign, and other Class E sub-rules; CR20-C20/R20 gets the less-restrictive §104(1)/(6)(a) Digital Message Sign pathway."},
+  {"id":"p4-83","sec":"304","title":"Sign – Class F","summary":"Discretionary — §1307(3)(nn). See the Citywide tab — CR20-C20/R20 uniquely permits a Third Party Advertising Sign larger than 4.5 m² as part of a comprehensive, building-incorporated development (§114(1.1))."},
+  {"id":"p4-84","sec":"307","title":"Social Organization","summary":"Discretionary — §1307(3)(oo)"},
+  {"id":"p4-85","sec":"309","title":"Special Function – Class 2","summary":"Discretionary — §1307(3)(pp). Where this use takes the form of temporary structures under §309, note Part 2 §25(j)(ii)(B) sets CR20-C20/R20's (and every East Village District's) no-development-permit-required threshold at a cumulative covered-temporary-structure area of 300.0 m² — higher than the 125.0 m² residential-proximity threshold or the 75.0 m² baseline elsewhere — and §25(j)(iii) additionally requires the parcel to already contain a Brewery/Winery/Distillery, Conference and Event Facility, a Drinking Establishment, Restaurant: Licensed, or Night Club for that exemption to apply at all. Confirm directly whether a specific proposal needs a DP."},
+  {"id":"p4-86","sec":"320.1","title":"Urban Agriculture","summary":"Discretionary — §1307(3)(pp.1)"},
+  {"id":"p4-87","sec":"322","title":"Utility Building","summary":"Discretionary — §1307(3)(qq)"},
+  {"id":"p4-88","sec":"323","title":"Vehicle Rental – Major","summary":"Discretionary — §1307(3)(rr). Activities other than pick-up/drop-off must be contained within a building (§1319)."},
+  {"id":"p4-89","sec":"324","title":"Vehicle Rental – Minor","summary":"Discretionary — §1307(3)(ss). Activities other than pick-up/drop-off must be contained within a building (§1319)."},
+  {"id":"p4-90","sec":"326","title":"Vehicle Sales – Minor","summary":"Discretionary — §1307(3)(tt). Activities other than pick-up/drop-off must be contained within a building (§1319)."},
+  {"id":"p4-91","sec":"252","title":"Parking Lot – Grade","summary":"Discretionary — §1307(4)(a), ONLY where it was legally existing on the parcel prior to its CR20-C20/R20 designation — not available as a brand-new use."},
+  {"id":"p4-92","sec":"260","title":"Place of Worship – Large","summary":"Discretionary — §1307(4)(b), ONLY where it was legally existing on the parcel prior to its CR20-C20/R20 designation — not available as a brand-new use."},
+  {"id":"p4-93","sec":"182","title":"Drinking Establishment – Large","summary":"Discretionary — §1308(a)","priorLetter":"a","condTransition":true},
+  {"id":"p4-94","sec":"304.1","title":"Sign – Class G","summary":"Discretionary — §1308(b)","priorLetter":"b","condTransition":true}
+]
+};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"part13div1", label:"Part 13 — Commercial Residential General Rules", short:"Sec. 1294–1304"},
+    {key:"part13div2", label:"Part 13 — CR20-C20/R20 District Rules", short:"Sec. 1305–1331"},
+    {key:"part3", label:"Part 3 — Citywide Rules", short:"Sec. 53–129.1"},
+    {key:"part4", label:"Part 4 — Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:"", newBuilding:false, skywalkSecondFloor:false, transitionArea:false},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+    document.getElementById("f-newbuilding").checked = !!state.project.newBuilding;
+    document.getElementById("f-skywalk").checked = !!state.project.skywalkSecondFloor;
+    document.getElementById("f-transition").checked = !!state.project.transitionArea;
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  // Three District Conditions facts drive live-computed Use tab status:
+  // newBuilding (proposed building/addition vs. existing approved building,
+  // §1307(1)), skywalkSecondFloor (§1307(2), only relevant to the
+  // §1306(3) group and only when newBuilding is unchecked), and
+  // transitionArea (§1308 — makes its two uses unavailable rather than
+  // discretionary). Computed at render time from CHECKLIST_DATA flags,
+  // never hardcoded into the data.
+  function computeEffectiveUseItem(item){
+    if(item.condBuilding){
+      const letter = item.priorLetter || "";
+      if(state.project.newBuilding){
+        return Object.assign({}, item, {
+          summary: `Discretionary — §1307(1), located in a proposed building or a proposed addition to an existing building (§1306(2)(${letter}) list).`
+        });
+      }
+      return Object.assign({}, item, {
+        summary: `Permitted — §1306(2)(${letter}), located in an existing approved building.`
+      });
+    }
+    if(item.condSkywalk){
+      const letter = item.priorLetter || "";
+      if(state.project.newBuilding){
+        return Object.assign({}, item, {
+          summary: `Discretionary — §1307(1), located in a proposed building or a proposed addition to an existing building (§1306(3)(${letter}) list).`
+        });
+      }
+      if(state.project.skywalkSecondFloor){
+        return Object.assign({}, item, {
+          summary: `Discretionary — §1307(2), located on the second floor of an existing approved building with an existing/approved +15 Skywalk System walkway (§1306(3)(${letter}) list).`
+        });
+      }
+      return Object.assign({}, item, {
+        summary: `Permitted — §1306(3)(${letter}), except where located on the second floor of an existing approved building with an existing/approved +15 Skywalk System walkway.`
+      });
+    }
+    if(item.condTransition){
+      const letter = item.priorLetter || "";
+      if(state.project.transitionArea){
+        return Object.assign({}, item, {
+          summary: `Not available — §1308 excludes this use where the parcel is located in the Transition Area illustrated on Map 11.`
+        });
+      }
+      return Object.assign({}, item, {
+        summary: `Discretionary — §1308(${letter}), except where the parcel is located in the Transition Area illustrated on Map 11.`
+      });
+    }
+    return item;
+  }
+
+  function allItemsForTab(tabKey){
+    const items = CHECKLIST_DATA[tabKey] || [];
+    return tabKey === "part4" ? items.map(computeEffectiveUseItem) : items;
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("part4").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "part4" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["part12div1","part12div2","part3","part4"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips) calls this instead of touching only
+  // the element that was clicked. It rebuilds tab counts, the overall
+  // progress bar, and the whole main panel together, so nothing in the
+  // sidebar or stat strip can ever go stale relative to what was clicked.
+  // Scroll position in the main panel is preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the CR20-C20/R20 Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the Commercial Residential District (CR20-C20/R20) (the "Downtown" family of districts, Part 13), or all districts.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> — it's used to name your session file. Then set the three <b>District conditions</b> checkboxes below them — they drive live Permitted/Discretionary status on the Use tab, so get them right before reviewing individual uses.</li>
+        <li><b>Part 13 — Commercial Residential General Rules</b> and <b>Part 13 — CR20-C20/R20 District Rules</b> apply to every project in this District without exception. Work through these first. CR20-C20/R20 is the only district built so far with three separate building/location facts driving use status: whether the building is proposed vs. existing approved (§1307(1)), whether a specific use sits on the second floor of an existing building with a +15 Skywalk connection (§1307(2)), and whether the parcel sits in the Transition Area shown on Map 11 (§1308) — the last of these also reshapes the §1313 window-separation, §1314 floor-plate, and §1316 Use Area figures on the District tab. Its own Floor Area Ratio (§1310) is a base 3.0, but may rise to a max. of 20.0 through the Part 13, Division 3 incentive/bonus density system — out of scope for this checklist; confirm directly.</li>
+        <li><b>Part 3 — Citywide Rules</b> applies to every district in Calgary, including CR20-C20/R20 — this district is the only one built so far to flat-out permit Sign Classes A, B and D (rather than requiring a discretionary use approval for them), while Classes C, E and F are discretionary and Class G follows the Transition Area checkbox. CR20-C20/R20 also carries a one-of-a-kind exception allowing a Third Party Advertising Sign (or its digital equivalent) larger than 4.5 m² as part of a comprehensive, building-incorporated development (§114(1.1)/§115.5(1.1)), and is expressly exempted from the standard Liquor Store/Cannabis Store separation-distance rules that apply almost everywhere else in the city. Don't skip it — including the flagged gaps where the Bylaw doesn't clearly assign this district a Freestanding Sign cap (§97) or an outdoor lighting mounting-height cap (§65).</li>
+        <li><b>Part 4 — Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the detailed use-specific requirements. This is the broadest use list built so far for the Centre City family — 6 flat permitted uses, 24 uses gated by the proposed/existing-building checkbox, 8 more gated additionally by the second-floor/Skywalk checkbox, 53 flat discretionary uses, 2 grandfather-only discretionary uses, and 2 uses gated by the Transition Area checkbox (95 in total).</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it — your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 167 checks, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off — the three District Conditions checkboxes round-trip through export/import along with the project fields.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope — what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the ~250 Part 4 use definitions not listed under CR20-C20/R20, subdivision requirements, site-specific overlays (Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps), and — deliberately — the Part 13, Division 3 incentive/bonus density calculation mechanics (Table 8 public amenity items, Incentive Rates/Ratios, the Central Business District Improvement Fund, and the sunlight-preservation density transfer mechanism), which are a distinct approval process layered on top of the base FAR rather than a pass/fail compliance check. Confirm the parcel's Map 11 Transition Area status and Map 12 Stephen Avenue Mall Retail Area status directly — several District tab and Use tab figures depend on them. Always check the current consolidated bylaw on calgary.ca since it is amended regularly. Part 10 (the original "Downtown" district family) was deleted by 33P2013 in 2014 and replaced by the Centre City districts in Parts 11–14 — if you're looking for "Downtown" in the old sense, CR20-C20/R20 and its neighbouring CC- districts are it.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;— confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;— non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;— need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;— not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+
+    if(state.activeTab === "part4"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab…";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) — nothing else is offered. Picking one
+  // adds it to the reviewed-uses set (proposed:true) and the card for that
+  // use (with its specific rule text and pass/fail controls) appears below.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review…";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", test: s => /^Permitted/i.test(s)},
+      {label:"Discretionary uses", test: s => /^Discretionary/i.test(s)},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("part4")
+        .filter(it => isSelectableUse(it) && g.test(it.summary) && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="part13div1") return "General rules for the Commercial Residential land use districts (CR20-C20/R20 and Part 13's own family) — landscaped area/planting/irrigation, additional landscaping and sidewalks, residential amenity space, garbage/recycling, mechanical screening, visibility setback, sunlight protection areas, and parcel access. Always applicable.";
+    if(key==="part13div2") return "CR20-C20/R20-specific rules — permitted/discretionary uses, floor area ratio, building height, window separation/floor plate (Transition Area-dependent), use area, office GFA/location, location of uses within buildings, use activities, lobbies at grade, street walls, Stephen Avenue Mall rules, landscaping, and the District's own full motor vehicle/bicycle parking framework (§1325–1331) — unlike CC-ER, this District doesn't fall back on a General Rules parking baseline. Set the three District Conditions checkboxes in the sidebar before reading the Use tab — they compute Permitted/Discretionary status live for 34 of this District's 95 uses. Always applicable.";
+    if(key==="part3") return "Rules Governing All Districts — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to CR20-C20/R20 the same as every other district, with several genuine gaps and one-of-a-kind carve-outs flagged directly on each item: no clear Freestanding Sign cap (§97) or outdoor lighting mounting-height group (§65) names this District; Sign Classes A, B and D are flat permitted uses here (unlike every East Village district, where they're all discretionary); and CR20-C20/R20 is the only district in the city permitted a Third Party Advertising Sign, or its digital equivalent, larger than 4.5 m² as part of a comprehensive development (§114(1.1)/§115.5(1.1)).";
+    if(key==="part4") return "Add the proposed use(s) from the dropdown — only Permitted and Discretionary CR20-C20/R20 uses are offered, computed live from the three District Conditions checkboxes in the sidebar. 24 uses (Accessory Food Service through Veterinary Clinic) flip on the proposed/existing-building checkbox alone; 8 more (Catering Service – Minor through Service Organization) also depend on the second-floor/+15 Skywalk checkbox; Drinking Establishment – Large and Sign – Class G depend on the Transition Area checkbox, becoming unavailable rather than discretionary when checked. Cannabis Store and Liquor Store are both expressly exempted from the separation-distance rules that apply almost everywhere else in the city — read their notes directly rather than assuming the usual restrictions.";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    requestAnimationFrame(()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    });
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "part4" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "part4";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items…";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["part12div1","part12div2","part3","part4"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+    ["Proposed building or addition (\u00a71307(1))", "newBuilding", "bool"],
+    ["Use on 2nd floor of existing building w/ +15 Skywalk (\u00a71307(2))", "skywalkSecondFloor", "bool"],
+    ["Parcel in the Transition Area \u2014 Map 11 (\u00a71308)", "transitionArea", "bool"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "part4";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported — ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed — couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed — not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed — no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported — ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed — couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // District Conditions checkboxes are state-changing (they flip use
+  // Permitted/Discretionary status live), unlike the text fields above,
+  // so they go through refreshEverything() rather than updating state alone.
+  function bindDistrictConditions(){
+    const checkMap = {"f-newbuilding":"newBuilding", "f-skywalk":"skywalkSecondFloor", "f-transition":"transitionArea"};
+    Object.keys(checkMap).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("change", (e)=>{
+        state.project[checkMap[id]] = e.target.checked;
+        refreshEverything();
+      });
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindDistrictConditions();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>
