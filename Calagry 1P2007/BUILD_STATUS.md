@@ -5,30 +5,44 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-EIR (Centre City East Village Integrated Residential District), Part 12,
-Division 3 — shares its General Rules tab with CC-ET (Part 12, Division 1: Sec. 1217–1242), since
-both are Centre City East Village districts, but CC-EIR's own District Rules division is
-noticeably shorter than CC-ET's: it runs Purpose through Use Area (§1253–1258, 6 sections) with no
-district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
-Parking Stalls, or Parking Stall Transfer section at all — unlike CC-ET's §1249–1252 — so the
-General Rules §1233 parking baseline applies to CC-EIR directly. CC-EIR's building-status
-conditional pattern (§07 of the build spec) is the same plain two-way flip as CC-ET — Permitted
-(§1254(2), existing approved building) vs. Discretionary (§1255(2), proposed building/addition) —
-with only one sidebar checkbox (`newBuilding`) needed. CC-EIR's own use list runs 12 conditional
-support-commercial uses (one fewer than CC-ET's 13 — CC-EIR's §1254(2) list has no Catering
-Service – Minor entry) plus a conditional Restaurant: Food Service Only (both gated on the single
-checkbox, with the Restaurant's 150.0 m² public-area threshold spelled out as static text), one
-grandfather-only discretionary use (Parking Lot – Grade), and 48 unconditional discretionary uses
-— notably including Dinner Theatre and Night Club, neither available in CC-ET; CC-EIR's Night Club
-use also triggers the Part 2 §27(2)(f.1) mandatory Notice Posting requirement. CC-EIR permits only
-Sign – Class A unconditionally (Classes B–E all discretionary, no Class F/G, same shape as CC-ET),
-but its dimensional figures diverge: CC-EIR's Projecting Sign cap is a tighter 2.3 m² under
-§102(1) (grouped with CC-MH/CC-MHX/CC-EMU/CC-EPR/etc.) versus CC-ET's more permissive 4.5 m²
-carve-out under §102(3), while its Freestanding Sign (14.0 m²/9.0 m, §97(3)) and Digital Message
-Sign (1.0 m², institutional/recreational uses only, §104(2)/(6)(b)) figures match CC-ET's exactly.
-Before that: CC-ET (Centre City East Village Transition District), Part 12, Division 2 — the first
-Centre City East Village district built, so it introduced the shared General Rules tab sourced
-from Part 12, Division 1, distinct from both the CC-MH/CC-MHX family's Division 1 and the
+Last completed: CC-EMU (Centre City East Village Mixed Use District), Part 12, Division 4 — shares
+its General Rules tab with CC-ET and CC-EIR (Part 12, Division 1: Sec. 1217–1242). Like CC-EIR,
+CC-EMU's own District Rules division runs Purpose through Use Area (§1259–1264, 6 sections) with
+no district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
+Parking Stalls, or Parking Stall Transfer section, so the General Rules §1233 parking baseline
+applies directly. CC-EMU's building-status conditional pattern (§07 of the build spec) is the same
+plain two-way flip as CC-ET/CC-EIR — Permitted (§1260(2), existing approved building) vs.
+Discretionary (§1261(2), proposed building/addition) — with only one sidebar checkbox
+(`newBuilding`) needed. CC-EMU's own use list runs 11 conditional support-commercial uses (one
+fewer than CC-EIR's 12 — CC-EMU's §1260(2) list has no Radio and Television Studio entry) plus a
+conditional Restaurant: Food Service Only, one grandfather-only discretionary use (Parking Lot –
+Grade), and 37 unconditional discretionary uses — notably including Kennel and Veterinary Clinic,
+neither available in CC-EIR or CC-ET. Unlike CC-EIR, CC-EMU's Restaurant uses carry a *second*,
+absolute public-area cap independent of the checkbox and the 150.0 m² Permitted/Discretionary
+split: §1264(3) caps the public area of both Restaurant: Food Service Only and Restaurant: Licensed
+at LESS THAN 300.0 m² outright, and §1261(4) makes both Restaurant uses additionally discretionary
+when located in a Municipal Historic Resource building — a pathway CC-EIR's District Rules don't
+have. CC-EMU's Density section also diverges: a 6.65 max. FAR, lower than CC-EIR's and CC-ET's
+shared 7.0, with no separate 3.0-FAR carve-out for Post-secondary Learning Institution gross floor
+area (CC-EIR has one). Its Use Area section adds a counselling carve-out for Health Care Service
+(the 200.0 m² cap lifts to 465.0 m² when activities are limited to counselling) that CC-EIR's
+equivalent section doesn't have. CC-EMU permits only Sign – Class A unconditionally (Classes B–E
+all discretionary, no Class F/G, same shape as CC-EIR/CC-ET), and most of its sign figures match
+CC-EIR's — a 2.3 m² Projecting Sign cap under §102(1) and a restrictive 1.0 m² Digital Message Sign
+pathway under §104(2)/(6)(b) — but its Freestanding Sign rule genuinely differs: instead of
+CC-EIR/CC-ET's flat 14.0 m²/9.0 m figure under §97(3), CC-EMU falls under §97(4)'s conditional
+7.0 m²/6.0 m cap, but only where the parcel contains commercial multi-residential uses; the bylaw
+doesn't spell out a fallback rate for a CC-EMU parcel that doesn't meet that condition, so the tool
+flags it as a caveat to confirm directly rather than assuming either figure. Before that: CC-EIR
+(Centre City East Village Integrated Residential District), Part 12, Division 3 — shares its
+General Rules tab with CC-ET, and its own District Rules division (§1253–1258) uses the same
+building-status two-way flip pattern; its use list runs 12 conditional support-commercial uses and
+48 unconditional discretionary uses (notably Dinner Theatre and Night Club, with Night Club
+triggering the Part 2 §27(2)(f.1) Notice Posting requirement), and it permits only Sign – Class A
+unconditionally, with a 2.3 m² Projecting Sign cap and a 14.0 m²/9.0 m Freestanding Sign matching
+CC-ET's. Before that: CC-ET (Centre City East Village Transition District), Part 12, Division 2 —
+the first Centre City East Village district built, so it introduced the shared General Rules tab
+sourced from Part 12, Division 1, distinct from both the CC-MH/CC-MHX family's Division 1 and the
 CC-X/CC-COR family's Division 4. Before that: CC-COR (Centre City Commercial Corridor District),
 Part 11, Division 6 — shares its general-rules tab with CC-X (Part 11, Division 4: General Rules
 for Centre City Commercial Land Use Districts), a different general-rules division than the
@@ -137,7 +151,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 11 | 6 | CC-COR | ✅ `CCCOR_Zoning_Review_Checklist.html` |
 | 12 | 2 | CC-ET | ✅ `CCET_Zoning_Review_Checklist.html` |
 | 12 | 3 | CC-EIR | ✅ `CCEIR_Zoning_Review_Checklist.html` |
-| 12 | 4 | CC-EMU | ⬜ |
+| 12 | 4 | CC-EMU | ✅ `CCEMU_Zoning_Review_Checklist.html` |
 | 12 | 5 | CC-EPR | ⬜ |
 | 12 | 6 | CC-ERR | ⬜ |
 | 12 | 7 | CC-ER | ⬜ |
