@@ -5,7 +5,39 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: CC-EMU (Centre City East Village Mixed Use District), Part 12, Division 4 — shares
+Last completed: CC-EPR (Centre City East Village Primarily Residential District), Part 12, Division 5 —
+shares its General Rules tab with CC-ET, CC-EIR, and CC-EMU (Part 12, Division 1: Sec. 1217–1242).
+CC-EPR's own District Rules division runs Purpose through Use Area (§1265–1270, 6 sections) with no
+district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
+Parking Stalls, or Parking Stall Transfer section, so the General Rules §1233 parking baseline
+applies directly — the same shape as CC-EIR and CC-EMU. CC-EPR's building-status conditional pattern
+(§07 of the build spec) is the same plain two-way flip as its neighbours — Permitted (§1266(2),
+existing approved building) vs. Discretionary (§1267(2), proposed building/addition) — with only one
+sidebar checkbox (`newBuilding`) needed, covering 10 conditional support-commercial uses (one fewer
+than CC-EMU's 11, two fewer than CC-EIR's 12 — CC-EPR's §1266(2) list has no Radio and Television
+Studio, Instructional Facility, or Museum entry). Unlike CC-EIR and CC-EMU, CC-EPR's Restaurant: Food
+Service Only carries no separate Permitted/Discretionary public-area split — it's simply one more
+entry in the same conditional list, and both Restaurant: Food Service Only and Restaurant: Licensed
+share one flat 150.0 m² public-area cap (§1270(3)) that applies regardless of building status,
+computed as a static caveat rather than a second conditional branch (CC-EIR/CC-EMU instead have a
+150.0 m² Permitted-only threshold PLUS a separate absolute <300.0 m² cap). CC-EPR's own use list runs
+narrower than its CC-EIR/CC-EMU neighbours — 35 unconditional discretionary uses (down from CC-EIR's
+48 and CC-EMU's 37) plus the one grandfather-only Parking Lot – Grade, with no Night Club, Dinner
+Theatre, Brewery/Winery/Distillery, Post-secondary Learning Institution, Kennel, Veterinary Clinic,
+or Drinking Establishment – Medium, consistent with its primarily-residential purpose — but it does
+add Food Kiosk, Health Care Service, and Outdoor Recreation Area (none of which CC-EIR/CC-EMU offer),
+and it moves Instructional Facility to an unconditional discretionary use instead of the
+existing-building conditional list. CC-EPR's Density section matches CC-EMU's 6.65 max. FAR (lower
+than CC-EIR's/CC-ET's shared 7.0), with a shorter 10-use FAR exclusion list (no Community Entrance
+Feature, Museum, or Post-secondary Learning Institution) and no separate Post-secondary Learning
+Institution FAR carve-out. Its Use Area section keeps CC-EMU's Health Care Service counselling
+carve-out (200.0 m² baseline lifting to 465.0 m² for counselling-only activities). CC-EPR permits
+only Sign – Class A unconditionally (Classes B–E all discretionary, no Class F/G, same shape as
+CC-EIR/CC-EMU/CC-ET), and its sign figures match CC-EMU's exactly — the same §97(4) conditional
+7.0 m²/6.0 m Freestanding Sign cap tied to commercial multi-residential uses, the same 2.3 m²
+Projecting Sign cap under §102(1), and the same restrictive 1.0 m² Digital Message Sign pathway under
+§104(2)/(6)(b) — CC-EPR is explicitly grouped alongside CC-EMU in all three of those citywide
+subsections. Before that: CC-EMU (Centre City East Village Mixed Use District), Part 12, Division 4 — shares
 its General Rules tab with CC-ET and CC-EIR (Part 12, Division 1: Sec. 1217–1242). Like CC-EIR,
 CC-EMU's own District Rules division runs Purpose through Use Area (§1259–1264, 6 sections) with
 no district-specific Motor Vehicle Parking Stalls, Restricted Parking Area relaxation, Short Stay
@@ -152,7 +184,7 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 12 | 2 | CC-ET | ✅ `CCET_Zoning_Review_Checklist.html` |
 | 12 | 3 | CC-EIR | ✅ `CCEIR_Zoning_Review_Checklist.html` |
 | 12 | 4 | CC-EMU | ✅ `CCEMU_Zoning_Review_Checklist.html` |
-| 12 | 5 | CC-EPR | ⬜ |
+| 12 | 5 | CC-EPR | ✅ `CCEPR_Zoning_Review_Checklist.html` |
 | 12 | 6 | CC-ERR | ⬜ |
 | 12 | 7 | CC-ER | ⬜ |
 | 13 | 2–3 | CR20-C20/R20 | ⬜ |
