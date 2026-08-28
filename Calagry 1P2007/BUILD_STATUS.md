@@ -5,7 +5,7 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: S-CRI (Special Purpose – City and Regional Infrastructure), Part 9, Division 7.
+Last completed: S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9. Note: Division 8 (S-URP) was intentionally skipped over per an explicit request and is still outstanding — build it next before moving on to S-TUC.
 
 ## Part 5 — Residential Districts
 
@@ -83,8 +83,8 @@ Last completed: S-CRI (Special Purpose – City and Regional Infrastructure), Pa
 | 5 | S-R | ✅ `SR_Zoning_Review_Checklist.html` |
 | 6 | S-CI | ✅ `CI_Zoning_Review_Checklist.html` |
 | 7 | S-CRI | ✅ `CRI_Zoning_Review_Checklist.html` |
-| 8 | S-URP | ⬜ |
-| 9 | S-FUD | ⬜ |
+| 8 | S-URP | ⬜ (skipped — build next) |
+| 9 | S-FUD | ✅ `SFUD_Zoning_Review_Checklist.html` |
 | 10 | S-TUC | ⬜ |
 
 ## Part 11–14 — Centre City (Downtown) Districts
