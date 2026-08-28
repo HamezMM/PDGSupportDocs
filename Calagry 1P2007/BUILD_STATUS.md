@@ -5,9 +5,10 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, and
-S-URP (Special Purpose – University Research Park), Part 9, Division 8 — both built concurrently
-in separate PRs and merged together. Part 9 now has only S-TUC (Division 10) left.
+Last completed: S-TUC (Special Purpose – Transportation and Utility Corridor), Part 9, Division 10,
+merged alongside S-FUD (Special Purpose – Future Urban Development), Part 9, Division 9, which was
+built concurrently in a separate PR. S-URP (Division 8) and S-CRI (Division 7) were built in
+earlier PRs and are also ✅ complete.
 
 ## Part 5 — Residential Districts
 
@@ -87,7 +88,9 @@ in separate PRs and merged together. Part 9 now has only S-TUC (Division 10) lef
 | 7 | S-CRI | ✅ `CRI_Zoning_Review_Checklist.html` |
 | 8 | S-URP | ✅ `SURP_Zoning_Review_Checklist.html` |
 | 9 | S-FUD | ✅ `SFUD_Zoning_Review_Checklist.html` |
-| 10 | S-TUC | ⬜ |
+| 10 | S-TUC | ✅ `STUC_Zoning_Review_Checklist.html` |
+
+**Part 9 (Special Purpose) is now complete.**
 
 ## Part 11–14 — Centre City (Downtown) Districts
 
