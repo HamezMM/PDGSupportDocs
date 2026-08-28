@@ -58,6 +58,41 @@ a.card:active{transform:scale(.99)}
 footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--border)}
 footer p{font-size:12px;color:var(--text-tertiary);line-height:1.6}
 footer code{font-family:'SFMono-Regular',Consolas,monospace;background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px}
+footer a{color:var(--accent)}
+
+/* Workflow guide filters */
+.guide-toolbar{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.guide-search{position:relative}
+.guide-search input{
+  width:100%;font:inherit;font-size:13.5px;padding:9px 12px 9px 34px;border-radius:8px;
+  border:0.5px solid var(--border);background:var(--surface);color:var(--text-primary);
+}
+.guide-search input:focus{outline:none;border-color:var(--accent)}
+.guide-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-tertiary);pointer-events:none}
+.guide-filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.guide-filter-label{font-size:10.5px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.07em;margin-right:2px}
+.guide-chip{
+  font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;border:0.5px solid var(--border);
+  background:var(--surface);color:var(--text-secondary);cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s,color .12s;
+  font-family:inherit;
+}
+.guide-chip:hover{border-color:var(--border-strong)}
+.guide-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.guide-count{font-size:12px;color:var(--text-tertiary);margin:2px 2px 10px}
+.guide-list{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+a.guide-row{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;padding:.7rem 1.1rem;
+  text-decoration:none;color:inherit;border-bottom:0.5px solid var(--border);
+}
+a.guide-row:last-child{border-bottom:none}
+a.guide-row:hover{background:var(--surface-2)}
+.guide-main{min-width:0}
+.guide-title{font-size:13.5px;font-weight:600;color:var(--text-primary);line-height:1.4}
+.guide-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.guide-tag{font-size:10px;font-weight:600;letter-spacing:.03em;color:var(--text-secondary);background:var(--surface-2);border-radius:5px;padding:2px 7px;white-space:nowrap}
+.guide-tag.dept-admin{color:var(--accent);background:var(--accent-bg)}
+.guide-arrow{flex-shrink:0;color:var(--text-tertiary);font-size:15px;line-height:1}
+.guide-empty{padding:2.25rem 1rem;text-align:center;color:var(--text-secondary);font-size:13px}
 </style>
 </head>
 <body>
@@ -217,13 +252,178 @@ footer code{font-family:'SFMono-Regular',Consolas,monospace;background:var(--sur
 
   </div>
 
+  <div class="section-divider" id="workflow-guides"><span>Workflow Guides &amp; Walkthroughs</span><hr></div>
+  <div class="guide-toolbar">
+    <div class="guide-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="guideSearch" placeholder="Search workflow guides, e.g. &quot;keynotes&quot; or &quot;Matterport&quot;" autocomplete="off">
+    </div>
+    <div class="guide-filter-row" id="guideCategoryRow"></div>
+    <div class="guide-filter-row" id="guideDeptRow"></div>
+  </div>
+  <p class="guide-count" id="guideCount"></p>
+  <div class="guide-list" id="guideList"></div>
+
   <footer>
     <p>
       Adding a new page? Drop the standalone <code>.html</code> file in the repo root and add a card for it above — no build step required.
       This site is published with GitHub Pages directly from this repository.
     </p>
+    <p style="margin-top:6px">
+      Workflow guides above are synced from the team's <a href="https://airtable.com/appDZKDvapg0r3c0h/tbl7knheomkfGmQ7T" target="_blank" rel="noopener">SOP Documentation base in Airtable</a> and open in Scribe.
+    </p>
   </footer>
 
 </div>
+<script>
+(function(){
+  var GUIDES = [{"n":"Revit - Creating & Setting View Filters","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_and_Setting_View_Filters__x8PzOv04SuqL3ZgWju997A","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Graphics Settings","d":["Production"],"a":["Revit"]},{"n":"Matterport - How to Archive a Space","u":"https://scribehow.com/viewer/Matterport__How_to_Archive_a_Space__Ym4XO3LQQ4m4N026n1WaAQ","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Managing Scans","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"PDG Revit Addin - Set Level Head Extent from View","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Set_Level_Head_Extent_from_View__PW02U9a9SrWUu2ejaWwt4g","c":"Revit","w":["Revit - Documentation"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"Claude - Marketing Copy Interview","u":"https://scribehow.com/viewer/Claude__Marketing_Copy_Interview__gFQ_i3XMQzSM63fwfQ0IqQ","c":"Project","w":["Project - Close Out"],"s":"Project - Marketing Summary","d":["Production"],"a":["Claude","Web Browser"]},{"n":"Onedrive - How to Stop a Folder Sync","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Onedrive__How_to_Stop_a_Folder_Sync__iMLG6BVgQTymqklHkqf2bg","c":"Office","w":["Office - General"],"s":"OneDrive - Folder Management","d":["Production"],"a":["OneDrive"]},{"n":"Matterport - Merging Scans Matterport Tool Instruction","u":"https://scribehow.com/viewer/Matterport__Merging_Scans_Matterport_Tool_Instruction__6QRTxR_8SG6Pp7LLfR6Ylw","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Merging Models","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"Revit - Site Annotations in the Architectural Model","u":"https://scribehow.com/viewer/Revit__Site_Annotations_in_Architectural_Model__ZbLIUJomTWen2PQiWycKfQ","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Topography","d":["Production"],"a":["Revit"]},{"n":"Revit - Mapping PDG Revit Templates","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Mapping_PDG_Revit_Templates__p-j8P9wORCuQ_08rK6XUbw","c":"Revit","w":["Revit - General"],"s":null,"d":["Production"],"a":["Revit","Autodesk Desktop Connector"]},{"n":"Revit - Creating Site Aerial Screenshots","u":"https://scribehow.com/viewer/Revit__Saving_Site_Aerials_for_a_Project__d1mnK3UxT-yjpdzjLrl2LA","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Project Information Page","d":["Production"],"a":["Web Browser","Revit"]},{"n":"Point Clouds - Processing & Publishing a Point Cloud to Import into Revit","u":"https://scribehow.com/viewer/Point_Clouds__Processing_and_Publishing_a_Point_Cloud_to_Import_into_Revit__GISx9955R4q1dnLA72oAnQ","c":"Matterport","w":["Matterport Scanning"],"s":null,"d":["Production"],"a":["ReCap Pro","Revit","Autodesk Desktop Connector","Autodesk Construction Cloud"]},{"n":"PDG Revit Addin - Give Feedback","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Give_Feedback__lXcEJulWQN2pz5l4ifZtDA","c":"Revit","w":["Revit - General"],"s":null,"d":["Production"],"a":["Revit","Web Browser"]},{"n":"Keynotes - Adding a New Section to the Keynote File","u":"https://scribehow.com/viewer/Keynotes__Adding_a_New_Section_to_the_Keynote_File__mV89LBFKQYChyTpq5zW6dg","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Keynotes","d":["Production"],"a":["MS Excel","Revit"]},{"n":"Revit - Batch Create Room Elevations","u":"https://scribehow.com/viewer/Revit__Batch_Creating_Room_Elevations__Ab6BFiN6RI26DVYUEbgSBw","c":"Revit","w":["Revit - Documentation"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"How to Save out Meeting Notes Transcripts from the Audio Recorder","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Save_out_Meeting_Notes_Transcripts_from_the_Audio_Recorder__z4drJdCcS3ScjtRpog28AQ","c":"Office","w":["Office - General"],"s":null,"d":["Production","Admin"],"a":["Audio Recorder","MS Word"]},{"n":"Revit - Building Finish Material Schedules","u":"https://scribehow.com/viewer/Revit__Building_Finish_Material_Schedules__qD7cN-klRzO7HmimhKB01Q","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Schedules","d":["Production"],"a":["Revit"]},{"n":"Revit - Starting a Workshared Revit Model","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Starting_a_Revit_Model__kfZAIQbgSw2IK0v58bZXEA","c":"Revit","w":["Revit - File Startup"],"s":"Revit - Worksharing","d":["Production"],"a":["Revit"]},{"n":"ACC - Archiving a Project","u":"https://scribehow.com/viewer/ACC__How_to_Archive_a_Project__02nEtc8DQKS1r-wA9QbwHQ","c":"Project","w":["Project - Close Out"],"s":"Project - Archiving","d":["Admin"],"a":["Web Browser","Autodesk Construction Cloud"]},{"n":"MS Word - Document Quick Setup from Template","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/MS_Word__Document_Quick_Setup_from_Template__gaohZiCuTbC11elmIHVh9w","c":"Project","w":["Project - Start up"],"s":"Project - Proposals","d":["Production"],"a":["MS Word"]},{"n":"Revit - Creating Revisions on Sheets","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_Revisions_on_Sheets__wuRGPmwUTnyDRs7nWPtS_Q","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Drafting Corrections","d":["Production"],"a":["Revit"]},{"n":"Airtable - Adding a Project to the Job List","u":"https://scribehow.com/viewer/Airtable__Adding_a_Project_to_the_Job_List__i-W93mmNQkmdK9pAFaIvzA","c":"Project","w":["Project - Start up"],"s":"Project - MS Teams","d":["Admin","Production"],"a":["Web Browser","MS Teams","Airtable"]},{"n":"AutoCAD + Revit - Vehicle Path Tracking","u":"https://scribehow.com/viewer/AutoCAD__Revit__Vehicle_Path_Tracking__VHI0vFagQqaPSQXtEAu0tw","c":"Revit","w":["Revit - Development Permits"],"s":"Revit - Vehicle Path","d":["Production"],"a":["AutoCAD","Revit"]},{"n":"Outlook - Adding the PDG Contacts List to Outlook","u":"https://scribehow.com/viewer/Outlook__How_to_add_the_PDG_Contacts_list_to_Outlook__kxIwveslSlGnpVHNjjOAhQ","c":"Office","w":["Office - Onboarding"],"s":"Outlook - Contacts","d":["Admin"],"a":["MS Outlook"]},{"n":"PDG Revit Addin - Create Elevation Sheets","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Create_Elevation_Sheets___Clzk5kuTLGdVEO6epPV4A","c":"Revit","w":["Revit - Documentation"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"Keynotes - Creating the Keynote in Excel file to import to Revit","u":"https://scribehow.com/viewer/Keynote_Files__Creating_a_Projects_Keynote_File_in_xlsm_and_txt__Fb9ZPAQ8QrqZGZK_gbeY4Q","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Keynotes","d":["Production"],"a":["File Explorer","MS Excel"]},{"n":"Airtable - Changing the value of a fee proposal","u":"https://scribehow.com/viewer/Job_List__Updating_Proposal_Values___Y-vrRz5Rj6kPW6W4YGkrQ","c":"Project","w":["Project - Start up"],"s":"Project - Proposals","d":["Admin"],"a":["Web Browser","Airtable"]},{"n":"Matterport - Purchasing a Matterpak Point Cloud","u":"https://scribehow.com/viewer/Purchasing_a_Matterpak_Point_Cloud__VADtu-FFQRqKE-2CMOAPbw","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Managing Scans","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"MS Word - Mapping PDG Document Templates","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Word__Pathing_PDG_Document_Template__FK7NtthBR3SXkeAudKPnlA","c":"Office","w":["Office - General"],"s":null,"d":["Production","Admin"],"a":["MS Word"]},{"n":"PDF - Changing or Adding PDF Content","u":"https://scribehow.com/viewer/PDF__Changing_or_Adding_PDF_Content__fuJO9u6OS0mBuPhI1-1ESw","c":"Office","w":["Office - General"],"s":"PDFs - Editing Existing Documents","d":["Production"],"a":["Bluebeam"]},{"n":"Outlook - Giving a user access to the PDG Contacts list","u":"https://scribehow.com/viewer/Outlook__How_to_give_a_user_access_to_PDG_Contacts_list__QQDgl0SPScuCeRHjiKJF_Q","c":"Office","w":["Office - Onboarding"],"s":"Outlook - Contacts","d":["Admin"],"a":["MS Outlook"]},{"n":"AutoCAD - Importing a PDF in AutoCAD","u":"https://scribehow.com/viewer/Import_a_PDF_into_AutoCAD__Q-k9NPCMSXCGDGTnC6sE_g","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Import PDFs","d":["Production"],"a":["AutoCAD","Revit"]},{"n":"Revit - Creating Site Based Families with Nested Families","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_Site_Based_Families_with_Nested_Details__XpANIq1EQh-QjjSjGm4Q7A","c":"Revit","w":["Revit - Modelling"],"s":"Revit - Topography","d":["Production"],"a":["Revit"]},{"n":"PDG Revit Addin - Create Room Elevations","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Create_Elevations_for_Rooms__TUQCQWC5TjixQrAq9AyFsg","c":"Revit","w":["Revit - Documentation"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"Keynotes - Loading & Reloading the keynote file into Revit","u":"https://scribehow.com/viewer/Keynote_Files__Importing_the_txt_into_Revit__2OZmNpLFTEqk141MHqENJA","c":"Revit","w":["Revit - Documentation"],"s":"Revit - Keynotes","d":["Production"],"a":["Revit"]},{"n":"AutoCAD - Exporting CADs from Revit","u":"https://scribehow.com/viewer/Autocad__Collate_dwg_files_Exported_from_Revit__u_qGa-27SO6I2DVI6tB1sA","c":"AutoCAD","w":["AutoCAD - Documentation"],"s":"AutoCAD - CAD Backgrounds","d":["Production"],"a":["AutoCAD"]},{"n":"Airtable - Changing the name of job list in a project","u":"https://airtable.com/appDZKDvapg0r3c0h/tbl7knheomkfGmQ7T/recd98v2fmPJ3mCnQ","c":"Project","w":["Project - Start up"],"s":"Project - Proposals","d":["Admin"],"a":["Web Browser","Airtable"]},{"n":"AutoCAD - How to Load and Apply LISP Routines","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/AutoCAD__How_to_Load_and_Apply_LISP_Routines__PdGYkMmLThyEovMmhZAuCg","c":"AutoCAD","w":["AutoCAD - Documentation"],"s":null,"d":["Production"],"a":["AutoCAD"]},{"n":"How to Complete a Barrier Free Relaxation Application","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Complete_a_Barrier_Free_Relaxation_Application__KJ5vyQ_SSNyB3tE4Ceypiw","c":"Project","w":["Project - Barrier Free Application"],"s":null,"d":["Production"],"a":["Web Browser"]},{"n":"How to Sync Teams Folders from Sharepoint","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Sync_Teams_Folders_from_Sharepoint__3EMM_-cVTM6siBwffIRfQQ","c":"Project","w":["Project - Start up"],"s":"Project - File Management","d":["Admin","Production"],"a":["MS Teams","MS Sharepoint"]},{"n":"Spin2 - How to Pull Alberta Land Titles","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Spin2__How_to_Pull_Alberta_Land_Titles__Lhie_KEgSNuHAfubqBVRgA","c":"Project","w":["Project - Diligence"],"s":"Project - Land Title Review","d":["Production"],"a":["Web Browser","MS Outlook","MS Word","File Explorer"]},{"n":"ACC - Saving a Workshared Revit Model as a Standalone Revit Model","u":"https://scribehow.com/viewer/ACC__Saving_a_Workshared_Revit_Model_as_a_Standalone_Revit_Model__wkekwfxlReGbt3FQB0UeaA","c":"Revit","w":["Revit - File Startup"],"s":"Revit - Worksharing","d":["Production"],"a":["Revit","Autodesk Construction Cloud","Web Browser"]},{"n":"Revit - Phase Mapping for Linked Models","u":"https://scribehow.com/viewer/Revit__Phase_Mapping_for_Linked_Models__hzxxKhU1QtiKKyXT_opsyw","c":"Revit","w":["Revit - Modelling"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"Revit - Grading (Phasing) a Toposolid","u":"https://scribehow.com/viewer/Revit__Grading_Phasing_a_Toposolid__oH8yZrfdSbefn2C2vFDbbQ","c":"Revit","w":["Revit - Modelling"],"s":"Revit - Topography","d":["Production"],"a":["Revit"]},{"n":"Matterport - Merging Scans Together","u":"https://scribehow.com/viewer/Matterport__Merging_Scans_Together__xbcpmIeeQTqHWHvR1AtfBA","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Merging Models","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"ACC - Creating a project in Autodesk Construction Cloud","u":"https://scribehow.com/viewer/ACC__Creating_a_project_in_Autodesk_Construction_Cloud__74cBoZUPS_6sVTfN4iN7Cw","c":"ACC","w":["ACC Project Management"],"s":null,"d":["Production"],"a":["Autodesk Construction Cloud","Web Browser"]},{"n":"Revit - PDG Tools - Creating New Shared Parameters","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__PDG_Tools__Creating_New_Shared_Parameters__z1WQLGjrRQe_QJRwZ02kYA","c":"Revit","w":["Revit - Process Development"],"s":"Revit - Shared Parameters","d":["Production"],"a":["Revit","Web Browser","Autodesk Construction Cloud"]},{"n":"Matterport - Reactivating an Archived Scan","u":"https://scribehow.com/viewer/Matterport__Reactivating_an_Archived_Scan__UZJH-rAqS2WkMa9MMFxe2Q","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Managing Scans","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"Matterport - How to Share a Virtual Walkthrough Tour","u":"https://scribehow.com/viewer/Matterport__How_to_Share_a_Virtual_Walkthrough_Tour__gkMF5yaJSsqTZfQuNuNzOQ","c":"Matterport","w":["Matterport Scanning"],"s":"Matterport - Managing Scans","d":["Production"],"a":["Matterport","Web Browser"]},{"n":"Revit - Deleting Template Elements that can not be Found in a Model","u":"https://scribehow.com/viewer/Revit__Deleting_Template_Elements_that_can_not_be_Found_in_a_Model__kgY39jSsRzqPDABgi2-QMA","c":"Revit","w":["Revit - Documentation","Revit - Modelling"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"Desktop Connector - Selecting ACC Projects to Syncronize","u":"https://scribehow.com/viewer/Desktop_Connector__Selecting_ACC_Projects_to_Syncronize__K9aCPMMzREWFxhAiZjYEhA","c":"ACC","w":["ACC Document Sync"],"s":null,"d":["Production"],"a":["Autodesk Desktop Connector","Autodesk Construction Cloud"]},{"n":"Revit - Batch Create Property Lines from Railings","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Batch_Create_Property_Lines_from_Railings__N2HgiwxARPGolJkh6AirAA","c":"Revit","w":["Revit - Modelling"],"s":"Revit - Development Planning","d":["Production"],"a":["Revit","AutoCAD"]},{"n":"PDG Revit Addin - Place Wall Sweeps","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Place_Wall_Sweeps__y--qTJbkSRemEpQw_KSucw","c":"Revit","w":["Revit - Modelling"],"s":null,"d":["Production"],"a":["Revit"]},{"n":"How to Use the Project Diary","u":"https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG__How_to_Use_the_Project_Diary__wUebhzF2T9SkCFOEytegDg?referrer=workspace","c":"Office","w":["Office - General"],"s":null,"d":["Admin","Production"],"a":["MS Word"]}];
+
+  var CATEGORY_ORDER = ["All","Revit","Matterport","Project","Office","AutoCAD","ACC"];
+  var DEPT_ORDER = ["All","Production","Admin"];
+
+  var state = { cat: "All", dept: "All", q: "" };
+
+  var catCounts = { All: GUIDES.length };
+  GUIDES.forEach(function(g){ catCounts[g.c] = (catCounts[g.c] || 0) + 1; });
+
+  var catRow = document.getElementById("guideCategoryRow");
+  var catLabel = document.createElement("span");
+  catLabel.className = "guide-filter-label";
+  catLabel.textContent = "Category";
+  catRow.appendChild(catLabel);
+  CATEGORY_ORDER.forEach(function(cat){
+    if (!(cat in catCounts)) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "guide-chip" + (cat === state.cat ? " active" : "");
+    btn.textContent = cat + " (" + catCounts[cat] + ")";
+    btn.dataset.cat = cat;
+    btn.addEventListener("click", function(){
+      state.cat = cat;
+      render();
+    });
+    catRow.appendChild(btn);
+  });
+
+  var deptRow = document.getElementById("guideDeptRow");
+  var deptLabel = document.createElement("span");
+  deptLabel.className = "guide-filter-label";
+  deptLabel.textContent = "Team";
+  deptRow.appendChild(deptLabel);
+  DEPT_ORDER.forEach(function(dept){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "guide-chip" + (dept === state.dept ? " active" : "");
+    btn.textContent = dept;
+    btn.dataset.dept = dept;
+    btn.addEventListener("click", function(){
+      state.dept = dept;
+      render();
+    });
+    deptRow.appendChild(btn);
+  });
+
+  var searchInput = document.getElementById("guideSearch");
+  searchInput.addEventListener("input", function(){
+    state.q = searchInput.value.trim().toLowerCase();
+    render();
+  });
+
+  var listEl = document.getElementById("guideList");
+  var countEl = document.getElementById("guideCount");
+
+  function matches(g){
+    if (state.cat !== "All" && g.c !== state.cat) return false;
+    if (state.dept !== "All" && g.d.indexOf(state.dept) === -1) return false;
+    if (state.q) {
+      var hay = [g.n, g.s || "", g.w.join(" "), g.a.join(" ")].join(" ").toLowerCase();
+      if (hay.indexOf(state.q) === -1) return false;
+    }
+    return true;
+  }
+
+  function render(){
+    Array.prototype.forEach.call(catRow.querySelectorAll(".guide-chip"), function(btn){
+      btn.classList.toggle("active", btn.dataset.cat === state.cat);
+    });
+    Array.prototype.forEach.call(deptRow.querySelectorAll(".guide-chip"), function(btn){
+      btn.classList.toggle("active", btn.dataset.dept === state.dept);
+    });
+
+    var results = GUIDES.filter(matches).sort(function(a, b){ return a.n.localeCompare(b.n); });
+
+    countEl.textContent = "Showing " + results.length + " of " + GUIDES.length + " guides";
+
+    listEl.innerHTML = "";
+    if (results.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "guide-empty";
+      empty.textContent = "No workflow guides match those filters.";
+      listEl.appendChild(empty);
+      return;
+    }
+
+    results.forEach(function(g){
+      var row = document.createElement("a");
+      row.className = "guide-row";
+      row.href = g.u;
+      row.target = "_blank";
+      row.rel = "noopener";
+
+      var main = document.createElement("div");
+      main.className = "guide-main";
+
+      var title = document.createElement("div");
+      title.className = "guide-title";
+      title.textContent = g.n;
+      main.appendChild(title);
+
+      var tags = document.createElement("div");
+      tags.className = "guide-tags";
+
+      var catTag = document.createElement("span");
+      catTag.className = "guide-tag";
+      catTag.textContent = g.c;
+      tags.appendChild(catTag);
+
+      if (g.s) {
+        var subTag = document.createElement("span");
+        subTag.className = "guide-tag";
+        subTag.textContent = g.s;
+        tags.appendChild(subTag);
+      }
+
+      g.a.filter(function(app){ return app.toLowerCase() !== g.c.toLowerCase(); })
+        .slice(0, 2)
+        .forEach(function(app){
+          var appTag = document.createElement("span");
+          appTag.className = "guide-tag";
+          appTag.textContent = app;
+          tags.appendChild(appTag);
+        });
+
+      if (g.d.indexOf("Admin") !== -1 && g.d.indexOf("Production") === -1) {
+        var deptTag = document.createElement("span");
+        deptTag.className = "guide-tag dept-admin";
+        deptTag.textContent = "Admin";
+        tags.appendChild(deptTag);
+      }
+
+      main.appendChild(tags);
+      row.appendChild(main);
+
+      var arrow = document.createElement("span");
+      arrow.className = "guide-arrow";
+      arrow.textContent = "\u2197";
+      row.appendChild(arrow);
+
+      listEl.appendChild(row);
+    });
+  }
+
+  render();
+})();
+</script>
 </body>
 </html>
