@@ -5,7 +5,7 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: S-CS (Special Purpose – Community Service), Part 9, Division 4.
+Last completed: S-R (Special Purpose – Recreation), Part 9, Division 5.
 
 ## Part 5 — Residential Districts
 
@@ -80,7 +80,7 @@ Last completed: S-CS (Special Purpose – Community Service), Part 9, Division 4
 | 2 | S-UN | ✅ `SUN_Zoning_Review_Checklist.html` |
 | 3 | S-SPR | ✅ `SSPR_Zoning_Review_Checklist.html` |
 | 4 | S-CS | ✅ `CS_Zoning_Review_Checklist.html` |
-| 5 | S-R | ⬜ |
+| 5 | S-R | ✅ `SR_Zoning_Review_Checklist.html` |
 | 6 | S-CI | ⬜ |
 | 7 | S-CRI | ⬜ |
 | 8 | S-URP | ⬜ |
