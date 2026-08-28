@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S-CS District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .proposed-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    padding:5px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:13px;
+    background:#fff;
+  }
+  .proposed-toggle input{accent-color:var(--blue);}
+  .proposed-toggle.checked{background:#EAF0F6;border-color:var(--blue-dim);color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+<a href="../index.html" style="display:block;padding:14px 20px 0 20px;font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8FAFC9;text-decoration:none;text-transform:uppercase">&larr; PDG Support Docs</a>
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>S-CS District Review Checklist</h1>
+    <div class="sub">Special Purpose &ndash; Community Service &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. 40 Ave Distribution Facility">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {"general": [{"id": "gen-0", "sec": "1013", "title": "Projections Into Setback Areas", "summary": "Buildings generally must not be located in a setback area. Eaves may project into a setback max. 0.6 m. Below-grade building portions may extend into a setback only if used as a parking structure. A parking area for a use may be located in a setback to within 1.2 m of any property line. Signs may be located in a setback per Part 3, Division 5."}, {"id": "gen-1", "sec": "1014", "title": "General Landscaped Area Rules", "summary": "S-CS IS one of the six Special Purpose districts where landscaping is required by default (\u00a71014(1)(b)) \u2014 unlike S-UN, don't skip this tab. A landscape plan for the whole development must be submitted with any DP application proposing building/parcel changes, showing existing/proposed topography, vegetation retention, the layout of berms/circulation/retaining walls/screening/slopes/hard & soft surfaces, the plant schedule (species/size/number/type), and the irrigation design; it must be approved by the Development Authority and maintained for the life of the development. Extensive Agriculture, Natural Area, Park, and Urban Agriculture uses are separately exempt from landscaping regardless of district (\u00a71014(2)) \u2014 directly relevant since Natural Area and Park are permitted uses and Urban Agriculture is a discretionary use here."}, {"id": "gen-2", "sec": "1015", "title": "Planting Requirements", "summary": "Applies wherever landscaping is required (see \u00a71014 above \u2014 that's the default in S-CS). All plant material must suit Calgary's climate per Canadian Nursery Landscape Association standards. Min. 25% of required trees coniferous. Deciduous trees min. 50 mm caliper (\u226550% at min. 75 mm). Coniferous trees min. 2.0 m height (\u226550% at min. 3.0 m). Shrubs min. 0.6 m height/spread at planting. Soft-surfaced landscaped areas may include Urban Agriculture."}, {"id": "gen-3", "sec": "1016", "title": "Low Water Irrigation System", "summary": "Applies wherever landscaping is required. If a low water irrigation system is used, only trees/shrubs are irrigated (not turf), and plants with similar water needs must be grouped together."}, {"id": "gen-4", "sec": "1017", "title": "Visibility Setback", "summary": "Within a corner visibility triangle, buildings, fences, finished grade, and vegetation must not exceed 0.75 m above the lowest elevation of the street."}, {"id": "gen-5", "sec": "1018", "title": "Mechanical Screening", "summary": "Outdoor mechanical systems/equipment must be screened or camouflaged from view of a public space, or from a residential-district parcel within 30.0 m, using a 1.7 m eye-level sightline."}, {"id": "gen-6", "sec": "1019", "title": "Garbage", "summary": "Garbage containers and waste material must be stored, prior to collection, inside a building or in a Development-Authority-approved enclosure \u2014 not within any setback area. No materials may escape the parcel."}, {"id": "gen-7", "sec": "1019.1", "title": "Solar Collectors", "summary": "Roof- or wall-mounted only. Roof pitch <4:12: max 2.0 m projection. Pitch \u22654:12: max 1.3 m projection, can't overhang the roof edge. Wall-mounted: min. 2.4 m above grade, max 0.6 m projection."}, {"id": "gen-8", "sec": "1019.2", "title": "Wind Energy Conversion System (WECS)", "summary": "Detailed siting, colour, tower type, safety, decommissioning (remove after 6 months' disrepair/abandonment), lighting/signage restrictions, 100 m wetland buffer, max 100 kW capacity, and DP term limits (5 yrs, renewable) apply to WECS Type 1/2 generally. S-CS-specific note: only Wind Energy Conversion System \u2013 Type 1 is a listed discretionary use here (\u00a71035(q)) \u2014 min. 60.0 m from a residential district (\u00a71019.2(2)(a)); its height is fixed at max. 15.0 m by its own use definition (\u00a7333.1), not district-variable. Wind Energy Conversion System \u2013 Type 2 is NOT a listed use in S-CS (unlike S-SPR, S-R, and S-CI) \u2014 the \u00a71019.2(3) Type 2 rules (550.0 m residential setback, biophysical impact assessment, 30.0/50.0 m height caps) simply don't apply in this district; don't offer it in the use tab."}, {"id": "gen-9", "sec": "1020", "title": "Parcel Access", "summary": "All developments must comply with the Controlled Streets Bylaw for access/curb cuts."}], "district": [{"id": "dis-0", "sec": "1033", "title": "Purpose", "summary": "The S-CS District is intended to: accommodate education and community uses located in buildings; accommodate a limited range of small scale, public indoor and outdoor recreation facilities; and have limited application to parcels that are not designated reserve pursuant to the Municipal Government Act or its predecessors. (Informational \u2014 useful for discretionary-use judgment calls. Note this purpose test runs opposite to S-SPR's: S-SPR should only be applied to reserve-designated land, while S-CS has limited application to parcels NOT designated reserve. Either way it's a land-designation/subdivision-stage consideration, not a DP-stage item \u2014 see Instructions.)"}, {"id": "dis-1", "sec": "1034", "title": "Permitted Uses", "summary": "Natural Area; Outdoor Recreation Area; Park; Park Maintenance Facility \u2013 Small; Power Generation Facility \u2013 Small; School Authority \u2013 School; School Authority Purpose \u2013 Minor; Sign \u2013 Class A; and Utilities (see Use tab for section-specific detail). Note: \u00a71034(i) is deleted \u2014 that's a removed item, not a gap left in error. This permitted-use list is identical to S-SPR's \u00a71026."}, {"id": "dis-2", "sec": "1035", "title": "Discretionary Uses", "summary": "Child Care Service; Community Entrance Feature; Community Recreation Facility; Food Kiosk; Indoor Recreation Facility; Library; Museum; Park Maintenance Facility \u2013 Large; Protective and Emergency Service; School \u2013 Private; School Authority Purpose \u2013 Major; Service Organization; Sign \u2013 Class B, C, D, and E; Urban Agriculture; Utility Building; and Wind Energy Conversion System \u2013 Type 1 (see Use tab for section-specific detail). Unlike S-SPR's \u00a71027(2), S-CS's Child Care Service carries NO building-history condition here \u2014 it is a plain, unconditional discretionary use, so no sidebar checkbox is needed for this district. Also note: S-CS's list omits Wind Energy Conversion System \u2013 Type 2 (present in S-SPR) but adds Library, Museum, Park Maintenance Facility \u2013 Large, Protective and Emergency Service, School \u2013 Private, Service Organization, and Urban Agriculture (not present in S-SPR)."}, {"id": "dis-3", "sec": "1036", "title": "Rules \u2014 Cross-References", "summary": "Confirms all S-CS uses must also meet: Part 9, Division 1 General Rules for Special Purpose districts (General tab), Part 3 Rules Governing All Districts (Citywide tab), and the applicable Part 4 Uses And Use Rules for the specific use(s) proposed (Use tab)."}, {"id": "dis-4", "sec": "1037", "title": "Front, Rear and Side Setback Area", "summary": "The setback area from every property line must have a minimum depth of 3.0 metres."}, {"id": "dis-5", "sec": "1038", "title": "Landscaping In Setback Areas", "summary": "All setback areas, other than portions specifically required for motor vehicle access, sidewalks, or another Development-Authority-approved purpose, must be a soft surfaced landscaped area. Minimum planting density: 1.2 trees per 70.0 m\u00b2 for a School Authority \u2013 School use and for any use in a building previously used for School Authority \u2013 School; 1.0 tree + 2.0 shrubs per 45.0 m\u00b2 for every other use."}, {"id": "dis-6", "sec": "1039", "title": "Additional Landscaping Requirements", "summary": "All areas of the parcel must be soft surfaced landscaped area unless the Development Authority specifically allows otherwise. Soft surfaced landscaped areas on a parcel with buildings used or previously used for School Authority \u2013 School are exempt from the underground-irrigation requirement in \u00a71014(6). Every building must have at least one sidewalk connecting its public entrance to a public sidewalk (or the nearest street if there is none), and at least one sidewalk connecting the parking area to the building's public entrances; in a multi-use building, every use with its own exterior public entrance needs its own sidewalk connection. Every sidewalk must be hard surfaced, min. 2.0 m wide, use different surfacing than adjacent parking, and be raised above the parking surface where it runs through a parking area."}, {"id": "dis-7", "sec": "1040", "title": "Reductions to Minimum Required Motor Vehicle Parking Stalls", "summary": "Deleted \u2014 no parking-stall reduction provision currently exists under this section number; don't rely on a stall-count relaxation from \u00a71040."}], "citywide": [{"id": "cw-0", "sec": "53", "title": "Public Realm Setbacks", "summary": "Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to any applicable front/side/rear setback, and the Development Authority cannot relax it."}, {"id": "cw-1", "sec": "54", "title": "Airport Vicinity Regulations", "summary": "If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply. Confirm against the current AVPA maps/bylaw."}, {"id": "cw-2", "sec": "55", "title": "Floodway, Flood Fringe & Overland Flow \u2014 Applicability", "summary": "Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping), regardless of district. S-CS's own purpose statement (\u00a71033(c)) notes limited application to parcels NOT designated reserve under the Municipal Government Act \u2014 the opposite emphasis from S-SPR, which is reserve-land only \u2014 so an S-CS site is more likely to be an ordinary parcel, though a riverside school or recreation site is still plausible. Check regardless."}, {"id": "cw-3", "sec": "56", "title": "Floodway Regulations", "summary": "If in the Floodway: new development is heavily restricted \u2014 confirm what, if anything, is permitted. Directly relevant to Natural Area or Park improvements (trails, viewpoints, small maintenance buildings) sited near a watercourse."}, {"id": "cw-4", "sec": "57", "title": "New Buildings and Alterations", "summary": "If in the Flood Fringe: specific construction/flood-proofing requirements for new buildings and alterations \u2014 e.g. a School Authority \u2013 School or School \u2013 Private building, a Library or Museum, or a Park Maintenance Facility."}, {"id": "cw-5", "sec": "58", "title": "Alterations to the Floodway and Riverbanks", "summary": "Special review requirements for any riverbank or floodway alteration work \u2014 relevant where a Park or Natural Area's improvements (pathways, trails) run along a riverbank."}, {"id": "cw-6", "sec": "61", "title": "Building Design in the Overland Flow Area", "summary": "Specific design requirements if the parcel is within a mapped overland flow area."}, {"id": "cw-7", "sec": "62", "title": "Lighting Requirements", "summary": "General exterior lighting standards apply to the site, subject to the Outdoor Recreation Area exemption noted in \u00a765 below."}, {"id": "cw-8", "sec": "63", "title": "Shielding", "summary": "Light fixtures must be shielded to control glare and light spill, particularly toward residential areas."}, {"id": "cw-9", "sec": "64", "title": "Mounting of Fixtures", "summary": "Requirements for how/where lighting fixtures are mounted."}, {"id": "cw-10", "sec": "65", "title": "Height Limits (Lighting)", "summary": "Max. mounting height for an outdoor light fixture >100 W is 7.5 m in all special purpose districts, including S-CS (\u00a765(1)(a)) \u2014 EXCEPT there is no maximum mounting height at all for an Outdoor Recreation Area (or a Spectator Sports Facility), regardless of district (\u00a765(2)). Directly relevant if sports-field lighting is proposed for S-CS's Outdoor Recreation Area use."}, {"id": "cw-11", "sec": "66", "title": "Canopy Lighting", "summary": "Rules for lighting mounted under canopies. Unlikely to apply \u2014 no canopy-associated use (Gas Bar, Drive Through) is permitted or discretionary in S-CS."}, {"id": "cw-12", "sec": "67-72", "title": "Signs \u2014 Purpose, Classification, DP Requirements", "summary": "All signs are classified Class A\u2013G. A Class A sign generally does not require its own DP when Sign \u2013 Class A is a listed use in the District and the sign meets all applicable rules (\u00a777); Class B, C, D and E signs generally do. Confirm whether a Comprehensive Sign Program applies to the site."}, {"id": "cw-13", "sec": "73-76", "title": "General Sign Rules, Digital Displays, Maintenance", "summary": "General construction/safety/illumination standards for all signs; extra rules if any sign has a digital display; ongoing maintenance obligation; rules for parcels sharing signage under a related function."}, {"id": "cw-14", "sec": "77-90", "title": "Class A Signs (permitted use in S-CS)", "summary": "Includes Address, Art, Banner, Construction, Directional, Election, Flag, Pedestrian, Real Estate, Special Event, Temporary, and Window sign sub-rules. Check whichever sub-types are proposed."}, {"id": "cw-15", "sec": "91-93", "title": "Class B Signs (discretionary use in S-CS)", "summary": "Fascia sign rules: attached to and parallel with an exterior wall, projecting max. 0.40 m from the wall."}, {"id": "cw-16", "sec": "94-97", "title": "Class C Signs (discretionary use in S-CS)", "summary": "Freestanding sign rules: number allowed, size and height restrictions."}, {"id": "cw-17", "sec": "98-102", "title": "Class D Signs (discretionary use in S-CS)", "summary": "Canopy sign and projecting sign rules, including size restrictions."}, {"id": "cw-18", "sec": "103-109", "title": "Class E Signs (discretionary use in S-CS)", "summary": "Every Sign \u2013 Class E requires its own DP (\u00a7103). Digital Message Sign (\u00a7104): generally restricted to commercial/industrial/mixed-use/S-R/CC-ER/CR20-C20/R20 districts UNLESS associated with a listed community-serving use \u2014 S-CS is expressly named at \u00a7104(2), and every one of Community Recreation Facility, Indoor Recreation Facility, Library, Museum, Outdoor Recreation Area, Park, School \u2013 Private, School Authority \u2013 School, School Authority Purpose \u2013 Major, and School Authority Purpose \u2013 Minor qualifies (all are listed S-CS uses) \u2014 in which case max. sign area is 1.0 m\u00b2 (\u00a7104(6)(b)), max. 1 sign per parcel (2 on a corner parcel) (\u00a7104(3)), the sign must go dark 10pm\u20137am if within 125 m of a Dwelling Unit (\u00a7104(7)(b)), the power supply must be underground (\u00a7104(10)), and the DP term is capped at 3 years unless copy is limited to date/time/temperature/parking/fuel-price/Drive-Through-menu (\u00a7104(12)). Roof Sign (\u00a7107): UNLIKE S-SPR, S-CS is NOT one of the districts where a Roof Sign may be approved \u2014 \u00a7107(1) names only S-CI and S-SPR among Special Purpose districts, so a Roof Sign is not available here even though Sign \u2013 Class E generally is. Confirm whichever other Class E sub-type (Digital Message, Flashing/Animated, Inflatable, Message, Painted Wall, Rotating, Temporary Sign Marker) is actually proposed against its own sub-rule."}, {"id": "cw-19", "sec": "111-115.5", "title": "Class F/G Signs \u2014 not a use in S-CS", "summary": "Not available in S-CS \u2014 third-party advertising signs (Class F/G) are not listed as a permitted or discretionary use under \u00a71034/\u00a71035."}, {"id": "cw-20", "sec": "116", "title": "Parking \u2014 General Rules", "summary": "Baseline rules governing all required parking/loading."}, {"id": "cw-21", "sec": "117", "title": "Parking Stall Signage", "summary": "Signage requirements for parking stalls (e.g., accessible stalls) \u2014 only relevant where a proposed use actually requires stalls (School Authority \u2013 School, School \u2013 Private, and Child Care Service)."}, {"id": "cw-22", "sec": "118", "title": "Location of Parking and Loading Requirements", "summary": "Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings. Natural Area and Park's own use definitions additionally require any parking area to sit min. 3.0 m from the nearest property line."}, {"id": "cw-23", "sec": "119", "title": "Use of Parking and Loading Stalls", "summary": "Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."}, {"id": "cw-24", "sec": "120", "title": "Identification of Required Parking/Loading Stalls", "summary": "How required stalls must be marked/identified on-site and on drawings."}, {"id": "cw-25", "sec": "121", "title": "Calculation of Minimum Parking/Loading Stalls", "summary": "Most S-CS uses require neither motor vehicle nor bicycle parking stalls under their own Part 4 definitions \u2014 Natural Area (\u00a7243), Park (\u00a7249), Park Maintenance Facility \u2013 Small (\u00a7251) and \u2013 Large (\u00a7250), Power Generation Facility \u2013 Small (\u00a7266), Protective and Emergency Service (\u00a7270), Urban Agriculture (\u00a7320.1), Utilities (\u00a7321), Utility Building (\u00a7322), and Wind Energy Conversion System \u2013 Type 1 (\u00a7333.1) all require neither; Food Kiosk (\u00a7198) and Outdoor Recreation Area (\u00a7248) require no bicycle stalls. The exceptions: School Authority \u2013 School (\u00a7291), School \u2013 Private (\u00a7290), and Child Care Service (\u00a7165) require pick-up/drop-off stalls sized from enrolment/capacity; Community Recreation Facility (\u00a7169), Indoor Recreation Facility (\u00a7211), Library (\u00a7224), Museum (\u00a7242), Service Organization (\u00a7298), School Authority Purpose \u2013 Major/Minor (\u00a7292/\u00a7293), and Child Care Service also carry their own bicycle-stall formulas. Confirm against the schedule for whichever use is actually proposed."}, {"id": "cw-26", "sec": "122", "title": "Standards for Motor Vehicle Parking Stalls", "summary": "Stall/aisle dimensions and layout standards \u2014 relevant mainly to any pick-up/drop-off stall layout for a School Authority \u2013 School, School \u2013 Private, or Child Care Service."}, {"id": "cw-27", "sec": "123", "title": "Loading Stalls", "summary": "Required loading stall size and count standards. Unlikely to apply given the low-intensity uses available in S-CS."}, {"id": "cw-28", "sec": "124", "title": "Relaxations of Parking/Loading Requirements", "summary": "Circumstances where the Development Authority may relax parking/loading counts."}, {"id": "cw-29", "sec": "124.1", "title": "Parking Stall Exemptions", "summary": "Specific exemptions from providing required parking stalls."}, {"id": "cw-30", "sec": "125", "title": "Bicycle Parking Stalls", "summary": "Citywide bicycle parking standards. S-CS uses with their own explicit bicycle-stall formulas: School Authority \u2013 School (\u00a7291(d)-(e)), School \u2013 Private (\u00a7290(d)-(e)), Child Care Service (\u00a7165(f)-(g)), Community Recreation Facility (\u00a7169(e)), Indoor Recreation Facility (\u00a7211(e)), Library (\u00a7224(d)-(e)), Museum (\u00a7242(d)-(e)), Service Organization (\u00a7298(d)-(e)), and School Authority Purpose \u2013 Major/Minor (\u00a7292(d)-(e)/\u00a7293(d)-(e)). Confirm the rest against the exemptions in each use's own Part 4 definition."}, {"id": "cw-31", "sec": "126", "title": "Motor Vehicle Pick-Up and Drop-Off Stalls", "summary": "Directly relevant here, unlike most other districts \u2014 School Authority \u2013 School (\u00a7291(c)), School \u2013 Private (\u00a7290(c)), and Child Care Service (\u00a7165(e)) all carry explicit minimum pick-up/drop-off stall counts tied to enrolment/capacity. Confirm the layout and count against whichever of those uses is proposed."}, {"id": "cw-32", "sec": "129.1", "title": "Infrastructure Requirements", "summary": "The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development \u2014 check especially if a School Authority \u2013 School, School \u2013 Private, a Community/Indoor Recreation Facility, a Library or Museum, or Utilities/Utility Building is proposed."}], "use": [{"id": "use-0", "sec": "243", "title": "Natural Area", "summary": "Permitted \u2014 1034(a) \u2014 Open space set aside to maintain an existing natural/native plant or animal community, or to allow disturbed land to be naturalized. May include benches, interpretive displays, pathways, picnic shelters, trails, viewpoints, washrooms, and small maintenance/study buildings \u226475.0 m\u00b2. Any parking area must sit min. 3.0 m from the nearest property line. Does not require motor vehicle or bicycle parking stalls. Exempt from the district's landscaped-area requirement (\u00a71014(2))."}, {"id": "use-1", "sec": "248", "title": "Outdoor Recreation Area", "summary": "Permitted \u2014 1034(b) \u2014 Outdoor sports/athletic use (excludes Motorized Recreation and Firing Range); may include a building with change rooms, washrooms/showers, and admin space; may provide temporary spectator seating. Does not require bicycle parking stalls (class 1 or 2). Exempt from the citywide outdoor-lighting mounting-height cap (\u00a765(2) \u2014 no max. height for this use, in any district). May carry a Digital Message Sign advertising its own events/activities (\u00a7104(2)(e))."}, {"id": "use-2", "sec": "249", "title": "Park", "summary": "Permitted \u2014 1034(c) \u2014 Open space set aside for recreational, educational, cultural, or aesthetic purposes; may include land/buildings for growing food (sheds, compost bins, greenhouses, raised beds, cold frames, hoop enclosures) and washrooms/small maintenance sheds <10.0 m\u00b2. Any parking area must sit min. 3.0 m from the nearest property line. Does not require motor vehicle or bicycle parking stalls. Exempt from the district's landscaped-area requirement (\u00a71014(2)). May carry a Digital Message Sign advertising its own events/activities (\u00a7104(2)(f))."}, {"id": "use-3", "sec": "251", "title": "Park Maintenance Facility \u2013 Small", "summary": "Permitted \u2014 1034(d) \u2014 Storage of park maintenance equipment, vehicles, or materials; total building GFA \u2264300.0 m\u00b2. Screening required for stored piles/stacks of loose materials, equal in height to the stored materials; a berm (max 3:1 slope) may satisfy the screening requirement. Does not require motor vehicle or bicycle parking stalls."}, {"id": "use-4", "sec": "266", "title": "Power Generation Facility \u2013 Small", "summary": "Permitted \u2014 1034(e) \u2014 Capacity 10 W\u20131.0 MW (excludes WECS Type 1/2, tracked separately below). Must not exceed the district height, excl. ancillary structures; can't sit in a required setback except solar collectors; must be screened except solar collectors. Does not require motor vehicle or bicycle parking stalls."}, {"id": "use-5", "sec": "291", "title": "School Authority \u2013 School", "summary": "Permitted \u2014 1034(f) \u2014 K\u201312 public/charter school teaching the Education Act curriculum; may include before/after-school Child Care Service programs, related playing fields, food service, and parental/community-involvement programs. Requires pick-up/drop-off stalls: min. 2.5 per 100 K\u20139 students (min. 5.0 stalls) plus min. 1.5 per 100 grade 10\u201312 students (min. 5.0 stalls); min. bicycle stalls \u2013 class 1 equal to 3.0% of max. employees; min. bicycle stalls \u2013 class 2 equal to 10.0% of max. students per the DP. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(k))."}, {"id": "use-6", "sec": "293", "title": "School Authority Purpose \u2013 Minor", "summary": "Permitted \u2014 1034(g) \u2014 School division/district administration, staff training, community-involvement programs, or preschool/before-after-school Child Care Service, entirely inside a building where another approved use also exists and the use occupies max. 25.0% of that building's GFA. Requires min. 1.0 bicycle stall \u2013 class 1 and min. 1.0 bicycle stall \u2013 class 2 per 1000.0 m\u00b2 of gross usable floor area, only where the administrative-function area exceeds 1000.0 m\u00b2. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(m))."}, {"id": "use-7", "sec": "299", "title": "Sign \u2013 Class A", "summary": "Permitted \u2014 1034(h) \u2014 Address, Art, Banner, Construction, Directional, Election, Flag, Pedestrian, Real Estate, Special Event, Temporary, and Window sign sub-types."}, {"id": "use-8", "sec": "321", "title": "Utilities", "summary": "Permitted \u2014 1034(j) \u2014 note: \u00a71034(i) is deleted. Facilities for water distribution/irrigation/drainage, waste water collection, gas, water heating/cooling for district energy, electricity, cable, telephone, and telecommunications; excludes Utilities \u2013 Linear and Utility Building. Building housing the use must not exceed 10.0 m\u00b2 GFA. Does not require motor vehicle or bicycle parking stalls."}, {"id": "use-9", "sec": "165", "title": "Child Care Service", "summary": "Discretionary \u2014 1035(a) \u2014 unconditional in S-CS: unlike S-SPR's \u00a71027(2) building-history gate, S-CS's \u00a71035 discretionary list places no condition on this use. Care for 7+ children under 13 (or 13\u201314 with special needs) for periods <24 hrs; screening required for any outdoor play area; min. 1.0 pick-up/drop-off stall per 10 children; no class 1 bicycle stalls; min. 1.0 bicycle stall \u2013 class 2 per 2000.0 m\u00b2 of gross usable floor area."}, {"id": "use-10", "sec": "168", "title": "Community Entrance Feature", "summary": "Discretionary \u2014 1035(a.1) \u2014 Landscape attraction, monument, or sign identifying a residential community. Requires a maintenance/removal agreement with the Development Authority; DP conditions may govern location, size, design, copy, character, and number allowed per community. Must use maintenance-free materials wherever possible and must not encroach on utility rights-of-way or affect traffic safety."}, {"id": "use-11", "sec": "169", "title": "Community Recreation Facility", "summary": "Discretionary \u2014 1035(b) \u2014 Neighbourhood-serving, voluntary-membership use providing recreation/leisure programs, with indoor recreation space and possible outdoor sports fields on the same parcel; may include temporary local-food processing/sale. Requires min. 1.0 bicycle stall \u2013 class 2 per 250.0 m\u00b2 of gross usable floor area (no class 1 required). May carry a Digital Message Sign advertising its own events/activities (\u00a7104(2)(a))."}, {"id": "use-12", "sec": "198", "title": "Food Kiosk", "summary": "Discretionary \u2014 1035(c) \u2014 Max. 75.0 m\u00b2 GFA; no seating area; must not be combined with a Drive Through. Does not require bicycle parking stalls (class 1 or 2)."}, {"id": "use-13", "sec": "211", "title": "Indoor Recreation Facility", "summary": "Discretionary \u2014 1035(d) \u2014 Building specifically built or adapted for athletic, recreation, or leisure activities (pools, rinks, gymnasia); may include outdoor sports fields on the same parcel and occasional spectator seating. Requires min. 0.5 bicycle stalls \u2013 class 2 per 100.0 m\u00b2 of gross usable floor area (no class 1 required). May carry a Digital Message Sign advertising its own events/activities (\u00a7104(2)(b))."}, {"id": "use-14", "sec": "224", "title": "Library", "summary": "Discretionary \u2014 1035(e) \u2014 Collections of materials maintained primarily for lending to the public; may include lecture theatres, meeting rooms, study space, computers, and rooms for the use's administrative functions. Does not require bicycle parking stalls \u2013 class 1; requires min. 0.5 bicycle stalls \u2013 class 2 per 100.0 m\u00b2 of gross usable floor area. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(c))."}, {"id": "use-15", "sec": "242", "title": "Museum", "summary": "Discretionary \u2014 1035(f) \u2014 Artifacts and information displayed, investigated, restored, and preserved for the public; may be contained entirely within or partly outside a building; may include rooms for educational programs, lecture theatres, meeting rooms, study space, computers, and administrative functions. Does not require bicycle parking stalls \u2013 class 1; requires min. 0.5 bicycle stalls \u2013 class 2 per 100.0 m\u00b2 of gross usable floor area. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(d))."}, {"id": "use-16", "sec": "250", "title": "Park Maintenance Facility \u2013 Large", "summary": "Discretionary \u2014 1035(g) \u2014 Storage/servicing of park maintenance equipment, vehicles, or materials, and admin buildings for the use; total building GFA >300.0 m\u00b2 (the threshold distinguishing it from Park Maintenance Facility \u2013 Small). Screening required for stored piles/stacks of loose materials, equal in height to the stored materials; a berm (max 3:1 slope) may satisfy the screening requirement. Does not require motor vehicle or bicycle parking stalls."}, {"id": "use-17", "sec": "270", "title": "Protective and Emergency Service", "summary": "Discretionary \u2014 1035(h) \u2014 Police, fire, and publicly operated emergency medical services. Does not require motor vehicle or bicycle parking stalls (class 1 or 2)."}, {"id": "use-18", "sec": "290", "title": "School \u2013 Private", "summary": "Discretionary \u2014 1035(i) \u2014 K\u201312 Education Act curriculum taught by an operator other than a school district, school division, or charter-school society (i.e. a private school); may include before/after-school Child Care Service programs, other Education Act programs, and food service for students/staff. Requires min. 1.0 pick-up/drop-off stall per 100 students (by DP max. enrolment); min. bicycle stalls \u2013 class 1 equal to 3.0% of employees; min. bicycle stalls \u2013 class 2 equal to 10.0% of max. students per the DP. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(j))."}, {"id": "use-19", "sec": "292", "title": "School Authority Purpose \u2013 Major", "summary": "Discretionary \u2014 1035(j) \u2014 School division/district administration, staff training, community-involvement programs, preschool/before-after-school Child Care Service, and surplus-equipment storage, indoors or outdoors. Requires min. 1.0 bicycle stall \u2013 class 1 and min. 1.0 bicycle stall \u2013 class 2 per 1000.0 m\u00b2 of gross usable floor area, only where the administrative-function area exceeds 1000.0 m\u00b2. May carry a Digital Message Sign advertising its own events/activities/services (\u00a7104(2)(l))."}, {"id": "use-20", "sec": "298", "title": "Service Organization", "summary": "Discretionary \u2014 1035(k) \u2014 Health or educational programs/services offered to the public, including Health Care Service limited to counselling; no food-preparation kitchen or public eating area; rooms for administrative functions; may include a meeting room or auditorium. Does not require bicycle parking stalls \u2013 class 1; requires min. 1.0 bicycle stall \u2013 class 2 per 250.0 m\u00b2 of gross usable floor area."}, {"id": "use-21", "sec": "300", "title": "Sign \u2013 Class B", "summary": "Discretionary \u2014 1035(l) \u2014 Fascia sign only: attached to and parallel with an exterior wall, projecting max. 0.40 m from the wall."}, {"id": "use-22", "sec": "301", "title": "Sign \u2013 Class C", "summary": "Discretionary \u2014 1035(m) \u2014 Freestanding sign; may incorporate a Message Sign, or a Digital Sign approved as a Sign \u2013 Class E."}, {"id": "use-23", "sec": "302", "title": "Sign \u2013 Class D", "summary": "Discretionary \u2014 1035(n) \u2014 Canopy sign or Projecting sign, attached to and perpendicular from an exterior wall."}, {"id": "use-24", "sec": "303", "title": "Sign \u2013 Class E", "summary": "Discretionary \u2014 1035(o), see Sec. 103\u2013109 \u2014 Digital Message Sign, Flashing/Animated Sign, Inflatable Sign, Message Sign, Painted Wall Sign, Rotating Sign, or Temporary Sign Marker. UNLIKE S-SPR, a Roof Sign is NOT available in S-CS \u2014 \u00a7107(1) names only S-CI and S-SPR among Special Purpose districts. A Digital Message Sign here is capped at max. 1.0 m\u00b2 sign area (\u00a7104(6)(b)) when associated with a listed community-serving use (\u00a7104(2) \u2014 Community/Indoor Recreation Facility, Library, Museum, Outdoor Recreation Area, Park, School \u2013 Private, School Authority \u2013 School/Purpose Major/Minor \u2014 all of which are listed S-CS uses)."}, {"id": "use-25", "sec": "320.1", "title": "Urban Agriculture", "summary": "Discretionary \u2014 1035(o.1) \u2014 Plants grown outdoors for a commercial purpose; may be accessory to another use; may include raised beds, cold frames, and temporary hoop enclosures \u22641.5 m height used only to extend the growing season; may include ancillary buildings and local food sales of food grown on site; must not include permanent outside storage of goods, materials, or supplies. Does not require motor vehicle or bicycle parking stalls (class 1 or 2)."}, {"id": "use-26", "sec": "322", "title": "Utility Building", "summary": "Discretionary \u2014 1035(p) \u2014 Building >10.0 m\u00b2 GFA housing water/steam, sewage treatment/disposal, irrigation, drainage, gas, electricity, heat, waste management, water heating/cooling for district energy, or telecommunications, wholly or partly above grade; excludes Sewage/Water Treatment Plants. Does not require bicycle parking stalls (class 1 or 2)."}, {"id": "use-27", "sec": "333.1", "title": "Wind Energy Conversion System \u2013 Type 1", "summary": "Discretionary \u2014 1035(q), see Sec. 1019.2 \u2014 Rotor diameter \u22644.0 m, total height \u226415.0 m (fixed by \u00a7333.1, not district-variable), CSA-certified. Must not sit in a required setback. Min. 60.0 m from a residential district. Does not require motor vehicle or bicycle parking stalls. Note: Wind Energy Conversion System \u2013 Type 2 is NOT a listed use in S-CS (unlike S-SPR) \u2014 it is not offered in this checklist's use tab."}]};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"general", label:"Part 9 \u2014 Special Purpose General Rules", short:"Sec. 1013\u20131020"},
+    {key:"district", label:"Part 9 \u2014 S-CS District Rules", short:"Sec. 1033\u20131040"},
+    {key:"citywide", label:"Part 3 \u2014 Citywide Rules", short:"Sec. 53\u2013129.1"},
+    {key:"use", label:"Part 4 \u2014 Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:""},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  // S-CS has no binary building-status flip (build spec \u00a707): unlike
+  // S-SPR's \u00a71027(2) building-history gate on Child Care Service, every
+  // use in the S-CS district (\u00a71034/\u00a71035) is a plain, unconditional
+  // Permitted or Discretionary use with a status fixed in CHECKLIST_DATA,
+  // so there is no sidebar "District conditions" checkbox and no
+  // isCurrentlyAvailable() gate in this file.
+
+  function allItemsForTab(tabKey){
+    return CHECKLIST_DATA[tabKey] || [];
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  // Scoping is on `proposed` alone \u2014 once a use is added it stays
+  // visible even if it's later removed from the "add a use" dropdown for
+  // any other reason.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("use").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "use" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["general","district","citywide","use"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips, the district-conditions checkbox)
+  // calls this instead of touching only the element that was clicked. It
+  // rebuilds tab counts, the overall progress bar, and the whole main panel
+  // every time, so nothing in the sidebar or stat strip can ever go stale
+  // relative to what was clicked. Scroll position in the main panel is
+  // preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the S-CS Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the S-CS district, Special Purpose districts generally, or all districts.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> \u2014 it's used to name your session file.</li>
+        <li><b>Part 9 \u2014 Special Purpose General Rules</b> and <b>Part 9 \u2014 S-CS District Rules</b> apply to every S-CS project without exception. Work through these first \u2014 like S-SPR (but unlike S-UN), S-CS <em>is</em> one of the six Special Purpose districts where a landscape plan (\u00a71014\u2013\u00a71016) is required by default.</li>
+        <li><b>Part 3 \u2014 Citywide Rules</b> applies to every district in Calgary, including S-CS. Don't skip it \u2014 note that S-CS does NOT qualify for a Roof Sign under \u00a7107 (unlike S-SPR), and the pick-up/drop-off stall rules (\u00a7126) are directly relevant if a School Authority \u2013 School, School \u2013 Private, or Child Care Service use is proposed.</li>
+        <li><b>Part 4 \u2014 Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the full use definition.</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it \u2014 your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 79 checks, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope \u2014 what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the ~260 Part 4 use definitions not listed under S-CS, subdivision requirements, and site-specific overlays \u2014 Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps. The \u00a71033(c) purpose statement, which flags limited application to parcels NOT designated reserve under the Municipal Government Act \u2014 the opposite emphasis from S-SPR's reserve-land test \u2014 is a land-designation/subdivision-stage consideration, not a DP-stage checklist item, and isn't tracked here. Always check the current consolidated bylaw on calgary.ca since it is amended regularly.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;\u2014 confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;\u2014 non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;\u2014 need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;\u2014 not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+
+    if(state.activeTab === "use"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab\u2026";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) \u2014 nothing else is offered. Picking
+  // one adds it to the reviewed-uses set (proposed:true) and the card for
+  // that use (with its specific rule text and pass/fail controls) appears
+  // below.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review\u2026";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", test: s => /^Permitted/i.test(s)},
+      {label:"Discretionary uses", test: s => /^Discretionary/i.test(s)},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("use")
+        .filter(it => isSelectableUse(it) && g.test(it.summary) && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="general") return "General rules for all Special Purpose land use districts \u2014 setback projections, landscaping, visibility, screening, garbage, solar, WECS, parcel access. Always applicable \u2014 like S-SPR (but unlike S-UN), S-CS is one of the six Special Purpose districts where the \u00a71014\u2013\u00a71016 landscape plan / planting / irrigation requirements actually apply by default. Only Wind Energy Conversion System \u2013 Type 1 is a listed use in S-CS \u2014 Type 2 isn't available here.";
+    if(key==="district") return "S-CS-specific rules \u2014 purpose, permitted/discretionary uses, setbacks, landscaping density, sidewalk connectivity, and the Part 9/Part 3/Part 4 cross-reference. Always applicable. Unlike S-SPR, Child Care Service is a plain, unconditional discretionary use here \u2014 no building-history gate, no sidebar checkbox.";
+    if(key==="citywide") return "Rules Governing All Districts \u2014 public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to S-CS the same as every other district \u2014 note S-CS does NOT qualify for a Roof Sign under \u00a7107 (unlike S-SPR), and the pick-up/drop-off stall rules (\u00a7126) are directly relevant for School Authority \u2013 School, School \u2013 Private, or Child Care Service uses.";
+    if(key==="use") return "Add the proposed use(s) from the dropdown \u2014 only the 9 permitted and 19 discretionary S-CS uses are offered.";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    requestAnimationFrame(()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    });
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "use" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "use";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes \u25CF" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes \u25CF" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items\u2026";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["general","district","citywide","use"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "use";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported \u2014 ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed \u2014 couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed \u2014 not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed \u2014 no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported \u2014 ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed \u2014 couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>

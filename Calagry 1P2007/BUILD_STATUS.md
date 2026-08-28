@@ -5,7 +5,7 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: S-SPR (Special Purpose – School, Park and Community Reserve), Part 9, Division 3.
+Last completed: S-CS (Special Purpose – Community Service), Part 9, Division 4.
 
 ## Part 5 — Residential Districts
 
@@ -79,7 +79,7 @@ Last completed: S-SPR (Special Purpose – School, Park and Community Reserve), 
 |---|---|---|
 | 2 | S-UN | ✅ `SUN_Zoning_Review_Checklist.html` |
 | 3 | S-SPR | ✅ `SSPR_Zoning_Review_Checklist.html` |
-| 4 | S-CS | ⬜ |
+| 4 | S-CS | ✅ `CS_Zoning_Review_Checklist.html` |
 | 5 | S-R | ⬜ |
 | 6 | S-CI | ⬜ |
 | 7 | S-CRI | ⬜ |
