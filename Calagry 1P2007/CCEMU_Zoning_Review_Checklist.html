@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CC-EMU District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  .district-conditions{
+    padding:14px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .district-conditions .dc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:2px;
+  }
+  .dc-check{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    cursor:pointer;
+  }
+  .dc-check input{
+    margin-top:2px;
+    accent-color:var(--blue-dim);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .dc-check span{
+    font-size:11.5px;
+    line-height:1.4;
+    color:#C7D2DC;
+  }
+  .dc-check span b{color:#EDE9DA;}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .proposed-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    padding:5px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:13px;
+    background:#fff;
+  }
+  .proposed-toggle input{accent-color:var(--blue);}
+  .proposed-toggle.checked{background:#EAF0F6;border-color:var(--blue-dim);color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+<a href="../index.html" style="display:block;padding:14px 20px 0 20px;font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8FAFC9;text-decoration:none;text-transform:uppercase">&larr; PDG Support Docs</a>
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>CC-EMU District Review Checklist</h1>
+    <div class="sub">Centre City (Downtown) &ndash; East Village Mixed Use District &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. 40 Ave Distribution Facility">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <div class="district-conditions">
+    <div class="dc-label">District conditions &mdash; CC-EMU</div>
+    <label class="dc-check">
+      <input id="f-newbuilding" type="checkbox">
+      <span><b>Building is a proposed building, or a proposed addition to an existing building</b> (unchecked = existing approved building) &mdash; when checked, the 11 support-commercial uses in &sect;1260(2) (Convenience Food Store through Specialty Food Store) and Restaurant: Food Service Only are <b>discretionary</b> per &sect;1261(2)/(2.2) &mdash; never unavailable outright. Unlike CC-COR/CC-X, CC-EMU has no second "already has a listed use" condition &mdash; this is a straight two-way flip, the same shape as CC-EIR and CC-ET. Restaurant: Food Service Only additionally carries an absolute &lt;300.0 m&sup2; public-area cap (&sect;1264(3)) that applies regardless of this checkbox.</span>
+    </label>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {
+"part12div1": [
+  {"id":"d1-0","sec":"1217","title":"Building Height","summary":"Minimum building height is 9.0 m. No maximum height is set in the General Rules or the CC-EMU District Rules — height is effectively controlled through floor area ratio (§1263), the floor plate/street wall/building separation rules below, and the sunlight-preservation and building-setback provisions tied to the Bow River and Fort Calgary."},
+  {"id":"d1-1","sec":"1218","title":"Building Orientation","summary":"The main public entrance to a building must face the property line shared with a street."},
+  {"id":"d1-2","sec":"1219","title":"Ground Floor Height","summary":"Minimum ground-floor height is 4.0 m, measured vertically from floor to ceiling."},
+  {"id":"d1-3","sec":"1220","title":"At Grade Units","summary":"A use or unit with any portion of its floor area on the floor closest to grade must have its own individual, separate, direct access to grade."},
+  {"id":"d1-4","sec":"1221","title":"Floor Plate Restrictions","summary":"In the Centre City East Village Transition District: each floor located partially or wholly above 36.0 m above grade has a max. horizontal dimension of 60.0 m within 6.0 m of a property line shared with a street, and a max. floor plate area of 930.0 m². In all other cases (other East Village districts): the 60.0 m horizontal-dimension trigger drops to 25.0 m above grade instead of 36.0 m, while the max. floor plate area is 750.0 m², still triggered at 36.0 m above grade."},
+  {"id":"d1-5","sec":"1222","title":"Street Walls","summary":"Where building height within 6.0 m of a street property line is >25.0 m and ≤50.0 m: provide 2 of building massing / façade articulation / textures / building materials / a 2.0 m horizontal step-back between the podium façade and the building above, to distinguish the base of the building from the rest. Where >50.0 m: provide the 2.0 m step-back AND one of the other listed features. These features must generally sit min. 9.0 m / max. 18.0 m above grade — but in the Centre City East Village Transition District specifically, the max. is 25.0 m above grade instead of 18.0 m. A façade may rise directly from grade without the step-back if that façade segment is ≤20.0 m long and set back min. 2.0 m / max. 6.0 m from the street property line."},
+  {"id":"d1-6","sec":"1223","title":"Building Separation","summary":"In the Centre City East Village Transition District: a building façade above 25.0 m from grade needs min. horizontal separation of 18.0 m from another building's façade on the same parcel, 9.0 m from a property line shared with another parcel, and 6.0 m from a property line shared with a lane. In all other cases (other East Village districts), those figures increase to 24.0 m / 12.0 m / 9.0 m respectively. Balconies are excluded from the façade measurement."},
+  {"id":"d1-7","sec":"1224","title":"Building Setback","summary":"A building must not be located within 35.0 m of the top of bank on the south side of the Bow River. An Outdoor Café, approved with another use in a building legally existing or approved before this Bylaw's effective date, may project up to 5.0 m into that 35.0 m separation. Unless a District states otherwise, the minimum building setback is 0.0 m."},
+  {"id":"d1-8","sec":"1225","title":"Vehicle Access","summary":"Where the parcel shares a property line with a lane, all vehicle access to the parcel must be from the lane."},
+  {"id":"d1-9","sec":"1226","title":"Parcel Access","summary":"All developments must comply with the access requirements of the Controlled Streets Bylaw."},
+  {"id":"d1-10","sec":"1227","title":"General Landscaped Area Rules","summary":"A landscape plan approved by the Development Authority is required with every DP application that changes the building/parcel: existing/proposed topography, vegetation retention, layout (berms, pathways, screening, slopes, hard/soft areas), plant schedule/species/sizes, and irrigation details. Must be maintained on the parcel for as long as the development exists. All soft-surfaced landscaped areas must be irrigated by an underground system unless a low water irrigation system is provided."},
+  {"id":"d1-11","sec":"1228","title":"Low Water Irrigation System","summary":"If provided, only trees and shrubs are irrigated (not turf), water delivery is confined to the tree/shrub area, and plants with similar water consumption requirements must be grouped together."},
+  {"id":"d1-12","sec":"1229","title":"Specific Rules for Landscaped Areas","summary":"Min. 30.0% of the parcel area must be a landscaped area. Any part of the parcel used for motor vehicle access, motor vehicle parking stalls, loading stalls, and garbage/recycling facilities must not be included in that calculation. Landscaped area provided at grade or below 36.0 m above grade may be credited toward the landscaped area requirement."},
+  {"id":"d1-13","sec":"1230","title":"Additional Landscaping Requirements","summary":"Every building on a parcel needs at least one sidewalk connecting its public entrance to a public sidewalk (or the nearest street where there is none). Where a building contains more than one use, every use with an exterior public entrance needs a sidewalk connecting either to that primary sidewalk or directly to a public sidewalk. Every building needs at least one sidewalk connecting the parking area to the building's public entrances. A required sidewalk next to a portion of a building must extend the entire length of that side. Every required sidewalk must be a hard surfaced landscaped area, min. 2.0 m wide, with surfacing distinct from the parking area surfacing."},
+  {"id":"d1-14","sec":"1231","title":"Planting Requirements","summary":"Trees/shrubs provided to satisfy the landscaped area requirement must suit Calgary's climate and meet Canadian Nursery Landscape Association standards. Min. 25.0% of all trees planted must be coniferous. Deciduous trees: min. 50 mm caliper (min. 50.0% of provided deciduous trees at 75 mm caliper). Coniferous trees: min. 2.0 m height (min. 50.0% at 3.0 m height). Shrubs: min. 0.6 m height or spread at planting. Landscaped areas may include Urban Agriculture."},
+  {"id":"d1-15","sec":"1232","title":"Amenity Space","summary":"Min. required amenity space is 5.0 m² per unit, as common amenity space, private amenity space, or a combination. Private amenity space (balcony, deck or patio, min. dimension 2.0 m) counts up to 5.0 m²/unit — any area above that per unit doesn't count further. Common amenity space must be accessible from all units, have a contiguous area of min. 50.0 m² with no dimension <6.0 m, and may be located at or above grade; the indoors-only portion is capped at max. 50.0% of the required amenity space. Common amenity space – outdoors needs a balcony/deck/patio plus a barbeque or seating as a permanent feature, and counts toward the landscaped area calculation when located below 36.0 m above grade."},
+  {"id":"d1-16","sec":"1233","title":"Motor Vehicle Parking Stall Requirements","summary":"Baseline citywide rates unless a District states otherwise. For Dwelling Units/Live Work Units: 0.75 resident stalls/unit, plus 0.1 visitor stalls per Dwelling Unit and 0.5 visitor stalls per Live Work Unit. On parcels ≤0.4 ha: Office above the ground floor — 1.0 stall/100 m² gross usable floor area (reduced by 0.75 stalls per 50 m², to a max. 1.5-stall reduction); a list of ground-floor commercial/service uses (Computer Games Facility, Convenience Food Store, Drinking Establishment – Medium/Small, Information and Service Provider, Liquor Store, Outdoor Café, Pet Care Service, Print Centre, Restaurant: Food Service Only/Licensed, Retail and Consumer Service) — 1.0 stall/100 m², or 0.0 stalls if the building has a Dwelling Unit/Hotel/Live Work Unit/Office above the ground floor or the ground-floor use area is ≤465.0 m²; all other uses per Part 4. On parcels >0.4 ha: same Office rate; Retail and Consumer Service above the ground floor — 4.0 stalls/100 m²; the same ground-floor commercial/service list (minus Pet Care Service) — 1.0 stall/100 m² or 0.0 stalls under the same building-type/area exemption; all other uses — 3.5 stalls/100 m². CC-EMU does NOT override this baseline — its own District Rules stop at Use Area (§1264), so this general rate applies directly here. (Compare CC-ET, which overrides it with its own rate in §1249.)"},
+  {"id":"d1-17","sec":"1234","title":"Additional Motor Vehicle Parking Stall Requirements","summary":"Motor vehicle parking stalls and loading stalls must not be located between a building and a street. A Parking Lot – Grade may only be allowed for short-stay parking of not more than four consecutive hours."},
+  {"id":"d1-18","sec":"1236","title":"Required Bicycle Parking Stalls","summary":"Class 1: no requirement for Dwelling Units/Live Work Units where the total number of units is less than 20.0; 0.5 stalls/unit where the total is 20.0 or more; all other uses per the minimum requirement referenced in Part 4. No requirement for bicycle parking stalls – Class 2 for any use."},
+  {"id":"d1-19","sec":"1237","title":"Sunlight Preservation","summary":"Two mapped sunlight protection areas must not be placed in greater shadow by a development, as measured on September 21, than were already existing or approved on the date the DP was applied for: The Riverbank (20.0 m wide along the top of the south bank of the Bow River, 10:00 a.m.–4:00 p.m. MDT) and Fort Calgary (40.0 m from the 6 Street SE right-of-way, 10:00 a.m.–3:00 p.m. MDT; 20.0 m from the 9 Avenue SE right-of-way, 10:00 a.m.–4:00 p.m. MDT)."},
+  {"id":"d1-20","sec":"1238","title":"Visibility Setback","summary":"Buildings, finished grade of a parcel, and vegetation within a corner visibility triangle must not be located between 0.75 m and 4.6 m above the lowest elevation of the street."},
+  {"id":"d1-21","sec":"1239","title":"Mechanical Screening","summary":"Mechanical systems or equipment located outside a building must be positioned, camouflaged, or screened from view of a public space, or from a residential-district parcel within 30.0 m of the equipment, using a line of sight of 1.7 m above grade."},
+  {"id":"d1-22","sec":"1240","title":"Garbage","summary":"Garbage containers and waste material must be stored, prior to collection, inside a building that contains another approved use."},
+  {"id":"d1-23","sec":"1241","title":"Recycling Facilities","summary":"Required for every building containing Dwelling Units or Office uses."},
+  {"id":"d1-24","sec":"1242","title":"Storage of Goods, Materials and Supplies","summary":"All goods, materials, and supplies associated with a use must be contained within a building."}
+],
+"part12div2": [
+  {"id":"d2-0","sec":"1259","title":"Purpose","summary":"The Centre City East Village Mixed Use District is intended to provide for: a mixed-use area that integrates residential uses with a range of commercial uses, local services and amenities; and a building form that is street oriented at grade. (Informational — useful for discretionary-use judgment calls.)"},
+  {"id":"d2-1","sec":"1260","title":"Permitted Uses","summary":"Permitted — §1260(1): Accessory Residential Building, Home Based Child Care – Class 1, Home Occupation – Class 1, Park, Protective and Emergency Service, Sign – Class A, and Utilities (7 uses) — unconditional. Permitted — §1260(2): 11 uses (Convenience Food Store through Specialty Food Store — see Use tab) are permitted ONLY if located within an existing approved building; in a proposed building or a proposed addition to an existing building they're discretionary per §1261(2) instead — never unavailable outright. Permitted — §1260(3): Restaurant: Food Service Only is an ADDITIONAL permitted use under the same existing-building condition, AND ONLY if the public area is 150.0 m² or less — over that threshold, or in a proposed building/addition, it's discretionary per §1261(2.1)/(2.2). A separate absolute cap also applies no matter the building status or branch: §1264(3) caps the public area of a Restaurant: Food Service Only or Restaurant: Licensed at LESS THAN 300.0 m². Status on the Use tab is computed live from the District Conditions checkbox in the sidebar (except the two public-area thresholds, neither of which is a checkbox — confirm both directly). Unlike CC-EIR (12 uses, §1254(2)) and CC-ET (13 uses, §1244(2)), CC-EMU's §1260(2) list has no Radio and Television Studio entry, and (like CC-EIR) no Catering Service – Minor entry either."},
+  {"id":"d2-2","sec":"1261","title":"Discretionary Uses","summary":"Discretionary — §1261(1): Parking Lot – Grade, but ONLY where it was legally existing or approved before this Bylaw's effective date — not available as a brand-new use. Discretionary — §1261(2): the 11 §1260(2) uses become discretionary instead of permitted when the building is a proposed building or a proposed addition to an existing building. Discretionary — §1261(2.1)/(2.2): Restaurant: Food Service Only is discretionary if the existing-building public area exceeds 150.0 m² (§1261(2.1) — confirm directly, not a checkbox) or if it's in a proposed building/addition (§1261(2.2)) — either way its public area must still be less than 300.0 m² under the separate absolute cap in §1264(3). Discretionary — §1261(3): 37 uses (see Use tab), Artist's Studio through Veterinary Clinic — unconditional on building history, and notably includes Kennel (§1261(3)(m.1)) and Veterinary Clinic (§1261(3)(mm)), neither of which is an available use in the neighbouring CC-EIR or CC-ET districts. Discretionary — §1261(4): Restaurant: Food Service Only and Restaurant: Licensed are ADDITIONALLY discretionary uses when located within a building designated as a Municipal Historic Resource under the Historical Resources Act — a pathway CC-EMU has that CC-EIR's District Rules don't include. Status for the conditional support-commercial/Restaurant group is computed live from the District Conditions checkbox in the sidebar."},
+  {"id":"d2-3","sec":"1262","title":"Rules","summary":"Confirms all CC-EMU uses must also comply with: the General Rules for Centre City East Village Districts referenced in Part 12, Division 1 (above); the Rules Governing All Districts referenced in Part 3; and the applicable Uses And Use Rules referenced in Part 4."},
+  {"id":"d2-4","sec":"1263","title":"Density","summary":"Max. floor area ratio is 6.65 — lower than CC-EIR's and CC-ET's shared 7.0 cap. Excluded from the FAR calculation, up to a max. cumulative FAR of 1.0: Child Care Service, Community Entrance Feature, Community Recreation Facility, Indoor Recreation Facility, Museum, Place of Worship – Small, Post-secondary Learning Institution, Protective and Emergency Service, School – Private, School Authority – School, Service Organization, Social Organization, and Utilities (13 uses). Also excluded from FAR entirely: gross floor area transferred from a designated Municipal Historic Resource under the Historical Resources Act, up to a max. 3.0 FAR. Unlike CC-EIR, CC-EMU has no separate 3.0-FAR exclusion specifically for Post-secondary Learning Institution gross floor area — here it only benefits from the general 1.0-FAR-cap list above."},
+  {"id":"d2-5","sec":"1264","title":"Use Area","summary":"Unless noted below, max. use area for uses on the ground floor is 465.0 m² — the same baseline as CC-EIR and CC-EPR, notably smaller than CC-ET's 1200.0 m² ground-floor cap. Max. 200.0 m² for Health Care Service on the ground floor, UNLESS its use activities are limited to counselling, in which case the cap rises to 465.0 m² instead — a counselling carve-out CC-EIR's own Use Area section does not have. Max. public area for a Restaurant: Food Service Only or Restaurant: Licensed is LESS THAN 300.0 m² (§1264(3), a strict inequality) — an absolute cap that applies regardless of the separate 150.0 m² Permitted/Discretionary threshold in §1260(3)/§1261(2.1), and regardless of building status; CC-EIR's own District Rules have no equivalent public-area cap section — its §1258(3) instead sets a 300.0 m² ground-floor cap for Night Club, a use CC-EMU doesn't have. CC-EMU's District Rules stop here — like CC-EIR, there is no district-specific Motor Vehicle Parking Stalls, Restricted Parking Area, Short Stay Parking Stalls, or Parking Stall Transfer section; the General Rules baseline (§1233, Part 12 – General Rules tab) applies directly."}
+],
+"part3": [
+  {"id":"p3-0","sec":"53","title":"Public Realm Setbacks","summary":"Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to the district's own front/side/rear setback, and the Development Authority cannot relax it. Note the General Rules §1224 (shared by every East Village district, including CC-EMU) already imposes a separate 35.0 m building setback from the top of bank on the south side of the Bow River — confirm both apply together where relevant."},
+  {"id":"p3-1","sec":"54","title":"Airport Vicinity Regulations","summary":"If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply — unlikely for an East Village parcel, but confirm against the current AVPA maps/bylaw."},
+  {"id":"p3-2","sec":"55","title":"Floodway, Flood Fringe & Overland Flow — Applicability","summary":"Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping) — directly relevant for CC-EMU, which sits along the Bow River in East Village and already carries its own 35.0 m river-setback rule (§1224) and Riverbank sunlight-protection area (§1237)."},
+  {"id":"p3-3","sec":"56","title":"Floodway Regulations","summary":"If in the Floodway: new development is heavily restricted — confirm what, if anything, is permitted."},
+  {"id":"p3-4","sec":"57","title":"New Buildings and Alterations","summary":"If in the Flood Fringe: specific construction/flood-proofing requirements for new buildings and alterations."},
+  {"id":"p3-5","sec":"58","title":"Alterations to the Floodway and Riverbanks","summary":"Special review requirements for any riverbank or floodway alteration work — directly relevant given CC-EMU's Bow River frontage and the §1224 top-of-bank setback."},
+  {"id":"p3-6","sec":"61","title":"Building Design in the Overland Flow Area","summary":"Specific design requirements if the parcel is within a mapped overland flow area."},
+  {"id":"p3-7","sec":"62","title":"Lighting Requirements","summary":"General exterior lighting standards apply to the site."},
+  {"id":"p3-8","sec":"63","title":"Shielding","summary":"Light fixtures must be shielded to control glare and light spill, particularly toward adjoining residential parcels."},
+  {"id":"p3-9","sec":"64","title":"Mounting of Fixtures","summary":"Requirements for how/where lighting fixtures are mounted."},
+  {"id":"p3-10","sec":"65","title":"Height Limits (Lighting)","summary":"Max. mounting height for an outdoor light fixture with a luminaire wattage >100 watts is 12.0 m in CC-EMU, grouped under §65(1)(b) with CC-ET, CC-EIR, CC-EPR, CC-ERR, and \"all other commercial and industrial districts\" — higher than the 7.5 m cap that applies under §65(1)(a) to C-N1, C-N2, C-C1, C-COR1, CC-ER, I-B, I-E, and all residential/mixed use/special purpose districts. No maximum mounting height applies to an Outdoor Recreation Area or Spectator Sports Facility light fixture (neither is a CC-EMU use). Pole/structure-mounted fixtures are generally capped at 40.0% of the horizontal distance to the property line, with exceptions for low-mounted (<5.0 m) fixtures with side shielding and for building-mounted fixtures near the property line."},
+  {"id":"p3-11","sec":"66","title":"Canopy Lighting","summary":"Outdoor light fixtures mounted on any canopy must be recessed so the luminaire doesn't project below the canopy's underside. CC-EMU has no Gas Bar or Drive Through in its permitted/discretionary use list — typically only relevant if a building entrance/awning canopy has integrated lighting; confirm directly if proposed."},
+  {"id":"p3-12","sec":"67-72","title":"Signs — Purpose, Classification, DP Requirements","summary":"All signs are classified Class A–G. Confirm a DP is required (most are) and whether a Comprehensive Sign Program applies to the site."},
+  {"id":"p3-13","sec":"73-76","title":"General Sign Rules, Digital Displays, Maintenance","summary":"General construction/safety/illumination standards for all signs; extra rules if any sign has a digital display; ongoing maintenance obligation; rules for parcels sharing signage under a related function."},
+  {"id":"p3-14","sec":"77-90","title":"Class A Signs (permitted use in CC-EMU)","summary":"Includes Address, Art, Banner, Construction, Directional, Flag, Pedestrian, Real Estate, Special Event, Show Home, Temporary, and Window sign sub-rules. Check whichever sub-types are proposed. Sign – Class A is a permitted use in CC-EMU per §1260(1)(f)."},
+  {"id":"p3-15","sec":"91-93","title":"Class B Signs (discretionary use in CC-EMU) — Fascia Sign","summary":"Designated signable area/location rules and fascia sign rules. Sign – Class B is discretionary in CC-EMU per §1261(3)(ff) — unlike CC-COR/CC-X, where Sign – Class B is a permitted use, CC-EMU only permits Sign – Class A unconditionally under §1260(1)."},
+  {"id":"p3-16","sec":"94-97","title":"Class C Signs (discretionary use in CC-EMU) — Freestanding Sign","summary":"Freestanding sign rules: number allowed (§96), size and height restrictions (§97). Sign – Class C is discretionary in CC-EMU per §1261(3)(gg). Unlike CC-EIR/CC-ET's flat 14.0 m²/9.0 m cap under §97(3), CC-EMU is explicitly named in §97(4): where the parcel contains commercial multi-residential uses, the max. Freestanding Sign area is only 7.0 m² and the max. height only 6.0 m — grouped with CC-EPR, CC-ERR, CC-MH, CC-MHX, M-H1, M-H2, M-H3, M-X1 and M-X2. Where a CC-EMU parcel does NOT contain commercial multi-residential uses, §97(4)'s trigger condition isn't met — the bylaw doesn't spell out a separate rate for that case, so confirm directly which subsection governs a given CC-EMU parcel rather than assuming the 14.0 m²/9.0 m general-mixed-use figure in §97(3) carries over."},
+  {"id":"p3-17","sec":"98-102","title":"Class D Signs (discretionary use in CC-EMU) — Canopy / Projecting Sign","summary":"Canopy sign rules (§99 — copy area max. 50.0% of canopy area, can't extend beyond the canopy structure), rules for signs under canopies (§100), and projecting sign rules (§101 — max. one per business per primary wall, max. height generally 6.0 m, min. 2.4 m clearance from grade). Sign – Class D is discretionary in CC-EMU per §1261(3)(hh) — unlike CC-COR/CC-X, where Sign – Class D is a permitted use. §102(1) sets the Projecting Sign area cap for CC-EMU at 2.3 m² (CC-EMU is explicitly named in this subsection, grouped with C-N1, C-N2, C-C1, CC-EIR, CC-EPR, CC-MH, CC-MHX, M-H1, M-H2, M-H3, M-X1 and M-X2) — notably TIGHTER than the 4.5 m² carve-out that applies to CC-ET (and CR20-C20/R20 and all other commercial/industrial/mixed use districts) under §102(3)."},
+  {"id":"p3-18","sec":"103-109","title":"Class E Signs (discretionary use in CC-EMU)","summary":"Includes Digital Message Sign (§104), Inflatable Sign (§105), Painted Wall Sign (§106), Roof Sign (§107), Rotating Sign (§108), and Temporary Sign Marker (§109) sub-rules. Sign – Class E is discretionary in CC-EMU per §1261(3)(ii). Unlike CC-COR/CC-X — approvable in any commercial district under the general §104(1) rule, with a 5.0 m² attached / 50.0% of Freestanding Sign area cap under §104(6)(a) — CC-EMU is grouped with CC-MH, CC-MHX, S-SPR, S-CS, S-CI, S-URP, CC-ET, CC-EPR, CC-EIR, and CC-ERR under the MORE RESTRICTIVE §104(2)/(6)(b): a Digital Message Sign here may only be approved when associated with a specific institutional/recreational use (Community Recreation Facility, Indoor Recreation Facility, Library, Museum, Outdoor Recreation Area, Park, Place of Worship – Large/Medium/Small, School – Private, School Authority – School/Purpose), and its max. sign area is only 1.0 m² — the same restrictive pathway as CC-EIR and CC-ET; don't assume CC-COR/CC-X's more permissive general-commercial figures carry over."},
+  {"id":"p3-19","sec":"110-115","title":"Class F Signs — not a use in CC-EMU","summary":"CC-EMU's §1260/§1261 use lists don't include Sign – Class F at all — a Third Party Advertising Sign isn't an available use here in any circumstance. Typically N/A; if one is claimed on the site, confirm its status directly rather than relying on this tool."},
+  {"id":"p3-20","sec":"115.1-115.5","title":"Class G Signs — not a use in CC-EMU","summary":"Unlike CC-X (which allows an existing pre-March-2013 Sign – Class G to continue as a discretionary use), CC-EMU's §1260/§1261 use lists don't include Sign – Class G at all — a Digital Third Party Advertising Sign isn't an available use here in any circumstance. Typically N/A; if one is claimed on the site, confirm its status directly rather than relying on this tool."},
+  {"id":"p3-21","sec":"116","title":"Parking — General Rules","summary":"Baseline rules governing all required parking/loading."},
+  {"id":"p3-22","sec":"117","title":"Parking Stall Signage","summary":"Signage requirements for parking stalls (e.g., accessible stalls)."},
+  {"id":"p3-23","sec":"118","title":"Location of Parking and Loading Requirements","summary":"Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings."},
+  {"id":"p3-24","sec":"119","title":"Use of Parking and Loading Stalls","summary":"Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."},
+  {"id":"p3-25","sec":"120","title":"Identification of Required Parking/Loading Stalls","summary":"How required stalls must be marked/identified on-site and on drawings."},
+  {"id":"p3-26","sec":"121","title":"Calculation of Minimum Parking/Loading Stalls","summary":"Unlike CC-ET (which overrides the baseline with its own §1249 rate plus a §1250 Restricted Parking Area relaxation and a §1252 historic-resource parking stall transfer mechanism), CC-EMU has no district-specific parking provisions at all — its own District Rules stop at Use Area (§1264). The General Rules baseline rate (§1233, Part 12 – General Rules tab) applies directly, and this citywide section is the general calculation mechanism behind it."},
+  {"id":"p3-27","sec":"122","title":"Standards for Motor Vehicle Parking Stalls","summary":"Stall/aisle dimensions and layout standards."},
+  {"id":"p3-28","sec":"123","title":"Loading Stalls","summary":"Required loading stall size and count standards."},
+  {"id":"p3-29","sec":"124","title":"Relaxations of Parking/Loading Requirements","summary":"Circumstances where the Development Authority may relax parking/loading counts generally. Unlike CC-ET, CC-EMU has no district-specific Restricted Parking Area relaxation tied to this section — confirm directly if a parking relaxation is being sought."},
+  {"id":"p3-30","sec":"124.1","title":"Parking Stall Exemptions","summary":"Specific exemptions from providing required parking stalls."},
+  {"id":"p3-31","sec":"125","title":"Bicycle Parking Stalls","summary":"CC-EMU's own bicycle parking rule lives in the General Rules tab (§1236): Class 1 — none under 20 units, 0.5 stalls/unit at 20+ units, all other uses per Part 4; no Class 2 requirement for any use in CC-EMU."},
+  {"id":"p3-32","sec":"126","title":"Motor Vehicle Pick-Up and Drop-Off Stalls","summary":"CC-EMU has no Drive Through or similar pick-up/drop-off use in its permitted/discretionary list — typically N/A."},
+  {"id":"p3-33","sec":"129.1","title":"Infrastructure Requirements","summary":"The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development."}
+],
+"part4": [
+  {"id":"p4-0","sec":"138","title":"Accessory Residential Building","summary":"Permitted — §1260(1)(a)"},
+  {"id":"p4-1","sec":"206.1","title":"Home Based Child Care – Class 1","summary":"Permitted — §1260(1)(b)"},
+  {"id":"p4-2","sec":"207","title":"Home Occupation – Class 1","summary":"Permitted — §1260(1)(c)"},
+  {"id":"p4-3","sec":"249","title":"Park","summary":"Permitted — §1260(1)(d)"},
+  {"id":"p4-4","sec":"270","title":"Protective and Emergency Service","summary":"Permitted — §1260(1)(e)"},
+  {"id":"p4-5","sec":"299","title":"Sign – Class A","summary":"Permitted — §1260(1)(f)"},
+  {"id":"p4-6","sec":"321","title":"Utilities","summary":"Permitted — §1260(1)(g)"},
+  {"id":"p4-7","sec":"174","title":"Convenience Food Store","summary":"Permitted — §1260(2)(c)","condSupport":true,"priorLetter":"c"},
+  {"id":"p4-8","sec":"193","title":"Financial Institution","summary":"Permitted — §1260(2)(d)","condSupport":true,"priorLetter":"d"},
+  {"id":"p4-9","sec":"195","title":"Fitness Centre","summary":"Permitted — §1260(2)(e)","condSupport":true,"priorLetter":"e"},
+  {"id":"p4-10","sec":"216","title":"Information and Service Provider","summary":"Permitted — §1260(2)(f)","condSupport":true,"priorLetter":"f"},
+  {"id":"p4-11","sec":"217","title":"Instructional Facility","summary":"Permitted — §1260(2)(g)","condSupport":true,"priorLetter":"g"},
+  {"id":"p4-12","sec":"242","title":"Museum","summary":"Permitted — §1260(2)(h)","condSupport":true,"priorLetter":"h"},
+  {"id":"p4-13","sec":"257","title":"Pet Care Service","summary":"Permitted — §1260(2)(i)","condSupport":true,"priorLetter":"i"},
+  {"id":"p4-14","sec":"266","title":"Power Generation Facility – Small","summary":"Permitted — §1260(2)(j)","condSupport":true,"priorLetter":"j"},
+  {"id":"p4-15","sec":"267","title":"Print Centre","summary":"Permitted — §1260(2)(k)","condSupport":true,"priorLetter":"k"},
+  {"id":"p4-16","sec":"286.1","title":"Retail and Consumer Service","summary":"Permitted — §1260(2)(m)","condSupport":true,"priorLetter":"m"},
+  {"id":"p4-17","sec":"310","title":"Specialty Food Store","summary":"Permitted — §1260(2)(n)","condSupport":true,"priorLetter":"n"},
+  {"id":"p4-18","sec":"278","title":"Restaurant: Food Service Only","summary":"Permitted — §1260(3)(a), if public area ≤ 150.0 m² (also subject to the absolute <300.0 m² public-area cap under §1264(3))","condRestaurant":true},
+  {"id":"p4-19","sec":"252","title":"Parking Lot – Grade","summary":"Discretionary — §1261(1)(a), ONLY where it was legally existing or approved before this Bylaw's effective date. Not available as a brand-new use in CC-EMU, regardless of the District Conditions checkbox above."},
+  {"id":"p4-20","sec":"144","title":"Artist's Studio","summary":"Discretionary — §1261(3)(a)"},
+  {"id":"p4-21","sec":"146","title":"Assisted Living","summary":"Discretionary — §1261(3)(b)"},
+  {"id":"p4-22","sec":"156.1","title":"Brewery, Winery and Distillery","summary":"Discretionary — §1261(3)(c)"},
+  {"id":"p4-23","sec":"160.3","title":"Cannabis Store","summary":"Discretionary — §1261(3)(c.2)"},
+  {"id":"p4-24","sec":"165","title":"Child Care Service","summary":"Discretionary — §1261(3)(d)"},
+  {"id":"p4-25","sec":"168","title":"Community Entrance Feature","summary":"Discretionary — §1261(3)(e)"},
+  {"id":"p4-26","sec":"169","title":"Community Recreation Facility","summary":"Discretionary — §1261(3)(f)"},
+  {"id":"p4-27","sec":"183","title":"Drinking Establishment – Medium","summary":"Discretionary — §1261(3)(h)"},
+  {"id":"p4-28","sec":"184","title":"Drinking Establishment – Small","summary":"Discretionary — §1261(3)(i)"},
+  {"id":"p4-29","sec":"188","title":"Dwelling Unit","summary":"Discretionary — §1261(3)(j)"},
+  {"id":"p4-30","sec":"198.1","title":"Food Production","summary":"Discretionary — §1261(3)(j.1)"},
+  {"id":"p4-31","sec":"204","title":"Health Care Service","summary":"Discretionary — §1261(3)(j.2)"},
+  {"id":"p4-32","sec":"208","title":"Home Occupation – Class 2","summary":"Discretionary — §1261(3)(k)"},
+  {"id":"p4-33","sec":"209","title":"Hotel","summary":"Discretionary — §1261(3)(l)"},
+  {"id":"p4-34","sec":"211","title":"Indoor Recreation Facility","summary":"Discretionary — §1261(3)(m)"},
+  {"id":"p4-35","sec":"220","title":"Kennel","summary":"Discretionary — §1261(3)(m.1). Not an available use in the neighbouring CC-EIR or CC-ET districts."},
+  {"id":"p4-36","sec":"225","title":"Liquor Store","summary":"Discretionary — §1261(3)(n)"},
+  {"id":"p4-37","sec":"226","title":"Live Work Unit","summary":"Discretionary — §1261(3)(o)"},
+  {"id":"p4-38","sec":"246","title":"Office","summary":"Discretionary — §1261(3)(s)"},
+  {"id":"p4-39","sec":"247","title":"Outdoor Café","summary":"Discretionary — §1261(3)(t)"},
+  {"id":"p4-40","sec":"262","title":"Place of Worship – Small","summary":"Discretionary — §1261(3)(u)"},
+  {"id":"p4-41","sec":"263","title":"Post-secondary Learning Institution","summary":"Discretionary — §1261(3)(v)"},
+  {"id":"p4-42","sec":"277","title":"Residential Care","summary":"Discretionary — §1261(3)(w)"},
+  {"id":"p4-43","sec":"281","title":"Restaurant: Licensed","summary":"Discretionary — §1261(3)(y). Also an additional discretionary use when located within a building designated as a Municipal Historic Resource, per §1261(4)(b) — a pathway CC-EIR's District Rules don't include. Public area is capped at LESS THAN 300.0 m² under §1264(3), the same absolute cap that applies to Restaurant: Food Service Only."},
+  {"id":"p4-44","sec":"290","title":"School – Private","summary":"Discretionary — §1261(3)(bb)"},
+  {"id":"p4-45","sec":"291","title":"School Authority – School","summary":"Discretionary — §1261(3)(cc)"},
+  {"id":"p4-46","sec":"294","title":"Seasonal Sales Area","summary":"Discretionary — §1261(3)(dd)"},
+  {"id":"p4-47","sec":"298","title":"Service Organization","summary":"Discretionary — §1261(3)(ee)"},
+  {"id":"p4-48","sec":"300","title":"Sign – Class B","summary":"Discretionary — §1261(3)(ff)"},
+  {"id":"p4-49","sec":"301","title":"Sign – Class C","summary":"Discretionary — §1261(3)(gg)"},
+  {"id":"p4-50","sec":"302","title":"Sign – Class D","summary":"Discretionary — §1261(3)(hh)"},
+  {"id":"p4-51","sec":"303","title":"Sign – Class E","summary":"Discretionary — §1261(3)(ii)"},
+  {"id":"p4-52","sec":"307","title":"Social Organization","summary":"Discretionary — §1261(3)(jj)"},
+  {"id":"p4-53","sec":"309","title":"Special Function – Class 2","summary":"Discretionary — §1261(3)(kk)"},
+  {"id":"p4-54","sec":"320.1","title":"Urban Agriculture","summary":"Discretionary — §1261(3)(kk.1)"},
+  {"id":"p4-55","sec":"322","title":"Utility Building","summary":"Discretionary — §1261(3)(ll)"},
+  {"id":"p4-56","sec":"330","title":"Veterinary Clinic","summary":"Discretionary — §1261(3)(mm). Not an available use in the neighbouring CC-EIR or CC-ET districts."}
+]
+};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"part12div1", label:"Part 12 — Centre City East Village General Rules", short:"Sec. 1217–1242"},
+    {key:"part12div2", label:"Part 12 — CC-EMU District Rules", short:"Sec. 1259–1264"},
+    {key:"part3", label:"Part 3 — Citywide Rules", short:"Sec. 53–129.1"},
+    {key:"part4", label:"Part 4 — Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:"", newBuilding:false},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+    document.getElementById("f-newbuilding").checked = !!state.project.newBuilding;
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  // Conditional use items (condSupport / condRestaurant flags in
+  // CHECKLIST_DATA) don't carry a fixed Permitted/Discretionary summary —
+  // their status is computed live from the single District Conditions
+  // checkbox (§07 of the build spec) every time the tab renders, never
+  // hardcoded into the data. CC-EMU's pattern is a plain two-way flip
+  // (unlike CC-COR/CC-X's three-way §1180/§1181-style split, and identical
+  // in shape to the neighbouring CC-EIR and CC-ET districts): the
+  // existing-building fact alone decides Permitted vs. Discretionary, with
+  // no second "already has a listed use" condition. Restaurant: Food
+  // Service Only follows the same two-way split, but its Permitted branch
+  // additionally carries the static 150.0 m² public-area caveat from
+  // §1261(2.1) — a measured value the build spec says not to gate behind a
+  // checkbox — plus a second, absolute <300.0 m² public-area cap under
+  // §1264(3) that applies no matter which branch governs.
+  function computeEffectiveUseItem(item){
+    if(item.condSupport){
+      const letter = item.priorLetter || "";
+      if(state.project.newBuilding){
+        return Object.assign({}, item, {
+          summary: `Discretionary — §1261(2), located in a proposed building or a proposed addition to an existing building (§1260(2)(${letter}) list)`
+        });
+      }
+      return Object.assign({}, item, {
+        summary: `Permitted — §1260(2)(${letter}), located in an existing approved building`
+      });
+    }
+    if(item.condRestaurant){
+      if(state.project.newBuilding){
+        return Object.assign({}, item, {
+          summary: `Discretionary — §1261(2.2), located in a proposed building or a proposed addition to an existing building. The public area must also be less than 300.0 m² regardless of building status (§1264(3)) — confirm directly.`
+        });
+      }
+      return Object.assign({}, item, {
+        summary: `Permitted — §1260(3)(a), located in an existing approved building, ONLY IF the public area is 150.0 m² or less. If the public area exceeds 150.0 m², this use is Discretionary per §1261(2.1) instead. Either way, the public area must be less than 300.0 m² under the separate absolute cap in §1264(3). Confirm the public area directly.`
+      });
+    }
+    return item;
+  }
+
+  function allItemsForTab(tabKey){
+    const items = CHECKLIST_DATA[tabKey] || [];
+    return tabKey === "part4" ? items.map(computeEffectiveUseItem) : items;
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  // Scoping is on `proposed` alone, NOT on isSelectableUse — an
+  // already-added card must stay visible (re-labeled, not removed) even if
+  // a later checkbox toggle makes that use currently unavailable to *add*.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("part4").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "part4" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["part12div1","part12div2","part3","part4"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips) calls this instead of touching only
+  // the element that was clicked. It rebuilds tab counts, the overall
+  // progress bar, and the whole main panel together, so nothing in the
+  // sidebar or stat strip can ever go stale relative to what was clicked.
+  // Scroll position in the main panel is preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the CC-EMU Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the CC-EMU district (Centre City East Village Mixed Use District — the "Downtown" family of districts, Part 12), Centre City East Village districts generally, or all districts.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> — it's used to name your session file.</li>
+        <li>Set the <b>District conditions</b> checkbox right below the project fields: whether the building is a proposed building or a proposed addition (vs. an existing approved building). The 11 support-commercial uses in §1260(2) and Restaurant: Food Service Only all flip their Use tab status automatically when you toggle it — note that the checkbox never removes a use from the review, it only changes Permitted vs. Discretionary. Unlike CC-COR/CC-X, there is no second checkbox here — CC-EMU's rules only tie status to one binary building fact, the same shape as the neighbouring CC-EIR and CC-ET districts. Restaurant: Food Service Only (and Restaurant: Licensed) also carry a separate, absolute public-area cap under §1264(3) that the checkbox does not compute — confirm it directly.</li>
+        <li><b>Part 12 — Centre City East Village General Rules</b> and <b>Part 12 — CC-EMU District Rules</b> apply to every CC-EMU project without exception. Work through these first.</li>
+        <li><b>Part 3 — Citywide Rules</b> applies to every district in Calgary, including CC-EMU — CC-EMU permits only Sign – Class A unconditionally, with Classes B, C, D and E all discretionary (no Class F or G), and several sign rules carry CC-EMU-specific figures — notably a tight 2.3 m² Projecting Sign cap (tighter than neighbouring CC-ET's 4.5 m²), a conditional 7.0 m²/6.0 m Freestanding Sign cap tied to whether the parcel has commercial multi-residential uses, and a restrictive 1.0 m² Digital Message Sign pathway. Don't skip it.</li>
+        <li><b>Part 4 — Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the detailed use-specific requirements. Note that CC-EMU is the only Centre City East Village district where Kennel (§1261(3)(m.1)) and Veterinary Clinic (§1261(3)(mm)) are available uses.</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it — your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 122 checks, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope — what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the ~270 Part 4 use definitions not listed under CC-EMU, subdivision requirements, and site-specific overlays — Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps. There is no maximum building height set in CC-EMU's own rules (only a 9.0 m minimum, §1217) — height is instead shaped by floor area ratio (§1263, max. 6.65), the floor plate/street wall/building separation rules, and the 35.0 m Bow River top-of-bank setback (§1224). The District Conditions checkbox only covers the binary building-history fact in §1260(2)/(3) and §1261(2)/(2.1)/(2.2) — it does not compute the 150.0 m² Restaurant public-area threshold in §1261(2.1), nor the separate absolute <300.0 m² Restaurant public-area cap in §1264(3), both of which are measured values you confirm directly. Unlike CC-ET, CC-EMU's own District Rules have no Restricted Parking Area relaxation or Parking Stall Transfer mechanism to work through at all — its District Rules stop at Use Area (§1264), and the General Rules parking baseline (§1233) applies directly. Confirm all of this separately for your parcel, and always check the current consolidated bylaw on calgary.ca since it is amended regularly. Part 10 (the original "Downtown" district family) was deleted by 33P2013 in 2014 and replaced by the Centre City districts in Parts 11–14 — if you're looking for "Downtown" in the old sense, CC-EMU and its neighbouring CC- districts are it.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;— confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;— non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;— need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;— not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+
+    if(state.activeTab === "part4"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab…";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) — nothing else is offered. Picking one
+  // adds it to the reviewed-uses set (proposed:true) and the card for that
+  // use (with its specific rule text and pass/fail controls) appears below.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review…";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", test: s => /^Permitted/i.test(s)},
+      {label:"Discretionary uses", test: s => /^Discretionary/i.test(s)},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("part4")
+        .filter(it => isSelectableUse(it) && g.test(it.summary) && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="part12div1") return "General rules for the Centre City East Village land use districts (CC-EMU and its neighbours) — building height/orientation/setback, floor plate/street wall/separation, landscaping, amenity space, parking/bicycle stalls, sunlight preservation, screening, garbage/recycling. Always applicable.";
+    if(key==="part12div2") return "CC-EMU-specific rules — permitted/discretionary uses, floor area ratio, and use area. Unlike CC-ET, CC-EMU's District Rules stop at Use Area (§1264) — there's no district-specific motor vehicle parking, Restricted Parking Area relaxation, short stay parking, or historic-resource parking stall transfer section here. Set the District Conditions checkbox in the sidebar first — the Use tab's support-commercial uses and Restaurant: Food Service Only depend on it, though the two Restaurant public-area thresholds (§1260(3)/§1261(2.1)'s 150.0 m² split and §1264(3)'s absolute <300.0 m² cap) are measured values, not checkboxes. Always applicable.";
+    if(key==="part3") return "Rules Governing All Districts — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to CC-EMU the same as every other district (note CC-EMU permits only Sign – Class A unconditionally, with Classes B–E discretionary and no Class F/G — several with CC-EMU-specific dimensional figures, including a tight 2.3 m² Projecting Sign cap and a restrictive Digital Message Sign rule, plus a Freestanding Sign cap that depends on whether the parcel has commercial multi-residential uses — see the Class B/C/D/E items).";
+    if(key==="part4") return "Add the proposed use(s) from the dropdown — only Permitted and Discretionary CC-EMU uses are offered. The 11 support-commercial uses (Convenience Food Store through Specialty Food Store) and Restaurant: Food Service Only show as Permitted or Discretionary depending on the District Conditions checkbox, but are always available one way or the other — Restaurant additionally needs a public area of 150.0 m² or less to be Permitted even when the checkbox otherwise allows it, and its public area must always be less than 300.0 m² under a separate absolute cap (confirm both directly, neither is a checkbox). Parking Lot – Grade is discretionary only where it was legally existing or approved before this Bylaw's effective date — it isn't available as a brand-new use. CC-EMU is the only Centre City East Village district offering Kennel and Veterinary Clinic as uses.";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    requestAnimationFrame(()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    });
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "part4" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "part4";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items…";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["part12div1","part12div2","part3","part4"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  // Third element is the field type: "text" (default) or "bool". The
+  // boolean project fact (the §07 district-condition checkbox) is written
+  // as literal Yes/No text so the CSV stays human-readable, and parsed
+  // back to a real boolean on import rather than round-tripping as a string.
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+    ["Building is a proposed building/addition (§1261(2)/(2.2))", "newBuilding", "bool"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "part4";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported — ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed — couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed — not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed — no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported — ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed — couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  // The district-condition checkbox is state-changing (it flips use
+  // Permitted/Discretionary status live), unlike the text fields above,
+  // so it goes through refreshEverything() rather than updating state alone.
+  function bindDistrictConditions(){
+    const checkMap = {"f-newbuilding":"newBuilding"};
+    Object.keys(checkMap).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("change", (e)=>{
+        state.project[checkMap[id]] = e.target.checked;
+        refreshEverything();
+      });
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindDistrictConditions();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>
