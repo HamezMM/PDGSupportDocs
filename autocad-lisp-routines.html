@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCAD LISP Routines — PDG Support Docs</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.22);
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b67;
+  --text-tertiary: #a0a09b;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --amber: #9a6a00;
+  --amber-bg: #fbf0da;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1c1a; --surface:#242422; --surface-2:#2c2c2a;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#e8e8e2; --text-secondary:#9b9b95; --text-tertiary:#636360;
+    --accent:#85b7eb; --accent-bg:#042c53;
+    --amber:#e3b455; --amber-bg:#3a2c05;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text-primary);min-height:100vh;padding:2.5rem 1.5rem 4rem}
+.page{max-width:920px;margin:0 auto}
+a{color:var(--accent)}
+header{margin-bottom:1rem}
+header .back{font-size:12.5px;color:var(--text-secondary);text-decoration:none}
+header .back:hover{color:var(--accent)}
+header h1{font-size:24px;font-weight:600;margin-top:.6rem}
+header p{font-size:14px;color:var(--text-secondary);margin-top:6px;max-width:640px;line-height:1.5}
+.path-note{
+  font-size:12.5px;color:var(--text-secondary);background:var(--surface-2);
+  border:0.5px solid var(--border);border-radius:var(--radius-md);
+  padding:.7rem .9rem;margin-top:1rem;line-height:1.6;
+}
+.path-note code{font-family:var(--font-mono);background:var(--surface);border-radius:4px;padding:1px 5px;font-size:11.5px}
+.section-divider{display:flex;align-items:center;gap:12px;margin:32px 0 14px}
+.section-divider span{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.09em;white-space:nowrap}
+.section-divider hr{flex:1;border:none;border-top:0.5px solid var(--border)}
+.section-desc{font-size:13px;color:var(--text-secondary);margin:-6px 0 14px;line-height:1.55}
+.howto{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.3rem}
+.howto ol{padding-left:1.2rem;font-size:13.5px;line-height:1.85;color:var(--text-primary)}
+.howto code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 6px;font-size:12px}
+.routine{
+  background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.1rem 1.3rem;margin-bottom:14px;
+}
+.routine-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
+.routine-file{font-size:13.5px;font-weight:600;color:var(--text-primary)}
+.cmd{
+  font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent);
+  background:var(--accent-bg);border-radius:6px;padding:2px 8px;white-space:nowrap;
+}
+.routine-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-top:4px}
+.routine-desc code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px;color:var(--text-primary)}
+.flag{
+  display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--amber);background:var(--amber-bg);border-radius:999px;padding:2px 9px;margin-top:8px;
+}
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--border)}
+footer p{font-size:12px;color:var(--text-tertiary);line-height:1.6}
+footer code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="index.html">&larr; PDG Support Docs</a>
+    <h1>AutoCAD LISP Routines</h1>
+    <p>Every LISP routine currently in the team's shared LISP library, what command each one registers, and what it actually does. Source files live on the shared drive — this page is the reference for what's available and how to run it.</p>
+    <div class="path-note">
+      Source folder: <code>Peake Design - Documents\TECHNICAL RESOURCES\AUTOCAD\LISP ROUTINES</code>
+    </div>
+  </header>
+
+  <div class="section-divider" style="margin-top:0"><span>How to Load a Routine</span><hr></div>
+  <div class="howto">
+    <ol>
+      <li>In AutoCAD, type <code>APPLOAD</code> (or drag the <code>.lsp</code> file straight onto the drawing window).</li>
+      <li>Browse to the LISP ROUTINES folder above and select the file(s) you need, then click <strong>Load</strong>.</li>
+      <li>Type the command name shown below (not the filename) to run it. A file can define more than one command — load once, use any of them.</li>
+      <li>Loaded routines only last for the current AutoCAD session. To have a routine load automatically every session, add it to the Startup Suite in <code>APPLOAD</code>.</li>
+    </ol>
+  </div>
+
+  <div class="section-divider"><span>Text Extraction</span><hr></div>
+  <div class="section-desc">Pulls the string content out of TEXT/MTEXT objects so it can be pasted elsewhere without retyping it.</div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">ExtractText.lsp</span>
+      <span class="cmd">TXTTOCLIP</span>
+      <span class="cmd">ALLTXTTOCLIP</span>
+      <span class="cmd">TXTTOCLIP2</span>
+    </div>
+    <div class="routine-desc">
+      Select text objects in the order you want them read, and the concatenated string is copied to the Windows clipboard.
+      <code>TXTTOCLIP</code> selects TEXT objects only; <code>ALLTXTTOCLIP</code> also accepts MTEXT; <code>TXTTOCLIP2</code> is
+      an alternate implementation that writes to a temp file and pipes it through <code>clip.exe</code> instead of the ActiveX
+      clipboard method — useful as a fallback if the primary method misbehaves.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Hatch Tools</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Clear Hatches - V2.lsp</span>
+      <span class="cmd">BLOCKHATCH</span>
+    </div>
+    <div class="routine-desc">
+      Explodes the selected hatch(es) and deletes the resulting boundary geometry, leaving only hatches that already
+      existed elsewhere in the drawing untouched. Useful for stripping hatch patterns out of an import without
+      hand-picking every boundary line.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Block &amp; Layer Tools</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Set Block Layer - Prompted.lsp</span>
+      <span class="cmd">PROMPTEDBLOCK</span>
+    </div>
+    <div class="routine-desc">
+      Prompts for a layer name, then a block to select. Every object inside that block definition is reassigned:
+      objects already on layer <code>DRAFT</code> stay on <code>DRAFT</code>, everything else moves to the layer you typed;
+      linetype is set to <code>DASHED2</code> or <code>CONTINUOUS</code> the same way. Depends on the helper routine below,
+      which must be loaded alongside it.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Apply to Block - Sub.lsp</span>
+    </div>
+    <div class="routine-desc">
+      Not a standalone command — a Lee Mac utility function (<code>LM:ApplytoBlockObjects</code>) that runs a supplied
+      function against every object inside a block definition. Load it whenever another routine (such as
+      <code>PROMPTEDBLOCK</code> above) calls it.
+    </div>
+    <span class="flag">Dependency, not a command</span>
+  </div>
+
+  <div class="section-divider"><span>Import Tools</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">PDFImport.lsp</span>
+      <span class="cmd">PDFBATCHIMPORT</span>
+    </div>
+    <div class="routine-desc">
+      Prompts for a PDF, then a base point, and imports every page of that PDF as vector geometry, stacking each
+      page 1'-0" below the last starting from the base point. Saves importing a multi-page PDF one page at a time.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">PDG - Import Revit DWGs into DWG.lsp</span>
+    </div>
+    <div class="routine-desc">
+      Runs automatically the moment it's loaded — there is no command to type. It opens a folder browser, then for
+      every Revit-exported <code>.dwg</code> in that folder it xrefs the sheet into the current drawing, draws a green
+      page-boundary rectangle around it, labels it with the sheet name, and lays sheets out left-to-right/top-to-bottom
+      by sheet number, before binding all the xrefs. Written to assemble a single DWG containing every sheet/view from
+      a Revit export. Boxes sometimes need manual resizing or repositioning afterward — it makes layout assumptions
+      that don't always hold.
+    </div>
+    <span class="flag">Runs on load — no command name</span>
+  </div>
+
+  <div class="section-divider"><span>Revit Interop</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">PDG - Railing Csv Export.lsp</span>
+      <span class="cmd">PDGRAILCSV</span>
+    </div>
+    <div class="routine-desc">
+      Select LINE and ARC entities representing railing runs, and it writes one CSV row per entity
+      (<code>Type,ID,X1,Y1,X2,Y2</code> for lines, plus a third on-arc point for arcs) for the Revit-side importer
+      <code>RailingTools.Commands.CreateRailingsFromCsvCmd</code> in PDGRevitAddinCollection. Reads the drawing's
+      <code>INSUNITS</code> to convert to decimal feet automatically (and asks you to confirm the unit if the drawing
+      doesn't have one set); read-only against the drawing. Polylines are out of scope and are reported as skipped
+      rather than silently dropped or auto-exploded.
+    </div>
+    <div class="routine-desc">
+      This is the <strong>v2</strong> CSV contract (one row per run, with a leading Type column) — a breaking change
+      from an earlier two-row-per-run format. The Revit-side parser must match this contract or the file won't import
+      correctly.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Brighton Project — Layer Workflow</span><hr></div>
+  <div class="section-desc">A three-step layer workflow built for one specific project's demo/remain marking process, not a general-purpose tool.</div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Brighton_Create_Layers.lsp</span>
+      <span class="cmd">CREATEBPLAYERS</span>
+    </div>
+    <div class="routine-desc">Step 1. Creates the two layers the rest of the workflow needs: <code>To_Demo</code> (red) and <code>To_Remain</code> (green).</div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Brighton_Assign_Layers.lsp</span>
+      <span class="cmd">ASSIGNBPLAYERS</span>
+      <span class="cmd">TODEMO</span>
+      <span class="cmd">TOREMAIN</span>
+    </div>
+    <div class="routine-desc">
+      Step 2. <code>ASSIGNBPLAYERS</code> selects objects then prompts Demo/Remain to choose the target layer;
+      <code>TODEMO</code> and <code>TOREMAIN</code> are one-step shortcuts that skip the prompt. All three require
+      <code>To_Demo</code>/<code>To_Remain</code> to already exist (run <code>CREATEBPLAYERS</code> first).
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Brighton_Delete_Layers.lsp</span>
+      <span class="cmd">CLEANUPLAYERS</span>
+      <span class="cmd">CUSTOMCLEANUPLAYERS</span>
+    </div>
+    <div class="routine-desc">
+      Step 3. <code>CLEANUPLAYERS</code> deletes every object on a hard-coded list of project layers (the
+      original architectural layers now superseded by <code>To_Demo</code>/<code>To_Remain</code>) and then deletes
+      the layers themselves, after a Yes/No confirmation prompt. <code>CUSTOMCLEANUPLAYERS</code> does the same thing
+      but for layer names you type in one at a time instead of the hard-coded list.
+    </div>
+    <span class="flag">Destructive — deletes objects permanently</span>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">Brighton_Save_Files.txt</span>
+    </div>
+    <div class="routine-desc">
+      A <code>.txt</code> copy of <code>Brighton_Delete_Layers.lsp</code>'s code, not a distinct routine. Rename it to
+      <code>.lsp</code> if it ever needs to be loaded directly — otherwise treat it as a backup of the file above.
+    </div>
+    <span class="flag">Duplicate of Delete_Layers, not loadable as-is</span>
+  </div>
+
+  <footer>
+    <p>
+      Source files and this list can drift — if a routine here doesn't match what's in the shared folder, the folder wins.
+      New routine? Add a <code>.routine</code> block to this page following the pattern above and it'll show up here.
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
