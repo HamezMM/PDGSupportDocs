@@ -5,7 +5,66 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: MU-1 (Mixed Use – General District), Part 14, Division 2 — the first district built
+Last completed: MU-2 (Mixed Use – Active Frontage District), Part 14, Division 3 — the final district
+in the entire 1P2007 checklist family, closing out Part 14 (and the whole Part 11–14 Centre City /
+Mixed Use group). MU-2 shares MU-1's General Rules tab (Part 14, Division 1, unchanged) and its own
+Permitted Uses structure is nearly identical to MU-1's — the same 8 flat permitted uses, the same
+11-use existing-building-conditional group (§1376(2)), the same Restaurant 150.0 m² conditional pair
+(§1376(2.1)), and the same 8-use ground-floor-conditional group (§1376(3)) — so the two-checkbox
+building-status pattern (§07 of the build spec) carries over unchanged: `newBuilding` (§1377(1)) and
+`groundFloor` (§1377(2)), with identical section-letter mappings to MU-1's §1367 equivalent. Where MU-2
+genuinely diverges is its Discretionary Uses list (§1377(3)): 43 flat discretionary uses versus MU-1's
+33 — ten purely entertainment/active-frontage uses that MU-1 doesn't have at all (Amusement Arcade,
+Billiard Parlour, Cinema, Conference and Event Facility, Dinner Theatre, Drinking Establishment –
+Medium, Museum, Pawn Shop, Payday Loan, Performing Arts Centre), directly reflecting the District's
+"active commercial uses required at grade" purpose statement (§1375(1)(a)) versus MU-1's softer
+"residential and commercial uses supported at grade." Several of these new uses carry their own
+separation-distance rules found while sourcing Part 4: Dinner Theatre must sit more than 45.0 m from
+a residential district unconditionally (§180(d)); Drinking Establishment – Medium (§183(e)) names MU-2
+explicitly, alongside C-C1, C-C2, C-COR1, C-COR2, CC-COR, CC-X and S-R, in its own 45.0 m
+residential-separation rule; and Pawn Shop (§254(c.1)) and Payday Loan (§254.1(c)) each need 400.0 m
+separation from another of their own kind. MU-2's single biggest structural departure from MU-1,
+though, has no equivalent anywhere else in the family built so far: §1383 "Location of Uses Within
+Buildings," a genuinely new, absolute (non-checkbox) rule barring ten specific uses — Addiction
+Treatment, Assisted Living, Catering Service – Minor, Custodial Care, Dwelling Unit, Health Care
+Service, Office, Place of Worship – Medium, Place of Worship – Small, and Residential Care — from the
+ground floor of ANY building facing the commercial street, regardless of building status or either
+sidebar checkbox. Three of those ten (Catering Service – Minor, Health Care Service, Office) are also
+members of the existing §1376(3)/§1377(2) ground-floor-conditional group, so for those three MU-2
+layers a permanent siting prohibition on top of a status flip that already exists in MU-1 — while the
+other seven are otherwise-ordinary flat discretionary uses that MU-1 doesn't restrict by floor at all.
+Per the build spec's §07 guidance against inventing toggles for non-binary facts, this was deliberately
+implemented as a static `groundFloorBan` flag appended as caveat text on the affected Use tab items
+(and documented in its own District Rules card), not as a third sidebar checkbox — it's a fixed design
+constraint, not a Permitted/Discretionary flip. MU-2's Façade Width rule (§1384) also picks up two
+entries MU-1's §1373 doesn't have, simply because the underlying uses only exist in MU-2: Drinking
+Establishment – Medium joins the 30.0 m increased-façade group, and Payday Loan joins the 9.0 m
+narrow-façade group. Floor Area Ratio, Density, and Building Height (§1379–§1381) use the identical
+site-specific Land Use District Map convention as MU-1 (MU-2f#h#d#), and Use Area (§1382) and Setback
+Area (§1385) are numerically identical to MU-1's §1372/§1374. Cannabis Store and Liquor Store are, as
+in MU-1, NOT exempted from the standard 300.0 m same-use/150.0 m school-proximity separation rules.
+The Citywide tab required re-verifying every sign/lighting figure specifically for MU-2 rather than
+assuming MU-1's numbers carried over — they did: §65(1)(a) lighting height, §97(3) Freestanding Sign
+(14.0 m²/9.0 m), §102(3) Projecting Sign (4.5 m²), §104(1)/(6)(a)'s less-restrictive Digital Message
+Sign pathway, and §107(1)(b.1) Roof Sign eligibility are all written generically as "mixed use
+districts" in the Bylaw rather than naming MU-1 or MU-2 individually, so the two districts are
+identical here with no gaps. MU-2's use list runs 72 uses total (8 flat permitted, 11
+building-status-conditional, 2 Restaurant uses conditional on building status plus the static
+area/distance caveats, 8 conditional on both checkboxes together — three of which also carry the
+§1383 ground-floor ban — plus 43 flat discretionary, seven of which also carry the §1383 ban) across a
+General tab of 31 items (shared verbatim with MU-1, §1333–1364), a District tab of 11 items
+(§1375–1385, one more than MU-1's 10 because of §1383), and a Citywide tab of 34 items (148 total items
+in the file, 76 non-use items + 72 Use tab items). Verified with an automated Playwright smoke test
+covering tab navigation (31/11/34/0 cards before any use is selected, 0/0 on the Use tab), the
+use-selector's Permitted/Discretionary optgroup counts shifting correctly under all three checkbox
+states (29/43 unchecked, 8/64 with `newBuilding` checked, 21/51 with `groundFloor` checked alone), the
+§1383 caveat text appearing on an affected use's card, status-pill clicks updating the
+card/stat-strip/tab badge/overall-progress bar together, and a full CSV export/import round trip with
+project fields and notes containing embedded commas, quotes, and newlines plus both District Conditions
+checkboxes, diffed to zero mismatches. The file was also opened directly via `file://` (headless
+Chromium) to confirm it renders standalone with no server. **Part 14 (and the whole Part 11–14 Centre
+City / Mixed Use family) is now complete** — MU-2 was the last unbuilt district in the entire Land Use
+Bylaw 1P2007 checklist family. Before that: MU-1 (Mixed Use – General District), Part 14, Division 2 — the first district built
 in this table that isn't a Part 11–13 Centre City (Downtown) district: it introduces its own General
 Rules division (Part 14, Division 1: §1333–1364, 31 items covering 32 section numbers — §1357 is
 wholly deleted) shared only with the not-yet-built MU-2,
@@ -318,4 +377,6 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 12 | 7 | CC-ER | ✅ `CCER_Zoning_Review_Checklist.html` |
 | 13 | 2–3 | CR20-C20/R20 | ✅ `CR20C20R20_Zoning_Review_Checklist.html` |
 | 14 | 2 | MU-1 | ✅ `MU1_Zoning_Review_Checklist.html` |
-| 14 | 3 | MU-2 | ⬜ |
+| 14 | 3 | MU-2 | ✅ `MU2_Zoning_Review_Checklist.html` |
+
+**Part 14 (and the whole Part 11–14 Centre City / Mixed Use family) is now complete.**
