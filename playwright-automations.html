@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright Automations — PDG Support Docs</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.22);
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b67;
+  --text-tertiary: #a0a09b;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --amber: #9a6a00;
+  --amber-bg: #fbf0da;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1c1a; --surface:#242422; --surface-2:#2c2c2a;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#e8e8e2; --text-secondary:#9b9b95; --text-tertiary:#636360;
+    --accent:#85b7eb; --accent-bg:#042c53;
+    --amber:#e3b455; --amber-bg:#3a2c05;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text-primary);min-height:100vh;padding:2.5rem 1.5rem 4rem}
+.page{max-width:960px;margin:0 auto}
+a{color:var(--accent)}
+header{margin-bottom:1rem}
+header .back{font-size:12.5px;color:var(--text-secondary);text-decoration:none}
+header .back:hover{color:var(--accent)}
+header h1{font-size:24px;font-weight:600;margin-top:.6rem}
+header p{font-size:14px;color:var(--text-secondary);margin-top:6px;max-width:660px;line-height:1.5}
+.path-note{
+  font-size:12.5px;color:var(--text-secondary);background:var(--surface-2);
+  border:0.5px solid var(--border);border-radius:var(--radius-md);
+  padding:.7rem .9rem;margin-top:1rem;line-height:1.6;
+}
+.path-note code{font-family:var(--font-mono);background:var(--surface);border-radius:4px;padding:1px 5px;font-size:11.5px}
+.section-divider{display:flex;align-items:center;gap:12px;margin:32px 0 14px}
+.section-divider span{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.09em;white-space:nowrap}
+.section-divider hr{flex:1;border:none;border-top:0.5px solid var(--border)}
+.section-desc{font-size:13px;color:var(--text-secondary);margin:-6px 0 14px;line-height:1.55}
+.howto{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.3rem}
+.howto ol{padding-left:1.2rem;font-size:13.5px;line-height:1.85;color:var(--text-primary)}
+.howto code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 6px;font-size:12px}
+.routine{
+  background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.1rem 1.3rem;margin-bottom:14px;
+}
+.routine-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
+.routine-file{font-size:13.5px;font-weight:600;color:var(--text-primary)}
+.cmd{
+  font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent);
+  background:var(--accent-bg);border-radius:6px;padding:2px 8px;white-space:nowrap;
+}
+.routine-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-top:4px}
+.routine-desc code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px;color:var(--text-primary)}
+.routine-desc + .routine-desc{margin-top:8px}
+.routine-desc strong.label{color:var(--text-primary)}
+.flag{
+  display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--amber);background:var(--amber-bg);border-radius:999px;padding:2px 9px;margin-top:8px;
+}
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--border)}
+footer p{font-size:12px;color:var(--text-tertiary);line-height:1.6}
+footer code{font-family:var(--font-mono);background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="index.html">&larr; PDG Support Docs</a>
+    <h1>Playwright Automations</h1>
+    <p>Every task script in <code>pdg-playwright-automation</code> — what it automates, what triggers it, and what it reads or writes. These scripts drive real browser sessions against Monograph, Matterport, Airtable, Autodesk ACC, and the City of Calgary's website because none of those expose a usable API for the workflow in question.</p>
+    <div class="path-note">
+      Source folder: <code>Peake Design - Documents\Technical Resources\playwright</code> &mdash; full technical reference in that folder's <code>DOCUMENTATION.md</code> and <code>CLAUDE.md</code>.
+    </div>
+  </header>
+
+  <div class="section-divider" style="margin-top:0"><span>How to Run a Task</span><hr></div>
+  <div class="howto">
+    <ol>
+      <li>Open a terminal in the <code>playwright</code> folder above.</li>
+      <li>Run it via its npm shortcut, e.g. <code>npm run task:sync-budget-hours</code>, or directly: <code>node task-&lt;name&gt;/run.js '&lt;json-payload&gt;'</code>.</li>
+      <li>Most tasks log a numbered step trail to the console and write debug screenshots to <code>./session/</code> &mdash; check there first if a run fails.</li>
+      <li>Six tasks (marked <span class="cmd">webhook</span> below) are also wired into <code>server.js</code> and can be triggered by POSTing to their route once <code>npm run server</code> is running. Everything else is CLI-only.</li>
+    </ol>
+  </div>
+
+  <div class="section-divider"><span>Monograph — Project Setup</span><hr></div>
+  <div class="section-desc">Monograph has no public API. These fill in its project-management screens directly from Airtable, using the same React-Select and popup-dismissal patterns throughout.</div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-create-monograph-project/run.js</span>
+      <span class="cmd">webhook</span>
+    </div>
+    <div class="routine-desc">
+      Creates a new Monograph project from an Airtable T01_Job_List record — template, name, number, client, category,
+      start date, service fee (75% of rough fee estimate), and consultants (Matterport, Ben Pond Architect where
+      applicable) — then writes the resulting project URL back to Airtable.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-add-monograph-client/run.js</span>
+      <span class="cmd">webhook</span>
+    </div>
+    <div class="routine-desc">
+      Creates a new client entry in Monograph's directory from an Airtable T05_Clients record (company name, primary
+      contact, email, phone). Read-only against Airtable — no writeback.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-add-monograph-consultant/run.js</span>
+      <span class="cmd">webhook</span>
+    </div>
+    <div class="routine-desc">
+      Creates a new consultant company in Monograph's directory from an Airtable T04_Vendors record, including
+      discipline (a React-Select variant with its own CSS classes). Read-only against Airtable.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-get-monograph-url/run.js</span>
+      <span class="cmd">webhook</span>
+    </div>
+    <div class="routine-desc">
+      Looks up an existing Monograph project by job number and writes its URL back to Airtable &mdash; for projects
+      created before the URL was being recorded. Writes the literal string <code>"NOT FOUND"</code> on failure so the
+      Airtable record shows a clear error state.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Monograph — Budget &amp; Hours</span><hr></div>
+  <div class="section-desc">Reconciling planned vs. logged hours in Monograph's Performance and Planner tabs, which expose no export or API for this data.</div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-sync-monograph-performance/run.js</span>
+      <span class="cmd">webhook</span>
+      <span class="cmd">queued</span>
+    </div>
+    <div class="routine-desc">
+      Scrapes each project's fee-spent-to-date (billable and total) from the Performance tab and writes both to
+      Airtable. The Performance table has no stable selectors, so it scrapes by matching month-label text and walking
+      up to the row container. The only server route that runs single-file (FIFO queued) rather than in parallel.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-sync-budget-hours/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Sums every phase's "Total" hours row in a project's Planner and writes the total to the linked Airtable
+      proposal's <strong class="label">Hours Allowed</strong> field, for proposals that don't have it set yet. Batch
+      mode processes every blank proposal; a job number argument runs one project only.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-budget-align-hours/run.js</span>
+    </div>
+    <div class="routine-desc">
+      For one project, reconciles each team member's assigned budget hours to their actually-logged hours. Monograph
+      exposes logged hours only inside the delete-role confirmation modal, so the script opens that modal to read the
+      number and always cancels &mdash; it never confirms a delete. Then copies each phase's updated total into the
+      phase budget field. Requires a job number or full project URL as its argument.
+    </div>
+    <span class="flag">Opens a delete-confirmation modal (always cancelled) to read data</span>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-update-project-colors/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Sets every active project's Monograph color swatch to match its Airtable Sub Type, via a hardcoded 32-entry
+      name-to-color-slot map. Skips the internal templates job and any Sub Type not in the map.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-ben-pond-hours/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Weekly sync of one consultant's (Ben Pond Architect) Monograph timesheet hours into a separate "Syllabus"
+      Airtable base that tracks his hours per project. Runs automatically every week via
+      <code>scheduled-run.ps1</code> in Windows Task Scheduler; supports <code>--dry-run</code>.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Matterport</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-matterport-sync/run.js</span>
+      <span class="cmd">webhook</span>
+    </div>
+    <div class="routine-desc">
+      Opens a Matterport model, enables public link sharing, and writes the share URL, scan date, and embed code to
+      the Matterport-specific Airtable base (a different base from every other task here). Notes are appended, not
+      overwritten.
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Calgary Due Diligence Pipeline</span><hr></div>
+  <div class="section-desc">
+    Four scripts run in sequence to build the interactive zoning/business due-diligence tool already published on this
+    site as <a href="calgary-tenancy-checker.html">Calgary Business Tenancy Checker</a>. Run in this order: business
+    matrix &rarr; land-use matrix &rarr; combined matrix &rarr; due-diligence HTML.
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-calgary-business-matrix/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Drives Calgary's "Start a Business" application wizard for every business activity in the city's system,
+      harvesting the full licensing question tree for each one. Resumable &mdash; a killed run picks up where it left
+      off from a progress checkpoint file.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-calgary-land-use-matrix/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Scrapes the full text of Calgary's Land Use Bylaw 1P2007 across ~56 zone-district pages to build the canonical
+      use list and a zone &times; use permitted/discretionary matrix. No login required; supports
+      <code>--resume</code>.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-calgary-combined-matrix/run.js</span>
+      <span class="routine-file">build-html.js</span>
+    </div>
+    <div class="routine-desc">
+      Pure data processing, no browser: cross-references business activities against zoning permissions to produce a
+      reviewable Excel workbook (<code>run.js</code>), then <code>build-html.js</code> bakes the result into the
+      self-contained interactive HTML tool. Matching quality depends on three hand-maintained lookup tables mapping
+      business categories and ambiguous terms (e.g. "Airbnb", "Gym") to bylaw use groups.
+    </div>
+    <span class="flag">Matching accuracy depends on manually maintained lookup tables</span>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-calgary-carl-pdfs/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Scrapes Calgary's CARL permit-application-requirements page for every linked PDF/XLSX, downloads them, and
+      builds an Excel index classified by permit type (DP/BP) and category (Residential/Commercial).
+    </div>
+  </div>
+
+  <div class="section-divider"><span>Airtable &amp; Autodesk ACC</span><hr></div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-document-airtable-automations/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Walks every "Live" automation listed in a tracker base, opens each one in Airtable's Automations editor,
+      screenshots it, and reads out its trigger/action configuration &mdash; including pulling the full script text
+      out of "Run a script" steps. Compiles everything into one Markdown reference doc and pushes it to GitHub if
+      configured. This is the tool that produced the automation screenshots already in this project's
+      <code>session/</code> folder.
+    </div>
+    <span class="flag">No stable selectors — scrapes by card geometry and text heuristics</span>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-create-forma-collection/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Creates a new Content Collection in Autodesk ACC's design-management admin panel for the Peake Design Group hub,
+      optionally adding user groups with read/download/upload/edit permissions.
+    </div>
+  </div>
+
+  <div class="routine">
+    <div class="routine-head">
+      <span class="routine-file">task-upload-content-catalog/run.js</span>
+    </div>
+    <div class="routine-desc">
+      Bulk-uploads local Revit family (<code>.rfa</code>) files into Autodesk Content Catalog in batches of 25,
+      assigning each top-level local folder to a same-named ACC collection. Supports resuming a specific folder from a
+      given file index, and a <code>--dry-run</code> listing mode.
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      This page can drift from the actual scripts &mdash; if something here doesn't match what's in the
+      <code>playwright</code> folder, the folder (and its <code>DOCUMENTATION.md</code>) wins. New task? Add a
+      <code>.routine</code> block following the pattern above and it'll show up here.
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
