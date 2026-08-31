@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H-GO District Review Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E8;
+    --paper-card:#FBF9F2;
+    --ink:#152538;
+    --ink-soft:#3A4A5C;
+    --blue:#2C5A87;
+    --blue-dim:#5C7C99;
+    --rule:#D9D2BC;
+    --rule-dark:#B9B092;
+    --pass:#3E7A5A;
+    --pass-bg:#E1EEE5;
+    --fail:#AE4429;
+    --fail-bg:#F4E2DC;
+    --pending:#B5842A;
+    --pending-bg:#F3E7CE;
+    --na:#83807A;
+    --na-bg:#E7E5DE;
+    --sidebar-w:280px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    display:flex;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Sidebar ---------- */
+  #sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EDE9DA;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .titleblock{
+    padding:22px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+  }
+  .titleblock .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#8FAFC9;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .titleblock h1{
+    font-size:18px;
+    line-height:1.28;
+    margin:0 0 4px 0;
+    font-weight:600;
+    color:#FFFFFF;
+  }
+  .titleblock .sub{
+    font-size:11.5px;
+    color:#9FB2C4;
+  }
+
+  .project-fields{
+    padding:16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .project-fields label{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:3px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .project-fields input{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(237,233,218,0.22);
+    border-radius:3px;
+    color:#EDE9DA;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:6px 8px;
+  }
+  .project-fields input::placeholder{color:#66768A;}
+  .project-fields input:focus{outline:none;border-color:var(--blue-dim);background:rgba(255,255,255,0.1);}
+
+  .district-conditions{
+    padding:14px 20px 16px 20px;
+    border-bottom:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .district-conditions .dc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8FAFC9;
+    margin-bottom:2px;
+  }
+  .dc-check{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    cursor:pointer;
+  }
+  .dc-check input{
+    margin-top:2px;
+    accent-color:var(--blue-dim);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .dc-check span{
+    font-size:11.5px;
+    line-height:1.4;
+    color:#C7D2DC;
+  }
+  .dc-check span b{color:#EDE9DA;}
+
+  nav.tabs{
+    padding:14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    color:#C7D2DC;
+    text-align:left;
+    padding:10px 10px;
+    border-radius:4px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,0.06);}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-btn .tname{display:flex;flex-direction:column;gap:1px;}
+  .tab-btn .tsec{font-size:10px;font-family:'IBM Plex Mono',monospace;opacity:0.72;letter-spacing:.04em;}
+  .tab-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    background:rgba(255,255,255,0.12);
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:34px;
+    text-align:center;
+  }
+  .tab-btn.active .tab-count{background:rgba(255,255,255,0.25);}
+
+  .ruler-block{
+    margin-top:auto;
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+  }
+  .ruler-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#9FB2C4;
+    margin-bottom:6px;
+  }
+  .ruler{
+    position:relative;
+    height:14px;
+    border:1px solid rgba(237,233,218,0.3);
+    border-radius:2px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.05);
+  }
+  .ruler-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,#3E7A5A,#5C9C77);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .ruler-ticks{
+    position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(21,37,56,0.55) 0 1px, transparent 1px 10%);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin-top:12px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:5px;
+    font-size:10.5px;color:#B7C3CE;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .session-block{
+    padding:16px 20px 20px 20px;
+    border-top:1px solid rgba(237,233,218,0.18);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .session-warning{
+    font-size:10.5px;
+    line-height:1.45;
+    color:#B5842A;
+    background:rgba(181,132,42,0.14);
+    border:1px solid rgba(181,132,42,0.35);
+    border-radius:4px;
+    padding:8px 9px;
+    margin-bottom:2px;
+  }
+  .session-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:4px;
+    border:1px solid rgba(237,233,218,0.3);
+    background:rgba(255,255,255,0.06);
+    color:#EDE9DA;
+    cursor:pointer;
+    width:100%;
+    text-align:center;
+  }
+  .session-btn:hover{background:rgba(255,255,255,0.12);}
+  .session-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .session-btn.primary:hover{background:#356E9D;}
+
+  /* ---------- Main ---------- */
+  #main{
+    flex:1;
+    min-width:0;
+    padding:28px 40px 80px 40px;
+    max-width:980px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:6px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .panel-head h2{
+    font-size:21px;
+    margin:0 0 4px 0;
+    font-weight:600;
+  }
+  .panel-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .panel-tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    background:#fff;
+    min-width:170px;
+  }
+  .filter-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:14px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .export-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .export-btn:hover{background:var(--blue);border-color:var(--blue);}
+  .export-btn.secondary{background:#fff;color:var(--ink);}
+  .export-btn.secondary:hover{background:var(--paper-card);}
+
+  .stat-strip{
+    display:flex;
+    gap:16px;
+    margin:16px 0 20px 0;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:4px;
+    display:flex;
+    gap:6px;
+    align-items:center;
+    border:1px solid var(--rule);
+    background:#fff;
+  }
+  .stat b{font-size:13px;}
+
+  /* Article cards */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--rule-dark);
+    border-radius:5px;
+    margin-bottom:12px;
+    padding:16px 18px;
+    transition:border-left-color .15s ease;
+  }
+  .card[data-status="Pass"]{border-left-color:var(--pass);}
+  .card[data-status="Fail"]{border-left-color:var(--fail);}
+  .card[data-status="Pending Info"]{border-left-color:var(--pending);}
+  .card[data-status="N/A"]{border-left-color:var(--na);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .card-id{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    min-width:0;
+  }
+  .sec-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--blue);
+    background:#fff;
+    border:1px solid var(--blue-dim);
+    border-radius:3px;
+    padding:2px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .summary{
+    margin:9px 0 0 0;
+    font-size:12.8px;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .use-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+  }
+
+  .status-row{
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:13px;
+    border:1px solid var(--rule-dark);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .1s ease;
+  }
+  .status-pill:hover{border-color:var(--ink);}
+  .status-pill.sel-pass{background:var(--pass);border-color:var(--pass);color:#fff;}
+  .status-pill.sel-fail{background:var(--fail);border-color:var(--fail);color:#fff;}
+  .status-pill.sel-pending{background:var(--pending);border-color:var(--pending);color:#fff;}
+  .status-pill.sel-na{background:var(--na);border-color:var(--na);color:#fff;}
+
+  .notes-toggle{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--blue);
+    cursor:pointer;
+    background:none;
+    border:none;
+    text-decoration:underline;
+    padding:4px;
+  }
+  .notes-area{
+    display:none;
+    margin-top:10px;
+  }
+  .notes-area.open{display:block;}
+  .notes-area textarea{
+    width:100%;
+    min-height:56px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1px solid var(--rule-dark);
+    border-radius:4px;
+    resize:vertical;
+    background:#fff;
+  }
+  .notes-area textarea:focus{outline:none;border-color:var(--blue);}
+
+  .use-select-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .use-select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--blue-dim);
+    border-radius:4px;
+    background:#EAF0F6;
+    color:var(--ink);
+    min-width:220px;
+    cursor:pointer;
+  }
+  .use-select-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--blue);
+    white-space:nowrap;
+  }
+  .remove-use-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--fail);
+    background:#fff;
+    border:1px solid var(--fail);
+    border-radius:13px;
+    padding:4px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .remove-use-btn:hover{background:var(--fail-bg);}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* Instructions panel */
+  .instr-block{
+    background:var(--paper-card);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .instr-block h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:var(--blue);
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .instr-block ol, .instr-block ul{margin:0;padding-left:20px;}
+  .instr-block li{margin-bottom:7px;font-size:13px;color:var(--ink-soft);}
+  .instr-block p{font-size:13px;color:var(--ink-soft);margin:0 0 8px 0;}
+  .legend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+  .legend-card{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;
+    border-radius:4px;
+    font-size:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .2s ease;
+    pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  @media (max-width:860px){
+    body{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;}
+    #main{padding:20px;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+<a href="../index.html" style="display:block;padding:14px 20px 0 20px;font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8FAFC9;text-decoration:none;text-transform:uppercase">&larr; PDG Support Docs</a>
+  <div class="titleblock">
+    <div class="eyebrow">Land Use Bylaw 1P2007</div>
+    <h1>H-GO District Review Checklist</h1>
+    <div class="sub">Housing &ndash; Grade Oriented &middot; Development Permit review</div>
+  </div>
+
+  <div class="project-fields">
+    <div>
+      <label for="f-projnum">Project number</label>
+      <input id="f-projnum" type="text" placeholder="e.g. 26.93">
+    </div>
+    <div>
+      <label for="f-name">Project name</label>
+      <input id="f-name" type="text" placeholder="e.g. 40 Ave Grade-Oriented Housing">
+    </div>
+    <div>
+      <label for="f-addr">Site address / legal desc.</label>
+      <input id="f-addr" type="text" placeholder="Address or plan/block/lot">
+    </div>
+    <div>
+      <label for="f-file">DP / file no.</label>
+      <input id="f-file" type="text" placeholder="DP2026-xxxxx">
+    </div>
+    <div>
+      <label for="f-reviewer">Reviewer</label>
+      <input id="f-reviewer" type="text" placeholder="Name">
+    </div>
+  </div>
+
+  <div class="district-conditions">
+    <div class="dc-label">District conditions &mdash; H-GO</div>
+    <label class="dc-check">
+      <input id="f-existingbuilding" type="checkbox">
+      <span><b>Existing approved building</b> (unchecked = proposed building or addition) &mdash; required for Child Care Service to be discretionary per &sect;1388(2)(a); otherwise it is not an available use.</span>
+    </label>
+  </div>
+
+  <nav class="tabs" id="tabnav"></nav>
+
+  <div class="ruler-block">
+    <div class="ruler-label"><span>OVERALL PROGRESS</span><span id="overall-pct">0%</span></div>
+    <div class="ruler">
+      <div class="ruler-ticks"></div>
+      <div class="ruler-fill" id="overall-fill"></div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--pass)"></span>Pass</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--fail)"></span>Fail</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--pending)"></span>Pending</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--na)"></span>N/A</span>
+    </div>
+  </div>
+
+  <div class="session-block">
+    <div class="session-warning">Nothing autosaves. Export a session file before closing this tab, and import it next time to pick up where you left off.</div>
+    <button class="session-btn primary" id="btn-export">Export session (.csv)</button>
+    <button class="session-btn" id="btn-import">Import session (.csv)</button>
+    <input type="file" id="file-import" accept=".csv,text/csv" style="display:none">
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const CHECKLIST_DATA = {
+"part15div1a": [
+{"id":"d1a-0","sec":"1391","title":"At Grade Orientation of Units","summary":"All units must have individual, separate, direct access to grade. A unit with an exterior wall facing a street must provide an entrance that is visible from the street, plus a sidewalk providing direct exterior access to that unit."},
+{"id":"d1a-1","sec":"1392","title":"Parcel Coverage","summary":"Max. cumulative building coverage across all parcels under a single DP containing one or more Dwelling Units: 45.0% (density <40 units/ha), 50.0% (40 to <50 units/ha), 55.0% (50 to <60 units/ha), or 60.0% (≥60 units/ha) of the combined parcel area — further reduced by 21.0 m² for the first required motor vehicle stall not in a private garage, and 19.0 m² for each additional such stall. In all other cases, max. parcel coverage is 45.0%."},
+{"id":"d1a-2","sec":"1393","title":"Building Depth and Separation","summary":"Max. building depth for a unit-containing building: 65.0% of parcel depth (unless subsections 2–4 apply). On a laned parcel, no max. depth for a main residential building wholly behind 40.0% parcel depth where there's more than one main residential building, ≥50.0% of units sit within the first 60.0% parcel depth, and front/rear buildings are separated ≥6.5 m. On a corner parcel, no max. depth where the side setback shared with another parcel is 3.0 m for the portion between the rear line and 50.0% parcel depth (or the adjoining building's depth, whichever is closer to the rear line). No max. depth for an existing Dwelling Unit legally existing/approved before the parcel was redesignated by Bylaw 21P2024, provided later exterior alterations/additions conform to §25(2)(b.1)."},
+{"id":"d1a-3","sec":"1394","title":"Building Setback Areas","summary":"The minimum depth of all setback areas must equal the minimum building setback required by §1393, §1395, §1396 and §1397 (this Division's depth, front, side, and rear rules)."},
+{"id":"d1a-4","sec":"1395","title":"Building Setback from Front Property Line","summary":"Min. 3.0 m."},
+{"id":"d1a-5","sec":"1396","title":"Building Setback from Side Property Line","summary":"Min. 1.2 m generally. No setback required on a property line where a party wall is located. Corner parcel: min. 0.6 m from the street-side line. Laned parcel, private garage attached to the main residential building: min. 0.6 m (reducible to 0 m where the garage doesn't share a side/rear line with a street, the garage wall is constructed of maintenance-free materials, and there is no eave overhang onto the adjacent parcel)."},
+{"id":"d1a-6","sec":"1397","title":"Building Setback from Rear Property Line","summary":"Min. 5.0 m generally; min. 1.2 m on a corner parcel or a laned parcel."},
+{"id":"d1a-7","sec":"1398","title":"Projections Into Setback Areas","summary":"Buildings and air conditioning units generally can't be located in a setback area. Portions of a building below grade may extend without limit. Patios and wheelchair ramps may project without limit. Eaves: max. 0.6 m; window wells: max. 0.8 m. Landings ≤2.5 m², non-wheelchair ramps, and unenclosed stairs may project. Signs may be located in a setback area if in accordance with Part 3, Division 5. Air conditioning equipment: max. 1.0 m projection, only into a setback area that doesn't share a property line with a street."},
+{"id":"d1a-8","sec":"1399","title":"Building Height","summary":"Max. 12.0 m from grade generally. Where a building setback is required from a property line shared with another parcel designated a low density residential district, H-GO, or the M-CG District: max. height is the greater of the adjoining main residential building's highest geodetic elevation, or 8.0 m from grade, measured at the shared property line — increasing at a 45° angle to a max. of 12.0 m."},
+{"id":"d1a-9","sec":"1400","title":"Solar Collectors","summary":"May only be located on the wall or roof of a building. Roof pitch <4:12: max. 2.0 m projection from the roof surface, min. 1.0 m from the roof edge. Roof pitch ≥4:12: max. 1.3 m projection, must not extend beyond the outermost roof edge. Wall-mounted: min. 2.4 m above grade, max. 0.6 m projection from the wall surface."},
+{"id":"d1a-10","sec":"1401","title":"Accessory Residential Buildings","summary":"May have an amenity space in the form of a deck or patio. Must not be located in a required setback area (unless subsection 4) or between any building and a public street. Max. height: 4.6 m measured from grade, or 3.0 m to the eaveline measured from the finished floor. Min. side setback from a line not shared with a street: 0.6 m, notwithstanding §1396. May be located in a setback area shared with another parcel where the building is <10.0 m² GFA, or the wall is constructed of maintenance-free materials with no eave overhang onto the adjacent parcel — notwithstanding §1398."},
+{"id":"d1a-11","sec":"1402","title":"Landscaping Requirements","summary":"Developments of 3+ units: landscaped areas per a Development Authority-approved landscape plan (see §1403). Developments of 2 units or less: the General Landscaping Rules of §346.1 apply instead. All parcel area except that specifically needed for vehicle access, parking/loading stalls, garbage facilities, or a DA-approved other purpose must be landscaped area; every setback area adjacent to a street (except vehicle access) must be landscaped; outdoor at-grade amenity space counts toward the landscaped-area calc; vehicle access/parking/loading/garbage/recycling areas don't count. Min. 30.0% of the landscaped area must be soft-surfaced, irrigated by an underground (or approved low-water) system. Outdoor mechanical systems/equipment must be screened. Approved landscaping must be maintained for the life of the development."},
+{"id":"d1a-12","sec":"1403","title":"Residential Amenity Space — Landscape Plan Submission","summary":"A landscape plan for the entire development must be submitted with any DP application proposing building or site-plan changes, showing: existing/proposed grading; existing vegetation and retain/remove status; the layout of berms, open-space systems, pedestrian circulation, retaining walls, screening, and soft/hard surfaced landscaped areas; private and/or common amenity space; plant material types/species/sizes/numbers and hard-surface types; irrigation system details; and, where landscaping sits over a building or structure, underlying slab/wall locations, waterproofing/protection/insulation/drainage cross-sections, growing-medium depths, mature tree/shrub height and spread, and the means of irrigation."},
+{"id":"d1a-13","sec":"1404","title":"Planting Requirements","summary":"Trees may be provided through new planting or the preservation of existing trees, and (with DA approval) on a boulevard adjacent to the parcel. Min. 1.0 tree + 3.0 shrubs per 110.0 m² of parcel area. Shrubs: min. 0.6 m height/spread at planting. '1.0 tree' = a 60 mm-caliper deciduous tree or a 2.0 m coniferous tree; '2.0 trees' = an 85 mm-caliper deciduous tree or a 4.0 m coniferous tree; '3.0 trees' = an existing preserved deciduous tree with a caliper >100 mm. Where landscaping sits over a building, min. soil depths: 1.2 m (trees), 0.6 m (shrubs), 0.3 m (all other planting), covering an area equal to the mature spread of the material. All plant material must be a species capable of healthy growth in Calgary and conform to Canadian Nursery Landscape Association standards."},
+{"id":"d1a-14","sec":"1405","title":"Amenity Space","summary":"Each unit and suite must have amenity space that is located outdoors and labelled on the required landscape plan. Amenity space may be provided as common amenity space, private amenity space, or a combination of both."},
+{"id":"d1a-15","sec":"1406","title":"Retaining Walls","summary":"A retaining wall must be less than 1.2 m in height, measured from the lowest grade at any point adjacent to the wall to the highest grade retained. Min. 1.0 m horizontal separation must be maintained between retaining walls."},
+{"id":"d1a-16","sec":"1407","title":"Fences","summary":"Max. fence height above grade, at any point along a fence line: 1.2 m for the portion extending beyond the foremost portion of all buildings on the parcel; 2.0 m for the portion that does not extend beyond the foremost portion of all buildings on the parcel; and 2.5 m to the highest point of a gateway, provided the gateway does not exceed 2.5 m in length."},
+{"id":"d1a-17","sec":"1408","title":"Visibility Setback","summary":"Within a corner visibility triangle, buildings, fences, finished grade of a parcel, and vegetation must not be located between 0.75 m and 4.60 m above the lowest elevation of the street."},
+{"id":"d1a-18","sec":"1409","title":"Decks and Patios","summary":"Deck height must not exceed 1.5 m above grade at any point. A privacy wall on a deck or patio must not exceed 2.0 m in height (measured from the deck/patio surface) and must not be located between the foremost front façade of the main residential building and the front property line. Max. height for an Accessory Residential Building under this section is 5.0 m measured from grade — contrast §1401's general 4.6 m cap, which applies outside the deck/patio context."},
+{"id":"d1a-19","sec":"1410","title":"Balconies","summary":"Unless subsection 2 applies, an open balcony must not project more than 1.85 m from the building façade to which it is attached. Where a balcony is located on the roof of the first or second storey and does not overhang any façade of the storey below, the maximum area is 50.0% of the horizontal cross-section of that storey below."},
+{"id":"d1a-20","sec":"1411","title":"Motor Vehicle Parking Stalls","summary":"Min. number of motor vehicle parking stalls is calculated based on the sum of all units and suites, at a rate of 0.5 stalls per unit or suite."},
+{"id":"d1a-21","sec":"1412","title":"Mobility Storage","summary":"Deleted — no current requirement."},
+{"id":"d1a-22","sec":"1413","title":"Bicycle Parking Stalls","summary":"Min. number of Class 1 bicycle parking stalls is calculated based on the sum of all units and suites, at a rate of 1.0 stall per unit or suite where that unit or suite is not provided a motor vehicle parking stall located in a private garage."},
+{"id":"d1a-23","sec":"1414","title":"Driveway Length and Parking Areas","summary":"A driveway must not have direct access to a major street unless there is no practical alternative method of vehicular access and a turning space is provided so all exiting vehicles can face the major street. A driveway connecting to a street: min. 6.0 m long (measured along the intended direction of travel from the back of the public sidewalk/curb), min. 3.0 m wide. A driveway connecting to a lane: min. 0.60 m long, located between the lane property line and the private garage's vehicular entrance. In the Developed Area, a driveway accessing a street must not be constructed, altered, or replaced unless the parcel is laneless, ≥50.0% of parcels on the same block face already have an existing driveway accessing a street, or it is a legally existing driveway that is not being relocated or widened."},
+{"id":"d1a-24","sec":"1415","title":"Waste, Recycling and Organics","summary":"Garbage, recycling, and organics containers must be stored in a screened location shown on a site plan approved by the Development Authority."}
+],
+"part15div1b": [
+{"id":"d1b-0","sec":"1386","title":"Purpose","summary":"The H-GO District: (a) accommodates grade-oriented development in a range of housing forms where Dwelling Units may be attached or stacked within a shared building or cluster of buildings, at a form and scale consistent with low density residential districts; (b) provides flexible parcel dimensions and building setbacks supporting a diversity of grade-oriented housing; and (c) accommodates site and building design adaptable to evolving housing needs. Per §1386(d), H-GO should only be designated on parcels located within: (i) an area supporting this development form under an approved Local Area Plan's Neighbourhood Connector or Neighbourhood Flex Urban Form Category; or (ii) the Centre City or Inner City areas identified on the Municipal Development Plan's Urban Structure Map, AND within one or more of: 200 m of a Main Street or Activity Centre, 600 m of an existing or capital-funded LRT platform, 400 m of an existing or capital-funded BRT station, or 200 m of primary transit service. This eligibility test is informational for confirming the designation is being applied appropriately — confirm the parcel's actual location against these criteria directly; this tool doesn't look them up for you."},
+{"id":"d1b-1","sec":"1387","title":"Permitted Uses","summary":"9 uses with no condition — see Use tab: Accessory Residential Building, Dwelling Unit, Home Based Child Care – Class 1, Home Occupation – Class 1, Park, Protective and Emergency Service, Secondary Suite, Sign – Class A, and Utilities."},
+{"id":"d1b-2","sec":"1388","title":"Discretionary Uses","summary":"15 flat discretionary uses under §1388(1) — see Use tab: Addiction Treatment, Assisted Living, Bed and Breakfast, Community Entrance Feature, Custodial Care, Home Occupation – Class 2, Live Work Unit, Place of Worship – Small, Power Generation Facility – Small, Residential Care, Sign – Class B, Sign – Class C, Sign – Class E, Temporary Residential Sales Centre, and Utility Building. PLUS Child Care Service — discretionary ONLY if located within an existing approved building (§1388(2)(a)); not available at all otherwise — see the 'Existing approved building' checkbox in the sidebar."},
+{"id":"d1b-3","sec":"1389","title":"Rules — Cross-References","summary":"In addition to the rules in this District, all uses in this District must comply with: (a) the Rules Governing All Districts referenced in Part 3; and (b) the applicable Uses and Use Rules referenced in Part 4. Unlike every other district category in this checklist family, Part 15 has no separate General Rules division of its own — H-GO is the only district in Part 15, and its own Division 1 (§1386–1415) already folds in the site- and building-level topics (setbacks, landscaping, parking, fences, etc.) that a shared General Rules division covers for every other category. This checklist splits that single division across the 'Site & Building Standards' tab and this 'District Identity' tab by content type only, for consistency with the rest of the family — both tabs cite the same Part 15, Division 1, and nothing here is borrowed from Part 5 or Part 6's General Rules divisions."},
+{"id":"d1b-4","sec":"1390","title":"Floor Area Ratio","summary":"The maximum floor area ratio is 1.5."}
+],
+"part3": [
+{"id":"p3-0","sec":"53","title":"Public Realm Setbacks","summary":"Check Table 1 in this section for the specific street the parcel fronts. If listed, a Required Setback applies IN ADDITION to the district's own front/side/rear setback, and the Development Authority cannot relax it."},
+{"id":"p3-1","sec":"54","title":"Airport Vicinity Regulations","summary":"If the parcel falls within an Airport Vicinity Protection Area (noise/height contours around Calgary Intl. or Springbank), additional height, noise-attenuation construction, and use restrictions apply. Confirm against the current AVPA maps/bylaw."},
+{"id":"p3-2","sec":"55","title":"Floodway, Flood Fringe & Overland Flow — Applicability","summary":"Confirm whether the parcel is mapped within a Floodway, Flood Fringe, or Overland Flow Area (City flood hazard mapping)."},
+{"id":"p3-3","sec":"56","title":"Floodway Regulations","summary":"If in the Floodway: new development is heavily restricted — confirm what, if anything, is permitted."},
+{"id":"p3-4","sec":"57","title":"New Buildings and Alterations","summary":"If in the Flood Fringe: specific construction/flood-proofing requirements for new buildings and alterations."},
+{"id":"p3-5","sec":"58","title":"Alterations to the Floodway and Riverbanks","summary":"Special review requirements for any riverbank or floodway alteration work."},
+{"id":"p3-6","sec":"61","title":"Building Design in the Overland Flow Area","summary":"Specific design requirements if the parcel is within a mapped overland flow area."},
+{"id":"p3-7","sec":"62","title":"Lighting Requirements","summary":"General exterior lighting standards apply to the site."},
+{"id":"p3-8","sec":"63","title":"Shielding","summary":"Light fixtures must be shielded to control glare and light spill, particularly toward adjoining residential parcels."},
+{"id":"p3-9","sec":"64","title":"Mounting of Fixtures","summary":"Requirements for how/where lighting fixtures are mounted."},
+{"id":"p3-10","sec":"65","title":"Height Limits (Lighting)","summary":"Max. mounting height for an outdoor light fixture with a luminaire wattage >100 W is 7.5 m under §65(1)(a)'s catch-all for \"all residential districts\" — H-GO (Part 15: Housing Districts) isn't named individually in this section, but falls within that generic residential-district group. Fixtures mounted on poles (or a structure primarily for mounting lighting) must not exceed a height of 40.0% of the horizontal distance between the fixture and the property line, except for low fixtures (<5.0 m) with side shielding, or accent lighting mounted in/on a tree."},
+{"id":"p3-11","sec":"66","title":"Canopy Lighting","summary":"Specific rules for lighting under canopies. H-GO has no canopy-generating use in its permitted/discretionary list (no Drive Through, Gas Bar) — typically N/A."},
+{"id":"p3-12","sec":"67-72","title":"Signs — Purpose, Classification, DP Requirements","summary":"All signs are classified Class A–G. Confirm a DP is required (most are) and whether a Comprehensive Sign Program applies to the site."},
+{"id":"p3-13","sec":"73-76","title":"General Sign Rules, Digital Displays, Maintenance","summary":"General construction/safety/illumination standards for all signs; extra rules if any sign has a digital display; ongoing maintenance obligation; rules for parcels sharing signage under a related function."},
+{"id":"p3-14","sec":"77-90","title":"Class A Signs (permitted use in H-GO)","summary":"Includes Address, Art, Banner, Construction, Directional, Flag, Pedestrian, Real Estate, Special Event, Show Home, Temporary, and Window sign sub-rules. Check whichever sub-types are proposed."},
+{"id":"p3-15","sec":"91-93","title":"Class B Signs (discretionary use in H-GO)","summary":"Designated signable area/location rules and fascia sign rules."},
+{"id":"p3-16","sec":"94-97","title":"Class C Signs (discretionary use in H-GO) — Freestanding Sign","summary":"A parcel may generally have one Freestanding Sign per frontage street, plus one additional per 200.0 m of frontage where frontage is ≥200.0 m (§96). Per §97(5), H-GO — grouped with the low density residential districts and the M-CG, M-C1, M-C2, M-G, M-1 and M-2 Districts — has a max. Freestanding Sign area of 5.0 m² and a max. height of 4.0 m."},
+{"id":"p3-17","sec":"98-102","title":"Class D Signs — Not a Listed Use in H-GO","summary":"Canopy/projecting sign rules. Sign – Class D is not in H-GO's permitted or discretionary use list — confirm no Class D signage is proposed."},
+{"id":"p3-18","sec":"103-109","title":"Class E Signs (discretionary use in H-GO)","summary":"Includes Inflatable Sign, Painted Wall Sign, Rotating Sign, and Temporary Sign Marker sub-rules, plus the Digital Message Sign rule at §104. Per §104(2), in the residential districts (including H-GO) a Digital Message Sign advertising events/activities/services may only be approved when associated with specific uses: Community Recreation Facility, Indoor Recreation Facility, Library, Museum, Outdoor Recreation Area, Park, Place of Worship – Large/Medium/Small, School – Private, School Authority – School, or School Authority Purpose – Major/Minor. Of H-GO's own use list, only Park (permitted) and Place of Worship – Small (discretionary) qualify — confirm the proposed use is one of these before proposing a digital Class E sign."},
+{"id":"p3-19","sec":"111-115.5","title":"Class F/G — Not a Listed Use in H-GO","summary":"Third Party Advertising Sign rules. Sign – Class F and Class G are not in H-GO's permitted or discretionary use list — confirm no Class F/G signage is proposed."},
+{"id":"p3-20","sec":"116","title":"Parking — General Rules","summary":"Baseline rules governing all required parking/loading."},
+{"id":"p3-21","sec":"117","title":"Parking Stall Signage","summary":"Signage requirements for parking stalls (e.g., accessible stalls)."},
+{"id":"p3-22","sec":"118","title":"Location of Parking and Loading Requirements","summary":"Where parking/loading areas may be sited on the parcel relative to setbacks, streets, and buildings."},
+{"id":"p3-23","sec":"119","title":"Use of Parking and Loading Stalls","summary":"Restrictions on how required stalls may be used (can't be used for storage, sales display, etc.)."},
+{"id":"p3-24","sec":"120","title":"Identification of Required Parking/Loading Stalls","summary":"How required stalls must be marked/identified on-site and on drawings."},
+{"id":"p3-25","sec":"121","title":"Calculation of Minimum Parking/Loading Stalls","summary":"H-GO has its own Motor Vehicle Parking Stall rule (§1411, Site & Building Standards tab) setting the ratio at 0.5 stalls per unit/suite — this citywide section is the general calculation mechanism, but §1411 supplies H-GO's actual ratio."},
+{"id":"p3-26","sec":"122","title":"Standards for Motor Vehicle Parking Stalls","summary":"Stall/aisle dimensions and layout standards."},
+{"id":"p3-27","sec":"123","title":"Loading Stalls","summary":"Required loading stall size and count standards. Typically N/A for H-GO's residential uses — confirm for any non-residential discretionary use proposed (e.g. Place of Worship – Small)."},
+{"id":"p3-28","sec":"124","title":"Relaxations of Parking/Loading Requirements","summary":"Circumstances where the Development Authority may relax parking/loading counts."},
+{"id":"p3-29","sec":"124.1","title":"Parking Stall Exemptions","summary":"Specific exemptions from providing required parking stalls."},
+{"id":"p3-30","sec":"125","title":"Bicycle Parking Stalls","summary":"H-GO has its own bicycle parking rule (§1413, Site & Building Standards tab): min. 1.0 Class 1 stall per unit/suite not provided a private-garage motor vehicle stall — see that tab."},
+{"id":"p3-31","sec":"126","title":"Motor Vehicle Pick-Up and Drop-Off Stalls","summary":"H-GO has no Drive Through or similar pick-up/drop-off use in its permitted/discretionary list — typically N/A."},
+{"id":"p3-32","sec":"129.1","title":"Infrastructure Requirements","summary":"The Development Authority must confirm adequate sewage collection/treatment/disposal, water supply/treatment/distribution, stormwater collection/storage, and road infrastructure capacity to serve the development."}
+],
+"part4": [
+{"id":"p4-0","sec":"138","title":"Accessory Residential Building","summary":"Permitted — 1387(a)"},
+{"id":"p4-1","sec":"188","title":"Dwelling Unit","summary":"Permitted — 1387(b)"},
+{"id":"p4-2","sec":"206.1","title":"Home Based Child Care – Class 1","summary":"Permitted — 1387(c)"},
+{"id":"p4-3","sec":"207","title":"Home Occupation – Class 1","summary":"Permitted — 1387(d)"},
+{"id":"p4-4","sec":"249","title":"Park","summary":"Permitted — 1387(e)"},
+{"id":"p4-5","sec":"270","title":"Protective and Emergency Service","summary":"Permitted — 1387(f)"},
+{"id":"p4-6","sec":"295","title":"Secondary Suite","summary":"Permitted — 1387(g)"},
+{"id":"p4-7","sec":"299","title":"Sign – Class A","summary":"Permitted — 1387(h)"},
+{"id":"p4-8","sec":"321","title":"Utilities","summary":"Permitted — 1387(i)"},
+{"id":"p4-9","sec":"139","title":"Addiction Treatment","summary":"Discretionary — 1388(1)(a)"},
+{"id":"p4-10","sec":"146","title":"Assisted Living","summary":"Discretionary — 1388(1)(b)"},
+{"id":"p4-11","sec":"154","title":"Bed and Breakfast","summary":"Discretionary — 1388(1)(c)"},
+{"id":"p4-12","sec":"168","title":"Community Entrance Feature","summary":"Discretionary — 1388(1)(d)"},
+{"id":"p4-13","sec":"178","title":"Custodial Care","summary":"Discretionary — 1388(1)(e)"},
+{"id":"p4-14","sec":"208","title":"Home Occupation – Class 2","summary":"Discretionary — 1388(1)(f)"},
+{"id":"p4-15","sec":"226","title":"Live Work Unit","summary":"Discretionary — 1388(1)(g). Per §226(a)(iii), in the H-GO District a Live Work Unit may only incorporate an Artist's Studio, Health Care Service, Office, or Retail and Consumer Service use within the Dwelling Unit — confirm the proposed business falls within this list."},
+{"id":"p4-16","sec":"262","title":"Place of Worship – Small","summary":"Discretionary — 1388(1)(h)"},
+{"id":"p4-17","sec":"266","title":"Power Generation Facility – Small","summary":"Discretionary — 1388(1)(i)"},
+{"id":"p4-18","sec":"277","title":"Residential Care","summary":"Discretionary — 1388(1)(j)"},
+{"id":"p4-19","sec":"300","title":"Sign – Class B","summary":"Discretionary — 1388(1)(k)"},
+{"id":"p4-20","sec":"301","title":"Sign – Class C","summary":"Discretionary — 1388(1)(l)"},
+{"id":"p4-21","sec":"303","title":"Sign – Class E","summary":"Discretionary — 1388(1)(m)"},
+{"id":"p4-22","sec":"316","title":"Temporary Residential Sales Centre","summary":"Discretionary — 1388(1)(n)"},
+{"id":"p4-23","sec":"322","title":"Utility Building","summary":"Discretionary — 1388(1)(o)"},
+{"id":"p4-24","sec":"165","title":"Child Care Service","summary":"Discretionary — 1388(2)(a)","condExisting":true}
+]
+};
+</script>
+<script>
+(function(){
+  "use strict";
+
+  const TABS = [
+    {key:"instructions", label:"Instructions", short:"Start here"},
+    {key:"part15div1a", label:"Part 15, Div. 1 — H-GO Site & Building Standards", short:"Sec. 1391–1415"},
+    {key:"part15div1b", label:"Part 15, Div. 1 — H-GO District Identity", short:"Sec. 1386–1390"},
+    {key:"part3", label:"Part 3 — Citywide Rules", short:"Sec. 53–129.1"},
+    {key:"part4", label:"Part 4 — Use Rules", short:"Permitted & discretionary uses"},
+  ];
+
+  const STATUS_OPTS = [
+    {key:"Pass", cls:"sel-pass"},
+    {key:"Fail", cls:"sel-fail"},
+    {key:"Pending Info", cls:"sel-pending"},
+    {key:"N/A", cls:"sel-na"},
+  ];
+
+  // No browser storage of any kind is used. This file may be opened as a
+  // plain local file (file://) with no server and no persistent storage API
+  // available, so all state lives in memory for the current tab only.
+  // The CSV export/import pair below is the sole persistence mechanism.
+  let state = {
+    activeTab: "instructions",
+    search: "",
+    statusFilter: null, // null = all
+    responses: {},      // id -> {status, notes, proposed}
+    project: {projNum:"", name:"", addr:"", file:"", reviewer:"", existingBuilding:false},
+    notesOpen: {},       // id -> bool, transient
+  };
+
+  function initState(){
+    applyProjectToFields();
+    renderAll();
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  function applyProjectToFields(){
+    document.getElementById("f-projnum").value = state.project.projNum || "";
+    document.getElementById("f-name").value = state.project.name || "";
+    document.getElementById("f-addr").value = state.project.addr || "";
+    document.getElementById("f-file").value = state.project.file || "";
+    document.getElementById("f-reviewer").value = state.project.reviewer || "";
+    document.getElementById("f-existingbuilding").checked = !!state.project.existingBuilding;
+  }
+
+  function getResponse(id){
+    return state.responses[id] || {status:null, notes:"", proposed:false};
+  }
+
+  function setResponse(id, patch){
+    const cur = getResponse(id);
+    state.responses[id] = Object.assign({}, cur, patch);
+  }
+
+  // Child Care Service (condExisting flag in CHECKLIST_DATA) doesn't carry a
+  // fixed Discretionary summary — its availability is computed live from the
+  // "Existing approved building" checkbox every time the tab renders, per
+  // §1388(2)(a).
+  function computeEffectiveUseItem(item){
+    if(item.condExisting){
+      if(state.project.existingBuilding){
+        return Object.assign({}, item, {
+          summary: "Discretionary — 1388(2)(a), located within an existing approved building"
+        });
+      }
+      return Object.assign({}, item, {
+        summary: "Not available — 1388(2)(a) requires the use to be located within an existing approved building"
+      });
+    }
+    return item;
+  }
+
+  function allItemsForTab(tabKey){
+    const items = CHECKLIST_DATA[tabKey] || [];
+    return tabKey === "part4" ? items.map(computeEffectiveUseItem) : items;
+  }
+
+  // Part 4 is scoped to whichever uses have been selected from the top
+  // dropdown (state.responses[id].proposed === true). Uses not selected
+  // are not "in review" and don't count toward progress or show as cards.
+  // Scoping is on `proposed` alone, NOT on isSelectableUse — an
+  // already-added card must stay visible (re-labeled, not removed) even if
+  // a later checkbox toggle makes that use currently unavailable to *add*.
+  function isSelectableUse(item){
+    return /^(Permitted|Discretionary)\b/i.test(item.summary || "");
+  }
+
+  function selectedPart4Items(){
+    return allItemsForTab("part4").filter(it => getResponse(it.id).proposed);
+  }
+
+  function scopedItemsForTab(tabKey){
+    return tabKey === "part4" ? selectedPart4Items() : allItemsForTab(tabKey);
+  }
+
+  function tabCounts(tabKey){
+    const items = scopedItemsForTab(tabKey);
+    if(!items.length) return {done:0, total:0};
+    let done = 0;
+    items.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) done++;
+    });
+    return {done, total: items.length};
+  }
+
+  function overallProgress(){
+    let done=0, total=0;
+    ["part15div1a","part15div1b","part3","part4"].forEach(k=>{
+      const c = tabCounts(k);
+      done += c.done; total += c.total;
+    });
+    return {done, total};
+  }
+
+  // ---------------- Rendering ----------------
+
+  function renderAll(){
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+  }
+
+  // Every click handler in the app (status pills, use-selector dropdown,
+  // remove-from-review, filter chips, the district-condition checkbox)
+  // calls this instead of touching only the element that was clicked. It
+  // rebuilds tab counts, the overall progress bar, and the whole main panel
+  // every time, so nothing in the sidebar or stat strip can ever go stale.
+  // Scroll position in the main panel is preserved across the rebuild.
+  function refreshEverything(){
+    const main = document.getElementById("main");
+    const scrollTop = main ? main.scrollTop : 0;
+    renderTabNav();
+    renderOverallProgress();
+    renderMain();
+    const restoreScroll = ()=>{
+      const m = document.getElementById("main");
+      if(m) m.scrollTop = scrollTop;
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(restoreScroll);
+    } else {
+      restoreScroll();
+    }
+  }
+
+  function renderTabNav(){
+    const nav = document.getElementById("tabnav");
+    nav.innerHTML = "";
+    TABS.forEach(tab=>{
+      const btn = document.createElement("button");
+      btn.className = "tab-btn" + (state.activeTab===tab.key ? " active":"");
+      const left = document.createElement("span");
+      left.className = "tname";
+      left.innerHTML = `<span>${tab.label}</span><span class="tsec">${tab.short}</span>`;
+      btn.appendChild(left);
+      if(tab.key !== "instructions"){
+        const c = tabCounts(tab.key);
+        const count = document.createElement("span");
+        count.className = "tab-count";
+        count.textContent = `${c.done}/${c.total}`;
+        btn.appendChild(count);
+      }
+      btn.addEventListener("click", ()=>{
+        state.activeTab = tab.key;
+        state.search = "";
+        state.statusFilter = null;
+        renderAll();
+      });
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderOverallProgress(){
+    const {done,total} = overallProgress();
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("overall-pct").textContent = `${pct}% (${done}/${total})`;
+    document.getElementById("overall-fill").style.width = pct + "%";
+  }
+
+  function renderMain(){
+    const main = document.getElementById("main");
+    main.innerHTML = "";
+    if(state.activeTab === "instructions"){
+      main.appendChild(buildInstructions());
+      return;
+    }
+    main.appendChild(buildPanelHead());
+    main.appendChild(buildStatStrip());
+    const list = buildCardList();
+    main.appendChild(list);
+  }
+
+  function buildInstructions(){
+    const wrap = document.createElement("div");
+
+    const head = document.createElement("div");
+    head.className = "panel-head";
+    head.innerHTML = `<div><h2>How to use this checklist</h2>
+      <p>An interactive companion to the H-GO Zoning Review Checklist, built from the sections of Land Use Bylaw 1P2007 that reference the H-GO district or all districts citywide.</p></div>`;
+    wrap.appendChild(head);
+
+    const b1 = document.createElement("div");
+    b1.className = "instr-block";
+    b1.innerHTML = `<h3>Workflow</h3>
+      <ol>
+        <li>Fill in the project fields in the sidebar, starting with <b>Project number</b> — it's used to name your session file.</li>
+        <li>Set the <b>District conditions</b> checkbox right below the project fields: whether the building is an <b>existing approved building</b> (vs. proposed). This drives whether Child Care Service is available as a discretionary use in the Use tab — see &sect;1388(2)(a).</li>
+        <li><b>Part 15, Div. 1 — H-GO Site & Building Standards</b> and <b>Part 15, Div. 1 — H-GO District Identity</b> apply to every H-GO project without exception. Work through these first. H-GO is the only district in Part 15, so unlike every other category in this checklist family there is no separate General Rules division shared with sibling districts — see the &sect;1389 card on the District Identity tab for why this checklist splits one division across two tabs.</li>
+        <li><b>Part 3 — Citywide Rules</b> applies to every district in Calgary, including H-GO. Don't skip it — note the H-GO-specific figures resolved on the &sect;65, &sect;97(5), and &sect;104 cards.</li>
+        <li><b>Part 4 — Use Rules</b> is use-dependent. Add whichever use(s) are actually proposed from the dropdown, then look up that Part 4 section number in the bylaw directly for the detailed use-specific requirements.</li>
+        <li>Click a status pill (Pass / Fail / Pending Info / N/A) on each article. Use "Notes" to log evidence, drawing references, or follow-ups.</li>
+        <li><b>Nothing autosaves.</b> This is a standalone file with no server and no browser storage behind it — your answers exist only in this tab. Click <b>Export session (.csv)</b> in the sidebar to save your progress across all 63 fixed checks (25 site & building + 5 district identity + 33 citywide) plus whichever of the 25 use-tab items you add, and <b>Import session (.csv)</b> to reload a previously exported file and pick up where you left off.</li>
+      </ol>`;
+    wrap.appendChild(b1);
+
+    const b2 = document.createElement("div");
+    b2.className = "instr-block";
+    b2.innerHTML = `<h3>Scope — what this does <em>not</em> cover</h3>
+      <p>This is a generic template, not a substitute for reading the bylaw. It excludes Part 1/2 (definitions, general administration), the Part 4 use definitions not listed under H-GO, subdivision requirements, and site-specific overlays — Direct Control variations, a registered Comprehensive Sign Program, restrictive covenants, or Airport Vicinity Protection Area maps. This tool does not verify the &sect;1386(d) locational eligibility test (Local Area Plan Urban Form Category, or Centre City/Inner City + transit-proximity criteria) — confirm that separately before relying on an H-GO designation being appropriately applied to this parcel. The "Existing approved building" checkbox only covers the &sect;1388(2)(a) building-status fact for Child Care Service. Confirm all of this separately for your parcel, and always check the current consolidated bylaw on calgary.ca since it is amended regularly — H-GO (Part 15) was itself added to the Bylaw by 21P2024, and this checklist's section numbers reflect that current numbering, not any earlier or superseded numbering that may still appear in older bookmarks or tables of contents.</p>`;
+    wrap.appendChild(b2);
+
+    const b3 = document.createElement("div");
+    b3.className = "instr-block";
+    b3.innerHTML = `<h3>Status legend</h3>
+      <div class="legend-grid">
+        <div class="legend-card" style="background:var(--pass-bg);color:var(--pass);"><b>Pass</b>&nbsp;— confirmed compliant</div>
+        <div class="legend-card" style="background:var(--fail-bg);color:var(--fail);"><b>Fail</b>&nbsp;— non-compliant, needs a change or relaxation</div>
+        <div class="legend-card" style="background:var(--pending-bg);color:var(--pending);"><b>Pending Info</b>&nbsp;— need more drawings/info</div>
+        <div class="legend-card" style="background:var(--na-bg);color:var(--na);"><b>N/A</b>&nbsp;— not applicable to this project</div>
+      </div>`;
+    wrap.appendChild(b3);
+
+    return wrap;
+  }
+
+  function buildPanelHead(){
+    const tab = TABS.find(t=>t.key===state.activeTab);
+    const head = document.createElement("div");
+    head.className = "panel-head";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<h2>${tab.label}</h2><p>${panelDescription(state.activeTab)}</p>`;
+    head.appendChild(left);
+
+    const tools = document.createElement("div");
+    tools.className = "panel-tools";
+
+    if(state.activeTab === "part4"){
+      tools.appendChild(buildUseSelector());
+    }
+
+    const search = document.createElement("input");
+    search.className = "search-box";
+    search.type = "text";
+    search.placeholder = "Search this tab…";
+    search.value = state.search;
+    search.addEventListener("input", (e)=>{ state.search = e.target.value; renderMain(); preserveFocus(search); });
+    tools.appendChild(search);
+
+    ["Fail","Pending Info"].forEach(s=>{
+      const chip = document.createElement("button");
+      chip.className = "filter-chip" + (state.statusFilter===s ? " active":"");
+      chip.textContent = s === "Pending Info" ? "Pending only" : "Fails only";
+      chip.addEventListener("click", ()=>{
+        state.statusFilter = state.statusFilter===s ? null : s;
+        refreshEverything();
+      });
+      tools.appendChild(chip);
+    });
+
+    head.appendChild(tools);
+    return head;
+  }
+
+  // Dropdown listing only Part 4 items whose status is Permitted or
+  // Discretionary (isSelectableUse) — nothing else is offered. Picking one
+  // adds it to the reviewed-uses set (proposed:true) and the card for that
+  // use (with its specific rule text and pass/fail controls) appears below.
+  // Grouping (Permitted vs Discretionary optgroup) uses the LIVE computed
+  // summary for Child Care Service — it disappears from both optgroups when
+  // "Existing approved building" is unchecked, per isSelectableUse's regex.
+  function buildUseSelector(){
+    const wrap = document.createElement("div");
+    wrap.className = "use-select-wrap";
+
+    const select = document.createElement("select");
+    select.className = "use-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "+ Add a use to review…";
+    select.appendChild(placeholder);
+
+    const groups = [
+      {label:"Permitted uses", test: s => /^Permitted/i.test(s)},
+      {label:"Discretionary uses", test: s => /^Discretionary/i.test(s)},
+    ];
+    groups.forEach(g=>{
+      const items = allItemsForTab("part4")
+        .filter(it => isSelectableUse(it) && g.test(it.summary) && !getResponse(it.id).proposed)
+        .sort((a,b)=> a.title.localeCompare(b.title));
+      if(!items.length) return;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = g.label;
+      items.forEach(it=>{
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = `${it.title} (${it.sec})`;
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+
+    select.addEventListener("change", (e)=>{
+      const id = e.target.value;
+      if(!id) return;
+      setResponse(id, {proposed:true});
+      refreshEverything();
+    });
+
+    wrap.appendChild(select);
+
+    const count = selectedPart4Items().length;
+    if(count){
+      const badge = document.createElement("span");
+      badge.className = "use-select-count";
+      badge.textContent = `${count} use${count===1?"":"s"} in review`;
+      wrap.appendChild(badge);
+    }
+
+    return wrap;
+  }
+
+  function panelDescription(key){
+    if(key==="part15div1a") return "Site and building standards that apply to every H-GO development — at-grade orientation, parcel coverage, building depth/setbacks/height, solar collectors, accessory buildings, landscaping, amenity space, retaining walls, fences, visibility, decks/balconies, parking, driveways, and waste. Part 15 has no separate General Rules division for the Housing category (see the District Identity tab, §1389) — these are H-GO's own Division 1 provisions, grouped here by topic. Always applicable.";
+    if(key==="part15div1b") return "H-GO's own district identity — purpose and locational eligibility (§1386), the permitted/discretionary use list overview, the Part 3/Part 4 cross-reference, and Floor Area Ratio. Set the “Existing approved building” checkbox in the sidebar first — it drives whether Child Care Service is available on the Use tab. Always applicable.";
+    if(key==="part3") return "Rules Governing All Districts — public realm setbacks, airport vicinity, floodway, lighting, signs, parking/loading, servicing. Applies to H-GO the same as every other district; the §65, §97(5), and §104 cards resolve H-GO-specific figures found while sourcing this Part.";
+    if(key==="part4") return "Add the proposed use(s) from the dropdown — only Permitted and Discretionary H-GO uses are offered. Child Care Service only appears once “Existing approved building” is checked in the sidebar.";
+    return "";
+  }
+
+  function preserveFocus(el){
+    // re-focus the search box after re-render (since renderMain rebuilds the DOM)
+    const refocus = ()=>{
+      const s = document.querySelector(".search-box");
+      if(s){ s.focus(); const v=s.value; s.value=""; s.value=v; }
+    };
+    if(typeof requestAnimationFrame === "function"){
+      requestAnimationFrame(refocus);
+    } else {
+      refocus();
+    }
+  }
+
+  function buildStatStrip(){
+    const items = filteredItems();
+    const scoped = scopedItemsForTab(state.activeTab);
+    const strip = document.createElement("div");
+    strip.className = "stat-strip";
+    const counts = {"Pass":0,"Fail":0,"Pending Info":0,"N/A":0,"none":0};
+    scoped.forEach(it=>{
+      const r = getResponse(it.id);
+      if(r.status) counts[r.status] = (counts[r.status]||0)+1;
+      else counts.none++;
+    });
+    const defs = [
+      ["Pass", "var(--pass)"],["Fail","var(--fail)"],["Pending Info","var(--pending)"],
+      ["N/A","var(--na)"],["Not started","var(--ink-soft)"]
+    ];
+    const map = {"Pass":counts.Pass,"Fail":counts.Fail,"Pending Info":counts["Pending Info"],"N/A":counts["N/A"],"Not started":counts.none};
+    defs.forEach(([label,color])=>{
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.innerHTML = `<span class="swatch" style="background:${color}"></span><b>${map[label]}</b> ${label}`;
+      strip.appendChild(s);
+    });
+    if(items.length !== scoped.length){
+      const s = document.createElement("div");
+      s.className = "stat";
+      s.style.marginLeft = "auto";
+      s.textContent = `Showing ${items.length} of ${scoped.length}`;
+      strip.appendChild(s);
+    }
+    return strip;
+  }
+
+  function filteredItems(){
+    let items = scopedItemsForTab(state.activeTab);
+    if(state.search.trim()){
+      const q = state.search.trim().toLowerCase();
+      items = items.filter(it =>
+        it.sec.toLowerCase().includes(q) ||
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+      );
+    }
+    if(state.statusFilter){
+      items = items.filter(it => getResponse(it.id).status === state.statusFilter);
+    }
+    return items;
+  }
+
+  function buildCardList(){
+    const container = document.createElement("div");
+    const items = filteredItems();
+    if(!items.length){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      if(state.activeTab === "part4" && !selectedPart4Items().length){
+        empty.textContent = "No uses selected yet. Choose a permitted or discretionary use from the dropdown above to begin testing it.";
+      } else {
+        empty.textContent = "No articles match your search/filter.";
+      }
+      container.appendChild(empty);
+      return container;
+    }
+    const isPart4 = state.activeTab === "part4";
+    items.forEach(it=>{
+      container.appendChild(buildCard(it, isPart4));
+    });
+    return container;
+  }
+
+  function buildCard(item, isPart4){
+    const r = getResponse(item.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.status = r.status || "";
+
+    const top = document.createElement("div");
+    top.className = "card-top";
+
+    const idWrap = document.createElement("div");
+    idWrap.className = "card-id";
+    idWrap.innerHTML = `<span class="sec-badge mono">${escapeHtml(item.sec)}</span><h3>${escapeHtml(item.title)}</h3>`;
+    top.appendChild(idWrap);
+
+    if(isPart4){
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-use-btn";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Remove from review";
+      removeBtn.addEventListener("click", ()=>{
+        setResponse(item.id, {proposed:false});
+        refreshEverything();
+      });
+      top.appendChild(removeBtn);
+    }
+    card.appendChild(top);
+
+    const summary = document.createElement("p");
+    summary.className = isPart4 ? "summary use-tag" : "summary";
+    summary.textContent = item.summary;
+    card.appendChild(summary);
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "status-row";
+    STATUS_OPTS.forEach(opt=>{
+      const pill = document.createElement("button");
+      pill.className = "status-pill" + (r.status===opt.key ? " "+opt.cls : "");
+      pill.textContent = opt.key;
+      pill.addEventListener("click", ()=>{
+        const newStatus = r.status===opt.key ? null : opt.key;
+        setResponse(item.id, {status:newStatus});
+        refreshEverything();
+      });
+      statusRow.appendChild(pill);
+    });
+
+    const notesToggle = document.createElement("button");
+    notesToggle.className = "notes-toggle";
+    notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+    notesToggle.addEventListener("click", ()=>{
+      state.notesOpen[item.id] = !state.notesOpen[item.id];
+      notesArea.classList.toggle("open", state.notesOpen[item.id]);
+      notesToggle.textContent = state.notesOpen[item.id] ? "Hide notes" : (r.notes ? "Edit notes ●" : "Add notes");
+      if(state.notesOpen[item.id]) textarea.focus();
+    });
+    statusRow.appendChild(notesToggle);
+    card.appendChild(statusRow);
+
+    const notesArea = document.createElement("div");
+    notesArea.className = "notes-area" + (state.notesOpen[item.id] ? " open":"");
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Notes, drawing references, follow-up items…";
+    textarea.value = r.notes || "";
+    textarea.addEventListener("input", (e)=>{
+      setResponse(item.id, {notes: e.target.value});
+    });
+    notesArea.appendChild(textarea);
+    card.appendChild(notesArea);
+
+    return card;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---------------- Session export / import (CSV = the persistent record) ----------------
+
+  const DATA_TAB_KEYS = ["part15div1a","part15div1b","part3","part4"];
+  const ITEM_HEADERS = ["Part","Section","Article Title","Requirement Summary","Proposed","Review Status","Notes","ID"];
+  // Third element is the field type: "text" (default) or "bool". The single
+  // boolean project fact (the §07 district-condition checkbox) is written
+  // as literal Yes/No text so the CSV stays human-readable, and parsed back
+  // to a real boolean on import rather than round-tripping as a string.
+  const META_FIELDS = [
+    ["Project number", "projNum", "text"],
+    ["Project name", "name", "text"],
+    ["Site address / legal desc.", "addr", "text"],
+    ["DP / file no.", "file", "text"],
+    ["Reviewer", "reviewer", "text"],
+    ["Existing approved building (§1388(2)(a))", "existingBuilding", "bool"],
+  ];
+
+  function todayStr(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  function sanitizeForFilename(s){
+    return String(s||"").trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  }
+
+  function buildExportRows(){
+    const rows = [];
+    rows.push(["Field","Value"]);
+    META_FIELDS.forEach(([label,key,type])=>{
+      const val = type === "bool" ? (state.project[key] ? "Yes" : "No") : (state.project[key] || "");
+      rows.push([label, val]);
+    });
+    rows.push(["Export date", todayStr()]);
+    const totalDone = overallProgress();
+    rows.push(["Progress", `${totalDone.done}/${totalDone.total} checks completed`]);
+    rows.push([]); // blank separator row
+    rows.push(ITEM_HEADERS);
+    DATA_TAB_KEYS.forEach(key=>{
+      const tab = TABS.find(t=>t.key===key);
+      allItemsForTab(key).forEach(it=>{
+        const r = getResponse(it.id);
+        const isPart4 = key === "part4";
+        rows.push([
+          tab.label,
+          it.sec,
+          it.title,
+          it.summary,
+          isPart4 ? (r.proposed ? "Yes" : "No") : "",
+          r.status || "",
+          r.notes || "",
+          it.id,
+        ]);
+      });
+    });
+    return rows;
+  }
+
+  function exportCsv(){
+    const rows = buildExportRows();
+    const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const projNum = sanitizeForFilename(state.project.projNum) || "Unnumbered";
+    a.href = url;
+    a.download = `${projNum} - ${todayStr()} - LUB Review.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const {done,total} = overallProgress();
+    showToast(`Exported — ${done}/${total} checks saved`);
+  }
+
+  function csvEscape(val){
+    const s = String(val==null ? "" : val);
+    if(/[",\r\n]/.test(s)){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+
+  // RFC4180-ish parser: handles quoted fields containing commas, quotes, and newlines.
+  function parseCsvText(text){
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+    // Normalize a leading BOM if present.
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    for(let i=0; i<text.length; i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          field += c;
+        }
+      } else {
+        if(c === '"'){
+          inQuotes = true;
+        } else if(c === ','){
+          row.push(field); field = "";
+        } else if(c === '\r'){
+          // skip; \n (or end) will terminate the row
+        } else if(c === '\n'){
+          row.push(field); field = "";
+          rows.push(row); row = [];
+        } else {
+          field += c;
+        }
+      }
+    }
+    // flush trailing field/row if the file doesn't end with a newline
+    if(field.length || row.length){
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(r => !(r.length===1 && r[0]===""));
+  }
+
+  function importCsv(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      let rows;
+      try{
+        rows = parseCsvText(String(e.target.result));
+      }catch(err){
+        showToast("Import failed — couldn't read this file as CSV");
+        return;
+      }
+      const headerIdx = rows.findIndex(r => r[0] === "Part" && r[1] === "Section");
+      if(headerIdx === -1){
+        showToast("Import failed — not a recognized session file");
+        return;
+      }
+
+      // Parse metadata rows (everything before the item table, skipping the
+      // "Field,Value" header and any Export date / Progress info rows).
+      const metaByLabel = {};
+      for(let i=0; i<headerIdx; i++){
+        const [label, value] = rows[i];
+        if(label && label !== "Field") metaByLabel[label] = value;
+      }
+      const newProject = {};
+      META_FIELDS.forEach(([label,key,type])=>{
+        newProject[key] = type === "bool" ? (metaByLabel[label] === "Yes") : (metaByLabel[label] || "");
+      });
+
+      // Parse item rows, matched back to known checklist items by ID.
+      const knownIds = new Set();
+      DATA_TAB_KEYS.forEach(key => allItemsForTab(key).forEach(it => knownIds.add(it.id)));
+      const newResponses = {};
+      let matched = 0, skipped = 0;
+      for(let i=headerIdx+1; i<rows.length; i++){
+        const r = rows[i];
+        if(!r.length || r.every(c=>c==="")) continue;
+        const [ , , , , proposedCol, statusCol, notesCol, idCol] = r;
+        const id = idCol;
+        if(!id || !knownIds.has(id)){ skipped++; continue; }
+        newResponses[id] = {
+          status: statusCol || null,
+          notes: notesCol || "",
+          proposed: proposedCol === "Yes",
+        };
+        matched++;
+      }
+
+      if(!matched){
+        showToast("Import failed — no matching checklist items found in that file");
+        return;
+      }
+
+      state.project = newProject;
+      state.responses = newResponses;
+      state.notesOpen = {};
+      applyProjectToFields();
+      renderAll();
+      showToast(`Imported — ${matched} checks loaded${skipped ? `, ${skipped} rows skipped` : ""}`);
+    };
+    reader.onerror = ()=> showToast("Import failed — couldn't read that file");
+    reader.readAsText(file);
+  }
+
+  // ---------------- Project field bindings ----------------
+  function bindProjectFields(){
+    const map = {"f-projnum":"projNum","f-name":"name","f-addr":"addr","f-file":"file","f-reviewer":"reviewer"};
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("input", (e)=>{
+        state.project[map[id]] = e.target.value;
+      });
+    });
+  }
+
+  // The district-condition checkbox is state-changing (it flips Child Care
+  // Service's availability live), unlike the text fields above, so it goes
+  // through refreshEverything() rather than updating state alone.
+  function bindDistrictConditions(){
+    const checkMap = {"f-existingbuilding":"existingBuilding"};
+    Object.keys(checkMap).forEach(id=>{
+      const el = document.getElementById(id);
+      el.addEventListener("change", (e)=>{
+        state.project[checkMap[id]] = e.target.checked;
+        refreshEverything();
+      });
+    });
+  }
+
+  function bindSessionButtons(){
+    document.getElementById("btn-export").addEventListener("click", exportCsv);
+    const fileInput = document.getElementById("file-import");
+    document.getElementById("btn-import").addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) importCsv(file);
+      fileInput.value = "";
+    });
+  }
+
+  // ---------------- Init ----------------
+  bindProjectFields();
+  bindDistrictConditions();
+  bindSessionButtons();
+  initState();
+
+})();
+
+</script>
+</body>
+</html>

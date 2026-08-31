@@ -5,9 +5,76 @@ have been built for this folder. Update this file whenever a checklist is comple
 
 Status legend: ✅ Built &nbsp;·&nbsp; ⏳ Built, file not yet downloaded to this folder &nbsp;·&nbsp; ⬜ Not started
 
-Last completed: MU-2 (Mixed Use – Active Frontage District), Part 14, Division 3 — the final district
-in the entire 1P2007 checklist family, closing out Part 14 (and the whole Part 11–14 Centre City /
-Mixed Use group). MU-2 shares MU-1's General Rules tab (Part 14, Division 1, unchanged) and its own
+Last completed: H-GO (Housing – Grade Oriented District), Part 15, Division 1 — a district this
+status file had missed entirely until now. Part 15 doesn't appear anywhere in the table below or in
+the "Part 11–14" heading that previously called itself the end of the family; it turned up only by
+diffing the actual bylaw's own Part list (via its "PART 15: HOUSING DISTRICTS Division 1: Housing –
+Grade Oriented (H-GO) District" bookmark) against every table in this file. H-GO was added to the
+Bylaw by 21P2024 and is the newest district in the whole 1P2007 family — new enough that the
+consolidated bylaw HTML still carries a numbering artifact from before Part 15 was inserted: every
+heading in its own division prints two numbers side by side ("1333 Purpose" immediately followed by
+"1386 The Housing – Grade Oriented (H-GO) District:..."), where the first number is a stale
+pre-insertion bookmark/TOC label (the same 1333–1362 range the table of contents still lists under
+"PART 15") and the second is the true, current section number actually used in the operative text.
+Confirmed against Part 14 (MU-1/MU-2) as a control — its Purpose heading prints the same number
+twice ("1365 Purpose" / "1365 (1) The Mixed Use..."), with no such mismatch — so this checklist cites
+the second number throughout (§1386–1415), not the TOC's stale first number. H-GO is also
+structurally unlike every other district built so far: Part 15 contains only one division and one
+district, so there is no separate multi-district "General Rules" division for a General tab to cite
+the way Part 5/Div. 1, Part 6/Div. 1, or Part 14/Div. 1 do for their categories — §1389's own Rules
+section confirms this by naming only Part 3 and Part 4 as cross-references, deliberately omitting any
+Part 5/6-style General Rules division. Rather than leave the General tab empty or invent bylaw
+content that doesn't exist, this checklist splits H-GO's single Division 1 (§1386–1415) across two
+tabs by content type only, both citing the same Part 15, Division 1: a "Site & Building Standards" tab
+(25 items, §1391–1415 — at-grade orientation, parcel coverage, building depth/setbacks/height, solar
+collectors, accessory buildings, landscaping, amenity space, retaining walls, fences, visibility,
+decks/balconies, parking, driveways, waste) covering the same topics a shared General Rules division
+covers for every other category, and a "District Identity" tab (5 items, §1386–1390 — Purpose, the
+Permitted/Discretionary use-list overview, the §1389 Rules cross-reference, and Floor Area Ratio) for
+what's genuinely specific to H-GO's own identity as a district. The §1389 card itself documents this
+deviation directly, per the build spec's own instruction to flag an ambiguity rather than silently
+drop it. §1386(d)'s Purpose statement is also the first in the family to carry an explicit locational
+eligibility test as bylaw text rather than pure policy framing — H-GO "should only be designated" on
+parcels within a Local Area Plan's Neighbourhood Connector/Flex Urban Form Category, or within Centre
+City/Inner City areas and within a set distance of a Main Street, LRT platform, BRT station, or
+primary transit service — flagged on the Purpose card and in the Instructions/Scope text as something
+this tool doesn't verify, not a rule the Development Authority relaxes. H-GO's use list runs 25 uses
+total (9 flat permitted under §1387, 15 flat discretionary under §1388(1), and one conditional —
+Child Care Service, discretionary under §1388(2)(a) only if located within an existing approved
+building, otherwise not available at all). That's the same "unavailable unless a building-status fact
+holds" shape as CR20-C20/R20's transitionArea checkbox from earlier in the family (§07 of the build
+spec), just with a single sidebar checkbox ("Existing approved building") instead of three. Sourcing
+Part 4 for the use list also surfaced a genuine H-GO-specific caveat: §226(a)(iii) restricts a Live
+Work Unit in H-GO (grouped with the multi-residential districts and CC-EPR) to incorporating only an
+Artist's Studio, Health Care Service, Office, or Retail and Consumer Service business within the
+Dwelling Unit — narrower than the commercial/mixed-use districts' own §226(a)(ii) list — flagged
+directly on that Use tab card. The Citywide tab resolved three H-GO-specific figures while sourcing
+Part 3: §65(1)(a)'s 7.5 m outdoor-lighting mounting-height cap applies to H-GO via its generic "all
+residential districts" catch-all (H-GO isn't named individually, but Part 15 is literally a housing/
+residential category); §97(5) does name H-GO explicitly, grouping it with the low density residential
+districts and M-CG/M-C1/M-C2/M-G/M-1/M-2 for a 5.0 m²/4.0 m Freestanding Sign cap — tighter than
+every other district built in this family so far; and §104(2) permits a Digital Message Sign in H-GO
+only when tied to one of a named list of uses, of which H-GO's own use list contains exactly two —
+Park (permitted) and Place of Worship – Small (discretionary) — flagged directly on the Class E Use
+tab card rather than left as a blanket allowance. §107's Roof Sign rule was checked and found not to
+apply to any residential district, consistent with H-GO having no Sign – Class D use at all. Verified
+with an automated Playwright smoke test (headless Chromium, launched directly against the file via
+`file://`, no server) covering: tab navigation showing 0/25, 0/5, 0/33 and 0/0 before any use is
+selected; the use-selector's Permitted/Discretionary optgroup counts (9/15 unchecked, 9/16 with
+"Existing approved building" checked, confirming Child Care Service's live add/drop from the
+dropdown); adding a use and confirming its card, the Use tab badge, and the overall progress bar
+update together on a single status-pill click; removing a use and confirming the card disappears and
+counts reset to 0/0; and a full 88-item CSV export/import round trip (25 site + 5 district + 33
+citywide + 25 use, every item touched across all four statuses, project fields containing embedded
+commas and quotes, and notes containing embedded commas/quotes/newlines) diffed to zero mismatches,
+including the "Existing approved building" boolean and the sanitized-filename convention. Part 15 was
+the last remaining Part in Land Use Bylaw 1P2007 with a district-review checklist still to build —
+**the entire 1P2007 checklist family (Parts 5 through 15) is now believed complete**, though this
+status file's own miss on Part 15 until this pass is a reminder to re-diff against the bylaw's actual
+Part list periodically rather than trusting this file's tables alone. Before that: MU-2 (Mixed Use –
+Active Frontage District), Part 14, Division 3 — the final district in the Part 11–14 Centre City /
+Mixed Use group, and (at the time) believed to be the final district in the entire 1P2007 checklist
+family. MU-2 shares MU-1's General Rules tab (Part 14, Division 1, unchanged) and its own
 Permitted Uses structure is nearly identical to MU-1's — the same 8 flat permitted uses, the same
 11-use existing-building-conditional group (§1376(2)), the same Restaurant 150.0 m² conditional pair
 (§1376(2.1)), and the same 8-use ground-floor-conditional group (§1376(3)) — so the two-checkbox
@@ -380,3 +447,19 @@ family below — this is the current "downtown" zoning group referenced by the L
 | 14 | 3 | MU-2 | ✅ `MU2_Zoning_Review_Checklist.html` |
 
 **Part 14 (and the whole Part 11–14 Centre City / Mixed Use family) is now complete.**
+
+## Part 15 — Housing Districts
+
+Newly identified in this pass — Part 15 didn't appear in this file's tables (or in the "Part 11–14"
+heading's claim to be the end of the family) until it was found by diffing this file against the
+bylaw's own Part list directly. Added to the Bylaw by 21P2024; contains a single division and a
+single district, with no separate General Rules division for the category (see the H-GO writeup
+above and its own §1389 Use tab card).
+
+| Division | District Code(s) | Status |
+|---|---|---|
+| 1 | H-GO | ✅ `HGO_Zoning_Review_Checklist.html` |
+
+**Part 15 is now complete. No further Parts with a district-review checklist target are known to
+remain in Land Use Bylaw 1P2007 — re-diff against the bylaw's own Part list before assuming that,
+though, since this file already missed one.**
