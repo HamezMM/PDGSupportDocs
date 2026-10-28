@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import data from '../../../data/fire-assemblies.json';
+
+const { assemblyTypes, ratings, protectionMethods, assemblies } = data;
+
+// Fail the build on values outside the controlled lists or a malformed URL.
+for (const a of assemblies) {
+  const bad =
+    !assemblyTypes.includes(a.assemblyType) ||
+    a.ratings.some((r) => !ratings.includes(r)) ||
+    a.protection.some((p) => !protectionMethods.includes(p)) ||
+    (a.url !== null && !/^https?:\/\//.test(a.url));
+  if (bad) throw new Error(`fire-assemblies.json: invalid entry "${a.listing}"`);
+}
+
+const bearing = (v: boolean | null) => (v === null ? 'Bearing or non-bearing' : v ? 'Load-bearing' : 'Non-bearing');
+const filters = [
+  { key: 'type', label: 'Assembly type', values: assemblyTypes },
+  { key: 'rating', label: 'Rating', values: ratings },
+  { key: 'protection', label: 'Protection method', values: protectionMethods },
+  { key: 'bearing', label: 'Load-bearing', values: ['Load-bearing', 'Non-bearing'] },
+];
+---
+
+<BaseLayout
+  title="Fire-Rated Assemblies"
+  description="Searchable list of approved fire-rated assembly listings."
+  crumbs={[{ label: 'Building Code Tools', href: '/building-code/' }, { label: 'Fire-Rated Assemblies' }]}
+>
+  <h1 class="page-title">Fire-Rated Assemblies</h1>
+  <p class="page-lede">Approved assembly listings. Open the listing at its source for the full design.</p>
+
+  <input id="q" type="search" placeholder="Search listing number or description…" aria-label="Search listings" />
+
+  {
+    filters.map((f) => (
+      <div class="filter" data-key={f.key}>
+        <span class="label">{f.label}</span>
+        {f.values.map((v) => (
+          <button type="button" class="chip" data-value={v} aria-pressed="false">{v}</button>
+        ))}
+      </div>
+    ))
+  }
+
+  <p id="count" class="count"></p>
+
+  <table>
+    <thead>
+      <tr><th>Listing</th><th>Description</th><th>Type</th><th>Rating</th><th>Protection</th><th>Bearing</th><th>Approved</th></tr>
+    </thead>
+    <tbody>
+      {
+        assemblies.map((a) => (
+          <tr
+            data-search={`${a.listing} ${a.title}`.toLowerCase()}
+            data-type={a.assemblyType}
+            data-rating={a.ratings.join('|')}
+            data-protection={a.protection.join('|')}
+            data-bearing={a.loadBearing === null ? 'Load-bearing|Non-bearing' : a.loadBearing ? 'Load-bearing' : 'Non-bearing'}
+          >
+            <td class="nowrap">
+              {a.url ? <a href={a.url} target="_blank" rel="noopener noreferrer">{a.listingBody} {a.listing} ↗</a> : <span>{a.listingBody} {a.listing}</span>}
+            </td>
+            <td>{a.title}</td>
+            <td>{a.assemblyType}</td>
+            <td class="nowrap">{a.ratings.join(', ')}</td>
+            <td>{a.protection.join(', ')}</td>
+            <td>{bearing(a.loadBearing)}</td>
+            <td class="nowrap">{a.approvedBy ? `${a.approvedBy}, ${a.reviewDate}` : 'Pending'}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</BaseLayout>
+
+<script>
+  const rows = [...document.querySelectorAll<HTMLTableRowElement>('tbody tr')];
+  const q = document.getElementById('q') as HTMLInputElement;
+  const count = document.getElementById('count')!;
+  const active: Record<string, Set<string>> = {};
+
+  function apply() {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    for (const row of rows) {
+      const ok =
+        (!term || row.dataset.search!.includes(term)) &&
+        Object.entries(active).every(([key, set]) => {
+          if (!set.size) return true;
+          const have = (row.dataset[key] ?? '').split('|');
+          return [...set].some((v) => have.includes(v));
+        });
+      row.hidden = !ok;
+      if (ok) shown++;
+    }
+    count.textContent = `${shown} of ${rows.length} listings`;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) => {
+    const key = chip.closest<HTMLElement>('.filter')!.dataset.key!;
+    chip.addEventListener('click', () => {
+      const set = (active[key] ??= new Set());
+      const on = chip.getAttribute('aria-pressed') !== 'true';
+      chip.setAttribute('aria-pressed', String(on));
+      on ? set.add(chip.dataset.value!) : set.delete(chip.dataset.value!);
+      apply();
+    });
+  });
+  q.addEventListener('input', apply);
+  apply();
+</script>
+
+<style>
+  #q {
+    width: 100%; max-width: 420px; margin-bottom: 14px; font: inherit; font-size: 13px;
+    padding: 8px 12px; background: var(--surface); color: var(--text-primary);
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-md);
+  }
+  .filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); min-width: 130px; }
+  .chip {
+    font: inherit; font-size: 13px; cursor: pointer; padding: 4px 12px; color: var(--text-primary);
+    background: var(--surface); border: 0.5px solid var(--border); border-radius: 999px;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed='true'] { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  .count { font-size: 12px; color: var(--text-secondary); margin: 14px 0 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
+  td a { color: var(--accent); font-weight: 500; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .nowrap { white-space: nowrap; }
+  tr[hidden] { display: none; }
+</style>

@@ -78,6 +78,12 @@ export const sections: Section[] = [
         tag: 'NBC 9.10.15.4',
       },
       {
+        title: 'Fire-Rated Assemblies',
+        description: 'Approved ULC / UL listing numbers with links to the source listing — filter by assembly type, rating and protection method.',
+        href: '/building-code/fire-rated-assemblies/',
+        tag: 'Fire',
+      },
+      {
         title: 'Slope Calculator',
         description: 'Convert between angle (degrees), percent slope, X:12 pitch, and 1:N ratio, or derive slope from rise and run.',
         href: '/building-code/slope/',

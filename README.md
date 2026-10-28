@@ -8,7 +8,7 @@ Internal training guides, calculators, reference tools, and working documents fo
 |---|---|---|
 | Training | `/training/` | All Scribe workflow guides (cards open the Scribe viewer) |
 | Land Use Tools | `/land-use/` | Tenancy checker, 63 Calgary LUB 1P2007 district checklists, link to the City's bylaw page |
-| Building Code Tools | `/building-code/` | NBC calculators and slope calculator |
+| Building Code Tools | `/building-code/` | NBC calculators, slope calculator, fire-rated assemblies list |
 | Revit Support | `/revit/` | PDG Revit Tools reference |
 | Project Support | `/project-support/` | Fee proposal and Calgary permit fee calculators |
 | Internal Tools | `/internal/` | Revit Add-in Academy, LISP routines, Playwright automations, folder restructure proposal |
@@ -36,6 +36,7 @@ npm run build    # outputs to dist/
 
 - **A Scribe guide:** add an entry to `src/data/guides.json`.
 - **A standalone tool/page:** put a complete `.html` document at `public/<section>/<slug>/index.html` (link back to `/`), then add a card in `src/data/sections.ts`.
+- **A fire-rated assembly:** add an entry to `assemblies` in `src/data/fire-assemblies.json` (listing number, source URL, type, ratings, protection). Values must come from the lists at the top of that file; the build fails otherwise. No PDFs are hosted — the URL points to the listing at its source.
 - **A new section:** add it to `sections` in `src/data/sections.ts` (and a page under `src/pages/` if it needs more than cards).
 
 ## Hosting on Vercel
