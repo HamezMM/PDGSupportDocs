@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import checklists from '../../../data/checklists.json';
+---
+
+<BaseLayout
+  title="Zoning Review Checklists"
+  description="Calgary LUB 1P2007 district review checklists."
+  crumbs={[{ label: 'Land Use Tools', href: '/land-use/' }, { label: 'Zoning Review Checklists' }]}
+>
+  <h1 class="page-title">Zoning Review Checklists</h1>
+  <p class="page-lede">Calgary Land Use Bylaw 1P2007 — one review checklist per land use district.</p>
+  {
+    checklists.map((group) => (
+      <section class="group">
+        <h2>{group.title}</h2>
+        <div class="links">
+          {group.items.map((item) => (
+            <a href={`/land-use/checklists/${item.slug}/`}>{item.label}</a>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>
+
+<style>
+  .group { margin-bottom: 1.5rem; }
+  h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 8px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a {
+    font-size: 13px; font-weight: 500; text-decoration: none;
+    background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md);
+    padding: 6px 12px;
+  }
+  .links a:hover { border-color: var(--accent); color: var(--accent); }
+</style>

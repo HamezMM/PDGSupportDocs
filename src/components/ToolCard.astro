@@ -1,0 +1,11 @@
+---
+import type { Tool } from '../data/sections';
+
+const { tool } = Astro.props as { tool: Tool };
+---
+
+<a class="card" href={tool.href} target={tool.external ? '_blank' : undefined} rel={tool.external ? 'noopener' : undefined}>
+  <div class="card-title">{tool.title}{tool.external ? ' ↗' : ''}</div>
+  <div class="card-desc">{tool.description}</div>
+  {tool.tag && <span class="card-tag">{tool.tag}</span>}
+</a>

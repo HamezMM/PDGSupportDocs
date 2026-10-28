@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sections } from '../data/sections';
+---
+
+<BaseLayout title="PDG Support Docs" description="Training, calculators and reference tools for the Peake Design team.">
+  <h1 class="page-title">PDG Support Docs</h1>
+  <p class="page-lede">
+    Training guides, calculators and reference tools for the Peake Design team. Calculators run client-side in the
+    browser — nothing is submitted to a server.
+  </p>
+  <div class="grid">
+    {
+      sections.map((s) => (
+        <a class="card" href={`/${s.slug}/`}>
+          <div class="card-title">{s.title}</div>
+          <div class="card-desc">{s.description}</div>
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>

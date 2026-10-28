@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slope Calculator — Angle, %, X:12</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --surface-3: #e8e6dc;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.22);
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b67;
+  --text-tertiary: #a0a09b;
+  --info-bg: #e6f1fb;   --info-text: #185fa5;
+  --warn-bg: #faeeda;   --warn-text: #854f0b;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1c1a; --surface:#242422; --surface-2:#2c2c2a; --surface-3:#343430;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#e8e8e2; --text-secondary:#9b9b95; --text-tertiary:#636360;
+    --info-bg:#042c53;   --info-text:#85b7eb;
+    --warn-bg:#412402;   --warn-text:#fac775;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text-primary)}
+body{font-family:var(--font-sans);min-height:100vh}
+.pdg-topnav{position:sticky;top:0;z-index:1000;background:#17171a;color:#e8e8e2;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:9px 18px;letter-spacing:.01em}
+.pdg-topnav a{color:inherit;text-decoration:none}
+.pdg-topnav a:hover{text-decoration:underline}
+.page{max-width:640px;margin:0 auto;padding:2rem 1.5rem}
+header.page-header h1{font-size:20px;font-weight:500}
+header.page-header p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.wrap{padding:1.5rem 0 1rem}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--text-secondary);text-transform:uppercase;margin-bottom:12px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px}
+.field input{width:100%;font-size:15px;font-weight:500;padding:8px 10px;background:var(--surface-2);color:var(--text-primary);border:0.5px solid var(--border-strong);border-radius:var(--radius-md);font-family:inherit}
+.field input:focus{outline:2px solid var(--info-text);outline-offset:1px}
+.field .unit{font-size:12px;color:var(--text-tertiary);margin-top:4px}
+.hint{font-size:12px;color:var(--text-secondary);margin-top:12px}
+.diagram{background:var(--surface-2);border-radius:var(--radius-md);margin-top:14px;padding:8px}
+.diagram svg{display:block;width:100%;height:auto;max-height:170px}
+.diagram .tri{fill:var(--info-bg);stroke:var(--info-text);stroke-width:1.5}
+.diagram text{fill:var(--text-secondary);font:11px var(--font-sans)}
+.diagram .arc{fill:none;stroke:var(--info-text);stroke-width:1}
+.warn{background:var(--warn-bg);color:var(--warn-text);font-size:12px;padding:8px 12px;border-radius:var(--radius-md);margin-top:12px}
+.btn{font:inherit;font-size:12px;color:var(--text-secondary);background:none;border:0.5px solid var(--border-strong);border-radius:var(--radius-md);padding:5px 10px;cursor:pointer;margin-top:12px}
+.btn:hover{background:var(--surface-2)}
+.out{font-family:var(--font-mono);font-size:13px;margin-top:10px;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--surface-2);font-weight:500;font-size:11px;padding:6px 6px;text-align:center;border:0.5px solid var(--border);color:var(--text-secondary)}
+td{padding:5px 6px;text-align:center;border:0.5px solid var(--border);font-size:12px}
+td.lbl{text-align:left;color:var(--text-secondary)}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+.ref-note{font-size:11px;color:var(--text-tertiary);margin-top:8px}
+@media (max-width:480px){.input-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pdg-topnav"><a href="/">&larr; PDG Support Docs</a></div>
+<div class="page">
+  <header class="page-header">
+    <h1>Slope Calculator</h1>
+    <p>Convert between angle (degrees), percent slope, X:12 pitch, and 1:N ratio — type in any field and the rest update</p>
+  </header>
+
+<div class="wrap">
+
+<div class="card">
+  <div class="section-label">Convert slope</div>
+  <div class="input-grid">
+    <div class="field">
+      <label for="deg">Angle</label>
+      <input type="number" id="deg" step="any" min="0" max="89.99" inputmode="decimal" placeholder="0">
+      <div class="unit">degrees (°)</div>
+    </div>
+    <div class="field">
+      <label for="pct">Percent slope</label>
+      <input type="number" id="pct" step="any" min="0" inputmode="decimal" placeholder="0">
+      <div class="unit">% (rise ÷ run × 100)</div>
+    </div>
+    <div class="field">
+      <label for="x12">Pitch</label>
+      <input type="number" id="x12" step="any" min="0" inputmode="decimal" placeholder="0">
+      <div class="unit">X : 12 (rise per 12 run)</div>
+    </div>
+    <div class="field">
+      <label for="ratio">Ratio</label>
+      <input type="number" id="ratio" step="any" min="0" inputmode="decimal" placeholder="0">
+      <div class="unit">1 : N (1 rise per N run)</div>
+    </div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 300 130" aria-label="Slope triangle">
+      <polygon class="tri" id="tri" points="20,110 280,110 280,110"/>
+      <path class="arc" id="arc" d=""/>
+      <text id="tDeg" x="60" y="105"></text>
+      <text id="tRise" x="284" y="70"></text>
+      <text id="tRun" x="150" y="125" text-anchor="middle">run</text>
+    </svg>
+  </div>
+  <div class="warn" id="warn" hidden></div>
+  <button class="btn" id="clear" type="button">Clear</button>
+</div>
+
+<div class="card">
+  <div class="section-label">From rise &amp; run</div>
+  <div class="input-grid">
+    <div class="field">
+      <label for="rise">Rise</label>
+      <input type="number" id="rise" step="any" min="0" inputmode="decimal" placeholder="0">
+      <div class="unit">any unit</div>
+    </div>
+    <div class="field">
+      <label for="run">Run</label>
+      <input type="number" id="run" step="any" min="0" inputmode="decimal" placeholder="0">
+      <div class="unit">same unit as rise</div>
+    </div>
+  </div>
+  <div class="out" id="slopeLen"></div>
+  <div class="hint">Enter rise and run to set the slope above. With a slope already set, enter just one and the other is filled in.</div>
+</div>
+
+<div class="card">
+  <div class="section-label">Common slopes — click a row to load</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="text-align:left">Reference</th><th>Ratio</th><th>%</th><th>Angle</th><th>X:12</th></tr></thead>
+      <tbody id="ref"></tbody>
+    </table>
+  </div>
+  <div class="ref-note">Common values for quick loading. Confirm limits against the governing code edition and local amendments.</div>
+</div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var els = { deg:$('deg'), pct:$('pct'), x12:$('x12'), ratio:$('ratio') };
+  var rise = $('rise'), run = $('run');
+
+  var COMMON = [
+    ['Ramp 1:12', 1/12],
+    ['Walk / ramp threshold 1:20', 1/20],
+    ['Flat-roof drainage 2%', 0.02],
+    ['1:48 (≈ 2.1%)', 1/48],
+    ['5% grade', 0.05],
+    ['Roof pitch 3:12', 3/12],
+    ['Roof pitch 4:12', 4/12],
+    ['Roof pitch 6:12', 6/12],
+    ['Roof pitch 8:12', 8/12],
+    ['Roof pitch 12:12 (45°)', 1],
+    ['Stair at 7/10 (rise 7", run 10")', 7/10]
+  ];
+
+  var t = null;               // current slope as rise/run
+  var lock = false;
+
+  function fmt(v, d){
+    if (!isFinite(v)) return '';
+    var s = v.toFixed(d);
+    return s.indexOf('.') >= 0 ? s.replace(/\.?0+$/, '') : s;
+  }
+
+  function fromField(key, v){
+    switch(key){
+      case 'deg':   return v >= 90 ? NaN : Math.tan(v * Math.PI / 180);
+      case 'pct':   return v / 100;
+      case 'x12':   return v / 12;
+      case 'ratio': return v === 0 ? NaN : 1 / v;
+    }
+  }
+
+  function setAll(skip){
+    var vals = {
+      deg:   Math.atan(t) * 180 / Math.PI,
+      pct:   t * 100,
+      x12:   t * 12,
+      ratio: t === 0 ? NaN : 1 / t
+    };
+    var dec = { deg:3, pct:3, x12:3, ratio:3 };
+    Object.keys(els).forEach(function(k){
+      if (k !== skip) els[k].value = (t === null || isNaN(vals[k])) ? '' : fmt(vals[k], dec[k]);
+    });
+    draw();
+    updateRiseRun();
+  }
+
+  function clearOthers(skip){
+    Object.keys(els).forEach(function(k){ if (k !== skip) els[k].value = ''; });
+  }
+
+  function onSlopeInput(key){
+    var raw = els[key].value;
+    var warn = $('warn');
+    warn.hidden = true;
+    if (raw === '' || isNaN(parseFloat(raw))){
+      t = null; clearOthers(key); draw(); updateRiseRun(); return;
+    }
+    var v = parseFloat(raw);
+    if (v < 0){ t = null; clearOthers(key); warn.textContent = 'Enter a non-negative value.'; warn.hidden = false; draw(); return; }
+    var tt = fromField(key, v);
+    if (isNaN(tt) || !isFinite(tt)){
+      t = null; clearOthers(key);
+      warn.textContent = key === 'deg' ? 'Angle must be less than 90°.' : 'Ratio must be greater than 0 (a 1:0 slope is vertical).';
+      warn.hidden = false; draw(); updateRiseRun(); return;
+    }
+    t = tt;
+    setAll(key);
+    if (t > 1){
+      warn.textContent = 'Steeper than 45° (X:12 above 12). Percent slope can exceed 100%.';
+      warn.hidden = false;
+    }
+  }
+
+  Object.keys(els).forEach(function(k){
+    els[k].addEventListener('input', function(){ onSlopeInput(k); });
+  });
+
+  function draw(){
+    var tri = $('tri'), arc = $('arc');
+    var W = 260, maxH = 95, x0 = 20, y0 = 110;
+    if (t === null){
+      tri.setAttribute('points', x0+','+y0+' '+(x0+W)+','+y0+' '+(x0+W)+','+y0);
+      arc.setAttribute('d', '');
+      $('tDeg').textContent = ''; $('tRise').textContent = '';
+      return;
+    }
+    var h = Math.min(t * W, maxH), w = t * W > maxH ? maxH / t : W;
+    var xr = x0 + w, yr = y0 - h;
+    tri.setAttribute('points', x0+','+y0+' '+xr+','+y0+' '+xr+','+yr);
+    var ang = Math.atan2(h, w), r = 34;
+    arc.setAttribute('d', 'M '+(x0+r)+' '+y0+' A '+r+' '+r+' 0 0 0 '+(x0+r*Math.cos(ang))+' '+(y0-r*Math.sin(ang)));
+    $('tDeg').setAttribute('x', x0 + r + 6);
+    $('tDeg').textContent = fmt(Math.atan(t)*180/Math.PI, 1) + '°';
+    var rt = $('tRise');
+    rt.setAttribute('x', Math.min(xr + 4, 262)); rt.setAttribute('y', y0 - h/2 + 4);
+    rt.textContent = fmt(t*12, 2) + ' : 12';
+    $('tRun').setAttribute('x', x0 + w/2);
+  }
+
+  // Rise / run helper
+  function updateRiseRun(){
+    var out = $('slopeLen');
+    var r = parseFloat(rise.value), n = parseFloat(run.value);
+    if (r > 0 || n > 0){
+      if (r >= 0 && n > 0 && !isNaN(r)){ out.textContent = 'Slope length: ' + fmt(Math.sqrt(r*r + n*n), 4); return; }
+    }
+    out.textContent = '';
+  }
+
+  function onRiseRun(changed){
+    var r = parseFloat(rise.value), n = parseFloat(run.value);
+    var rOk = !isNaN(r) && r >= 0, nOk = !isNaN(n) && n > 0;
+    if (rOk && nOk && (changed === 'both' || true) && (rise.value !== '' && run.value !== '')){
+      // both present: the one just edited drives; if slope exists and the other was auto-filled, recompute from both
+      t = r / n;
+      setAll(null);
+      $('warn').hidden = true;
+      updateRiseRun();
+      return;
+    }
+    if (t !== null && t > 0){
+      if (changed === 'rise' && rOk){ run.value = fmt(r / t, 4); }
+      else if (changed === 'run' && nOk){ rise.value = fmt(n * t, 4); }
+    }
+    updateRiseRun();
+  }
+  rise.addEventListener('input', function(){ onRiseRun('rise'); });
+  run.addEventListener('input',  function(){ onRiseRun('run'); });
+
+  $('clear').addEventListener('click', function(){
+    t = null;
+    Object.keys(els).forEach(function(k){ els[k].value = ''; });
+    rise.value = ''; run.value = '';
+    $('warn').hidden = true;
+    draw(); updateRiseRun();
+  });
+
+  // Reference table
+  var tb = $('ref');
+  COMMON.forEach(function(c){
+    var tt = c[1], tr = document.createElement('tr');
+    tr.innerHTML = '<td class="lbl">'+c[0]+'</td>'
+      + '<td>1:'+fmt(1/tt,2)+'</td>'
+      + '<td>'+fmt(tt*100,2)+'%</td>'
+      + '<td>'+fmt(Math.atan(tt)*180/Math.PI,2)+'°</td>'
+      + '<td>'+fmt(tt*12,2)+':12</td>';
+    tr.addEventListener('click', function(){
+      t = tt; rise.value = ''; run.value = ''; $('warn').hidden = true; setAll(null);
+    });
+    tb.appendChild(tr);
+  });
+
+  // Start at 1:12
+  t = 1/12; setAll(null);
+})();
+</script>
+</body>
+</html>

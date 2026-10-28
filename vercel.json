@@ -1,0 +1,709 @@
+{
+  "redirects": [
+    {
+      "source": "/nbc-classifier.html",
+      "destination": "/building-code/classification/",
+      "permanent": true
+    },
+    {
+      "source": "/washroom-calculator.html",
+      "destination": "/building-code/washrooms/",
+      "permanent": true
+    },
+    {
+      "source": "/glazed-opening-calculator.html",
+      "destination": "/building-code/glazed-openings/",
+      "permanent": true
+    },
+    {
+      "source": "/slope-calculator.html",
+      "destination": "/building-code/slope/",
+      "permanent": true
+    },
+    {
+      "source": "/calgary-tenancy-checker.html",
+      "destination": "/land-use/tenancy-checker/",
+      "permanent": true
+    },
+    {
+      "source": "/fee-calculator.html",
+      "destination": "/project-support/fee-proposal/",
+      "permanent": true
+    },
+    {
+      "source": "/calgary-commercial-permit-fee-calculator.html",
+      "destination": "/project-support/calgary-permit-fees/",
+      "permanent": true
+    },
+    {
+      "source": "/autocad-lisp-routines.html",
+      "destination": "/internal/lisp-routines/",
+      "permanent": true
+    },
+    {
+      "source": "/playwright-automations.html",
+      "destination": "/internal/playwright/",
+      "permanent": true
+    },
+    {
+      "source": "/revit-addin-learning-hub.html",
+      "destination": "/internal/revit-academy/",
+      "permanent": true
+    },
+    {
+      "source": "/folder-restructure-proposal.html",
+      "destination": "/internal/folder-restructure/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCCOR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cccor/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCCOR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cccor/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCEIR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cceir/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCEIR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cceir/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCEMU_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccemu/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCEMU_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccemu/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCEPR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccepr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCEPR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccepr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCER_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccer/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCER_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccer/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCERR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccerr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCERR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccerr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCET_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccet/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCET_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccet/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCMH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccmh/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCMH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccmh/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCMHX_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccmhx/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCMHX_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccmhx/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCOR1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCOR1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCOR2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCOR2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCOR3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCOR3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccor3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CCX_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccx/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CCX_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ccx/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CI_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ci/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CI_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ci/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CN1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cn1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CN1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cn1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CN2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cn2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CN2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cn2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/co/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/co/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CR1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CR1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CR2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CR2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CR20C20R20_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr20c20r20/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CR20C20R20_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr20c20r20/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CR3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CR3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cr3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CRI_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cri/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CRI_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cri/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/CS_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cs/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/CS_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/cs/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/HGO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/hgo/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/HGO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/hgo/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IB_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ib/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IB_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ib/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IC_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ic/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IC_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ic/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IE_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ie/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IE_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ie/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ig/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ig/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ih/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ih/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/io/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IO_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/io/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/IR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ir/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/IR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/ir/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/M1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/m1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/M1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/m1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/M2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/m2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/M2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/m2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MCG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mcg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MCG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mcg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MH1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MH1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MH2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MH2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MH3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MH3_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mh3/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MU1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mu1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MU1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mu1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MU2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mu2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MU2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mu2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MX1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mx1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MX1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mx1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/MX2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mx2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/MX2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/mx2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/R1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/R1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/R1N_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r1n/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/R1N_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r1n/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/R2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/R2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/R2M_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r2m/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/R2M_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/r2m/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RC1_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RC1L_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1l/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RC1L_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1l/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RC1N_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1n/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RC1N_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc1n/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RC2_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rc2/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RCG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rcg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RCG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rcg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RG_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rg/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/RMH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rmh/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/RMH_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/rmh/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/SFUD_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sfud/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/SFUD_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sfud/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/SR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/SR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/SSPR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sspr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/SSPR_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sspr/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/STUC_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/stuc/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/STUC_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/stuc/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/SUN_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sun/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/SUN_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/sun/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/SURP_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/surp/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/SURP_Zoning_Review_Checklist.html",
+      "destination": "/land-use/checklists/surp/",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/Calgary_Land_Use_Bylaw_1P2007.html",
+      "destination": "https://www.calgary.ca/planning/land-use/districts.html",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/Calgary_Land_Use_Bylaw_1P2007.html",
+      "destination": "https://www.calgary.ca/planning/land-use/districts.html",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry%201P2007/Calgary%20Land%20Use%20Bylaw%201P2007.pdf",
+      "destination": "https://www.calgary.ca/planning/land-use/districts.html",
+      "permanent": true
+    },
+    {
+      "source": "/Calagry 1P2007/Calgary Land Use Bylaw 1P2007.pdf",
+      "destination": "https://www.calgary.ca/planning/land-use/districts.html",
+      "permanent": true
+    }
+  ]
+}

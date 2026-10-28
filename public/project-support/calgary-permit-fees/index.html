@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calgary Commercial Permit Fee Calculator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-2: #f0efe9;
+      --border: rgba(0,0,0,0.12);
+      --border-strong: rgba(0,0,0,0.22);
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b67;
+      --text-tertiary: #a0a09b;
+      --info-bg: #e6f1fb;
+      --info-text: #185fa5;
+      --warn-bg: #faeeda;
+      --warn-text: #854f0b;
+      --danger-bg: #fcebeb;
+      --danger-text: #a32d2d;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --surface: #242422;
+        --surface-2: #2c2c2a;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.18);
+        --text-primary: #e8e8e2;
+        --text-secondary: #9b9b95;
+        --text-tertiary: #636360;
+        --info-bg: #042c53;
+        --info-text: #85b7eb;
+        --warn-bg: #412402;
+        --warn-text: #fac775;
+        --danger-bg: #501313;
+        --danger-text: #f09595;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+      max-width: 900px;
+    }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+      .summary-col { order: -1; }
+    }
+
+    .sec {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .base-amt {
+      display: flex;
+      align-items: center;
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+
+    .base-amt span {
+      font-size: 15px;
+      color: var(--text-tertiary);
+      padding: 0 10px;
+    }
+
+    .base-amt input {
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 500;
+      width: 100%;
+      padding: 10px 12px 10px 0;
+      outline: none;
+      color: var(--text-primary);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 128px 30px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="number"] {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 7px 10px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: var(--border-strong);
+    }
+
+    input::placeholder { color: var(--text-tertiary); }
+
+    .amt-wrap {
+      display: flex;
+      align-items: center;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface-2);
+      transition: border-color 0.15s;
+    }
+
+    .amt-wrap:focus-within { border-color: var(--border-strong); }
+
+    .amt-wrap span {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      padding: 0 7px;
+    }
+
+    .amt-wrap input {
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-align: right;
+      width: 100%;
+      padding: 7px 8px 7px 0;
+      outline: none;
+    }
+
+    .rm {
+      background: none;
+      border: 0.5px solid var(--border);
+      cursor: pointer;
+      color: var(--text-tertiary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .rm:hover {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-color: transparent;
+    }
+
+    .add-btn {
+      background: none;
+      border: 0.5px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      margin-top: 6px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .add-btn:hover {
+      background: var(--surface-2);
+      color: var(--text-primary);
+    }
+
+    .sum-panel {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+
+    .sum-panel-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+    }
+
+    .sum-label { font-size: 13px; color: var(--text-secondary); }
+    .sum-val { font-family: var(--font-mono); font-size: 13px; }
+    .sum-div { border: none; border-top: 0.5px solid var(--border); margin: 8px 0; }
+    .sum-strong { font-size: 14px; font-weight: 500; }
+    .sum-strong-val { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+
+    .total-box {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .total-label { font-size: 14px; font-weight: 500; }
+    .total-val { font-family: var(--font-mono); font-size: 22px; font-weight: 500; }
+
+    .dash { color: var(--text-tertiary); }
+  
+    .hint { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; margin-bottom: 4px; }
+    .note { font-size: 12px; color: var(--text-secondary); margin-top: 12px; line-height: 1.5; }
+    .sum-sub .sum-label { padding-left: 10px; font-size: 12px; }
+    .sum-sub .sum-val { font-size: 12px; }
+</style>
+</head>
+<body>
+<style>
+.pdg-topnav{position:sticky;top:0;z-index:1000;background:#17171a;color:#e8e8e2;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:9px 18px;letter-spacing:.01em}
+.pdg-topnav a{color:inherit;text-decoration:none}
+.pdg-topnav a:hover{text-decoration:underline}
+</style>
+<div class="pdg-topnav"><a href="/">&larr; PDG Support Docs</a></div>
+
+  <header>
+    <h1>Calgary commercial building permit fee calculator</h1>
+    <p>Mirrors the City of Calgary commercial building permit fee calculator, then adds PDG's 9% admin handling fee on the City fees.</p>
+  </header>
+
+  <div class="layout">
+
+    <div class="inputs-col">
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-title">Step 1 &mdash; Base permit fee</span></div>
+        <div class="field">
+          <label for="pmv">Prevailing market value (PMV)</label>
+          <div class="base-amt"><span>$</span><input type="number" id="pmv" min="0" step="1" placeholder="0" oninput="recalc()"></div>
+          <p class="hint">Rounded up to the next $100. Rate: $10.14 per $1,000, plus $112.00 minimum processing fee.</p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <span class="sec-title">Step 2 &mdash; Additional fees</span>
+        </div>
+        <div class="field">
+          <label for="area">Partial permit &mdash; building area (m&sup2;) <span class="badge" style="background:var(--surface-2);color:var(--text-secondary);">optional</span></label>
+          <div class="amt-wrap"><span>m&sup2;</span><input type="number" id="area" min="0" step="any" placeholder="0" oninput="recalc()"></div>
+          <p class="hint">Building area as defined by the Alberta Building Code. $1.44/m&sup2;, min $112.00, max $4,420.00. Leave blank if no partial permit is requested.</p>
+        </div>
+        <div class="field">
+          <label for="ha">Lot grading &mdash; hectares</label>
+          <div class="amt-wrap"><span>ha</span><input type="number" id="ha" min="0" step="any" placeholder="0" oninput="recalc()"></div>
+          <p class="hint">Commercial/Industrial lot grading, required on all new buildings. Rounded up to the next whole hectare, $80.00 per hectare.</p>
+        </div>
+        <p class="note">Safety Codes Council fee: 4% of the base permit fee (min $4.50, max $560.00), and 4% of the partial permit rate if one is requested (min $4.50, max $560.00).</p>
+      </div>
+
+    </div>
+
+    <div class="summary-col">
+      <div class="sum-panel">
+        <p class="sum-panel-title">City of Calgary fees</p>
+
+        <div class="sum-row"><span class="sum-label">PMV (rounded up)</span><span class="sum-val dash" id="s-pmv">&mdash;</span></div>
+        <div class="sum-row sum-sub"><span class="sum-label">Permit rate</span><span class="sum-val dash" id="s-rate">&mdash;</span></div>
+        <div class="sum-row sum-sub"><span class="sum-label">Minimum processing fee</span><span class="sum-val dash" id="s-min">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-strong">Base permit fee</span><span class="sum-strong-val dash" id="s-base">&mdash;</span></div>
+        <hr class="sum-div">
+        <div class="sum-row"><span class="sum-label">Safety Codes Council &mdash; base</span><span class="sum-val dash" id="s-scc">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label">Partial permit rate</span><span class="sum-val dash" id="s-partial">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label">Safety Codes Council &mdash; partial</span><span class="sum-val dash" id="s-scc-p">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label">Lot grading</span><span class="sum-val dash" id="s-grade">&mdash;</span></div>
+        <hr class="sum-div">
+        <div class="sum-row"><span class="sum-strong">Total permit fee</span><span class="sum-strong-val dash" id="s-permit">&mdash;</span></div>
+        <p class="hint">No GST on City permit fees.</p>
+        <hr class="sum-div">
+
+        <p class="sum-panel-title">PDG charge to client</p>
+        <div class="sum-row"><span class="sum-label">Permit fee disbursement</span><span class="sum-val dash" id="s-disb">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label">Admin handling (9%)</span><span class="sum-val dash" id="s-ahf">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label">GST (5% on AHF only)</span><span class="sum-val dash" id="s-gst">&mdash;</span></div>
+
+        <div class="total-box">
+          <span class="total-label">Total to client</span>
+          <span class="total-val dash" id="s-total">&mdash;</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var RATE_PER_1000 = 10.14, MIN_PROCESSING = 112.00;
+    var SCC_PCT = 0.04, SCC_MIN = 4.50, SCC_MAX = 560.00;
+    var PARTIAL_RATE = 1.44, PARTIAL_MIN = 112.00, PARTIAL_MAX = 4420.00;
+    var GRADING_PER_HA = 80.00, AHF_PCT = 0.09, GST_PCT = 0.05;
+
+    function fmt(n) {
+      return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+    function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
+
+    function setVal(id, val, hasData) {
+      var el = document.getElementById(id);
+      if (hasData) { el.textContent = fmt(val); el.classList.remove('dash'); }
+      else { el.textContent = '\u2014'; el.classList.add('dash'); }
+    }
+
+    function recalc() {
+      var pmvIn = parseFloat(document.getElementById('pmv').value) || 0;
+      var area  = parseFloat(document.getElementById('area').value) || 0;
+      var ha    = parseFloat(document.getElementById('ha').value) || 0;
+      var any   = pmvIn > 0 || area > 0 || ha > 0;
+
+      var pmv     = Math.ceil(pmvIn / 100) * 100;
+      var rate    = round2(pmv / 1000 * RATE_PER_1000);
+      var base    = round2(rate + MIN_PROCESSING);
+      var scc     = round2(clamp(base * SCC_PCT, SCC_MIN, SCC_MAX));
+      var partial = area > 0 ? round2(clamp(area * PARTIAL_RATE, PARTIAL_MIN, PARTIAL_MAX)) : 0;
+      var sccP    = area > 0 ? round2(clamp(partial * SCC_PCT, SCC_MIN, SCC_MAX)) : 0;
+      var grade   = round2(Math.ceil(ha) * GRADING_PER_HA);
+      var permit  = round2(base + scc + partial + sccP + grade);
+
+      var ahf   = round2(permit * AHF_PCT);
+      var gst   = round2(ahf * GST_PCT);
+      var total = round2(permit + ahf + gst);
+
+      setVal('s-pmv', pmv, any);
+      setVal('s-rate', rate, any);
+      setVal('s-min', MIN_PROCESSING, any);
+      setVal('s-base', base, any);
+      setVal('s-scc', scc, any);
+      setVal('s-partial', partial, any);
+      setVal('s-scc-p', sccP, any);
+      setVal('s-grade', grade, any);
+      setVal('s-permit', permit, any);
+      setVal('s-disb', permit, any);
+      setVal('s-ahf', ahf, any);
+      setVal('s-gst', gst, any);
+      setVal('s-total', total, any);
+    }
+  </script>
+
+</body>
+</html>

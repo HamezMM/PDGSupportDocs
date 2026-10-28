@@ -1,19 +1,51 @@
 # PDG Support Docs
 
-Internal calculators, reference tools, and working documents for the Peake Design team, published as a static site on Vercel at **https://pdgdocs.peakos.ca**.
+Internal training guides, calculators, reference tools, and working documents for the Peake Design team, built with [Astro](https://astro.build) and hosted on Vercel at **https://pdgdocs.peakos.ca**.
 
-**Homepage:** `index.html` — links to every page in the site.
+## Sections
 
-## Adding a new page
+| Section | URL | Contents |
+|---|---|---|
+| Training | `/training/` | All Scribe workflow guides (cards open the Scribe viewer) |
+| Land Use Tools | `/land-use/` | Tenancy checker, 63 Calgary LUB 1P2007 district checklists, link to the City's bylaw page |
+| Building Code Tools | `/building-code/` | NBC calculators and slope calculator |
+| Revit Support | `/revit/` | PDG Revit Tools reference |
+| Project Support | `/project-support/` | Fee proposal and Calgary permit fee calculators |
+| Internal Tools | `/internal/` | Revit Add-in Academy, LISP routines, Playwright automations, folder restructure proposal |
 
-1. Add a standalone `.html` file to the repo root (it should be a complete document with its own `<!DOCTYPE html>`, `<head>`, and `<body>` — not a fragment).
-2. Add a card for it to `index.html` under the most relevant section (or add a new section).
-3. Commit and push — Vercel redeploys automatically.
+## Local development
+
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # outputs to dist/
+```
+
+## Layout
+
+- `src/pages/` — Astro pages (home, section indexes, Training, checklist index)
+- `src/layouts/`, `src/components/` — shared nav, footer, cards
+- `src/data/sections.ts` — section headings and the tool cards on each section page
+- `src/data/guides.json` — Scribe guide metadata (title, URL, tags) for the Training page
+- `src/data/checklists.json` — district checklist index
+- `public/<section>/<tool>/index.html` — standalone tools and checklists, served as-is
+- `vercel.json` — redirects from the old flat URLs (e.g. `/nbc-classifier.html`) to the new paths
+- `docs/` — non-published working notes
+
+## Adding things
+
+- **A Scribe guide:** add an entry to `src/data/guides.json`.
+- **A standalone tool/page:** put a complete `.html` document at `public/<section>/<slug>/index.html` (link back to `/`), then add a card in `src/data/sections.ts`.
+- **A new section:** add it to `sections` in `src/data/sections.ts` (and a page under `src/pages/` if it needs more than cards).
 
 ## Hosting on Vercel
 
-There is no build step. If the Vercel project needs to be set up again:
-
 1. **Add New → Project**, import this GitHub repo.
-2. Framework Preset: **Other**. Leave the Build Command empty and the Output Directory at the repo root.
-3. **Settings → Domains**: add `pdgdocs.peakos.ca` and create the DNS record Vercel shows (a CNAME to `cname.vercel-dns.com`, or the value Vercel displays).
+2. Framework Preset: **Astro** (Build Command `astro build`, Output Directory `dist`).
+3. **Settings → Domains**: `pdgdocs.peakos.ca` (CNAME to `cname.vercel-dns.com`, or the value Vercel displays).
+
+If the existing project was created with Framework Preset **Other** and the repo root as the output directory, change it to Astro before merging this branch, or the deploy will serve the wrong folder.
+
+## Auth
+
+Not yet implemented. `BaseLayout.astro` marks where the session check goes.

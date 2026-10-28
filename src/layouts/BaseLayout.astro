@@ -1,0 +1,126 @@
+---
+import { sections } from '../data/sections';
+
+interface Props {
+  title: string;
+  description?: string;
+  crumbs?: { label: string; href?: string }[];
+}
+
+const { title, description, crumbs = [] } = Astro.props;
+const path = Astro.url.pathname;
+const pageTitle = title === 'PDG Support Docs' ? title : `${title} — PDG Support Docs`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <style is:global>
+      :root {
+        --bg: #f5f4f0;
+        --surface: #ffffff;
+        --surface-2: #f0efe9;
+        --border: rgba(0, 0, 0, 0.12);
+        --border-strong: rgba(0, 0, 0, 0.22);
+        --text-primary: #1a1a18;
+        --text-secondary: #6b6b67;
+        --text-tertiary: #a0a09b;
+        --accent: #185fa5;
+        --accent-bg: #e6f1fb;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1c1c1a;
+          --surface: #242422;
+          --surface-2: #2c2c2a;
+          --border: rgba(255, 255, 255, 0.1);
+          --border-strong: rgba(255, 255, 255, 0.18);
+          --text-primary: #e8e8e2;
+          --text-secondary: #9b9b95;
+          --text-tertiary: #636360;
+          --accent: #85b7eb;
+          --accent-bg: #042c53;
+        }
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { background: var(--bg); }
+      body {
+        font-family: var(--font-sans);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a { color: inherit; }
+      .site-nav {
+        position: sticky; top: 0; z-index: 100;
+        background: #17171a; color: #e8e8e2;
+        font-size: 13px; font-weight: 600;
+      }
+      .site-nav-inner {
+        max-width: 1040px; margin: 0 auto; padding: 0 1.5rem;
+        display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+      }
+      .site-nav a { color: inherit; text-decoration: none; padding: 11px 10px; display: block; opacity: 0.75; }
+      .site-nav a:hover { opacity: 1; }
+      .site-nav a.brand { opacity: 1; padding-left: 0; margin-right: 8px; }
+      .site-nav a[aria-current='page'] { opacity: 1; box-shadow: inset 0 -2px 0 #85b7eb; }
+      .wrap { max-width: 1040px; width: 100%; margin: 0 auto; padding: 2rem 1.5rem 3rem; flex: 1; }
+      .crumbs { font-size: 12px; color: var(--text-secondary); margin-bottom: 1rem; }
+      .crumbs a { text-decoration: none; color: var(--accent); }
+      .crumbs a:hover { text-decoration: underline; }
+      .crumbs span + span::before, .crumbs a + span::before { content: '/'; margin: 0 6px; color: var(--text-tertiary); }
+      h1.page-title { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+      p.page-lede { font-size: 14px; color: var(--text-secondary); margin: 6px 0 1.75rem; max-width: 68ch; line-height: 1.55; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+      .card {
+        display: flex; flex-direction: column; gap: 6px;
+        background: var(--surface); border: 0.5px solid var(--border);
+        border-radius: var(--radius-lg); padding: 1rem 1.1rem;
+        text-decoration: none; transition: border-color 0.15s, transform 0.15s;
+      }
+      .card:hover { border-color: var(--accent); transform: translateY(-1px); }
+      .card-title { font-size: 14.5px; font-weight: 600; }
+      .card-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+      .card-tag {
+        align-self: flex-start; font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
+        color: var(--accent); background: var(--accent-bg); border-radius: 5px; padding: 2px 7px;
+      }
+      .site-footer { border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-tertiary); padding: 1.25rem 1.5rem; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <!-- Auth: a session check belongs here (or in src/middleware.ts) once the sign-in step is built. -->
+    <nav class="site-nav" aria-label="Sections">
+      <div class="site-nav-inner">
+        <a class="brand" href="/">PDG Support Docs</a>
+        {
+          sections.map((s) => (
+            <a href={`/${s.slug}/`} aria-current={path.startsWith(`/${s.slug}/`) ? 'page' : undefined}>
+              {s.title}
+            </a>
+          ))
+        }
+      </div>
+    </nav>
+    <main class="wrap">
+      {
+        crumbs.length > 0 && (
+          <div class="crumbs">
+            <a href="/">Home</a>
+            {crumbs.map((c) => (c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>))}
+          </div>
+        )
+      }
+      <slot />
+    </main>
+    <footer class="site-footer">Peake Design Group — internal staff use</footer>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolCard from './ToolCard.astro';
+import { sectionBySlug } from '../data/sections';
+
+const { slug } = Astro.props as { slug: string };
+const section = sectionBySlug(slug);
+---
+
+<BaseLayout title={section.title} description={section.description} crumbs={[{ label: section.title }]}>
+  <h1 class="page-title">{section.title}</h1>
+  <p class="page-lede">{section.description}</p>
+  <div class="grid">
+    {section.tools.map((tool) => <ToolCard tool={tool} />)}
+  </div>
+  <slot />
+</BaseLayout>
