@@ -48,4 +48,7 @@ If the existing project was created with Framework Preset **Other** and the repo
 
 ## Auth
 
-Not yet implemented. `BaseLayout.astro` marks where the session check goes.
+The whole site requires Microsoft 365 (Entra ID) sign-in, enforced by the root `middleware.ts`
+(Vercel Routing Middleware, which also covers the static files in `public/`). The site returns a 500
+until the `AUTH_*` environment variables are set. Setup steps, rollout and limits are in
+[`docs/AUTH_SETUP.md`](docs/AUTH_SETUP.md); run the tests with `npm test`.

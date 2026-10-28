@@ -72,6 +72,8 @@ const pageTitle = title === 'PDG Support Docs' ? title : `${title} — PDG Suppo
       .site-nav a:hover { opacity: 1; }
       .site-nav a.brand { opacity: 1; padding-left: 0; margin-right: 8px; }
       .site-nav a[aria-current='page'] { opacity: 1; box-shadow: inset 0 -2px 0 #85b7eb; }
+      .site-nav .who { margin-left: auto; font-weight: 500; font-size: 12px; opacity: 0.8; padding: 11px 0; }
+      .site-nav .who a { display: inline; padding: 0; text-decoration: underline; opacity: 1; }
       .wrap { max-width: 1040px; width: 100%; margin: 0 auto; padding: 2rem 1.5rem 3rem; flex: 1; }
       .crumbs { font-size: 12px; color: var(--text-secondary); margin-bottom: 1rem; }
       .crumbs a { text-decoration: none; color: var(--accent); }
@@ -97,7 +99,7 @@ const pageTitle = title === 'PDG Support Docs' ? title : `${title} — PDG Suppo
     </style>
   </head>
   <body>
-    <!-- Auth: a session check belongs here (or in src/middleware.ts) once the sign-in step is built. -->
+    <!-- Auth is enforced by the root middleware.ts (Vercel Routing Middleware), not in Astro. -->
     <nav class="site-nav" aria-label="Sections">
       <div class="site-nav-inner">
         <a class="brand" href="/">PDG Support Docs</a>
@@ -108,8 +110,26 @@ const pageTitle = title === 'PDG Support Docs' ? title : `${title} — PDG Suppo
             </a>
           ))
         }
+        <span class="who" id="who" hidden></span>
       </div>
     </nav>
+    <script>
+      // The auth middleware answers /auth/me for signed-in users; hide the badge if it doesn't.
+      fetch('/auth/me', { credentials: 'same-origin' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((u: { name?: string; email?: string } | null) => {
+          const el = document.getElementById('who');
+          if (!u || !el) return;
+          el.textContent = '';
+          el.append(u.name || u.email || 'Signed in', ' · ');
+          const out = document.createElement('a');
+          out.href = '/auth/logout';
+          out.textContent = 'Sign out';
+          el.append(out);
+          el.hidden = false;
+        })
+        .catch(() => {});
+    </script>
     <main class="wrap">
       {
         crumbs.length > 0 && (
