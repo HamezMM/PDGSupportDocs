@@ -1,0 +1,65 @@
+{
+  "assemblyTypes": ["Wall", "Floor/Ceiling", "Roof/Ceiling", "Beam", "Column"],
+  "ratings": ["45 min", "1 h", "1.5 h", "2 h", "3 h", "4 h"],
+  "protectionMethods": [
+    "Gypsum board",
+    "Spray-applied fireproofing",
+    "Intumescent coating",
+    "Concrete/masonry",
+    "Membrane protection"
+  ],
+  "assemblies": [
+    {
+      "listing": "U404",
+      "title": "Interior partition, steel stud, gypsum board both sides",
+      "listingBody": "UL / cUL",
+      "assemblyType": "Wall",
+      "ratings": ["1 h", "2 h"],
+      "protection": ["Gypsum board"],
+      "loadBearing": false,
+      "url": "https://iq.ulprospector.com/en/profile?e=14964",
+      "lastChecked": "2021-10-26",
+      "approvedBy": null,
+      "reviewDate": null
+    },
+    {
+      "listing": "U419",
+      "title": "Interior partition, steel stud, gypsum board both sides",
+      "listingBody": "UL / cUL",
+      "assemblyType": "Wall",
+      "ratings": ["1 h", "2 h", "3 h", "4 h"],
+      "protection": ["Gypsum board"],
+      "loadBearing": false,
+      "url": "https://iq.ulprospector.com/en/profile?e=14979",
+      "lastChecked": "2022-02-01",
+      "approvedBy": null,
+      "reviewDate": null
+    },
+    {
+      "listing": "W453",
+      "title": "Shaftliner wall, horizontal C-H studs, gypsum board",
+      "listingBody": "UL / cUL",
+      "assemblyType": "Wall",
+      "ratings": ["1 h", "2 h"],
+      "protection": ["Gypsum board"],
+      "loadBearing": false,
+      "url": "https://iq.ulprospector.com/en/profile?e=15313",
+      "lastChecked": "2022-09-13",
+      "approvedBy": null,
+      "reviewDate": null
+    },
+    {
+      "listing": "U901",
+      "title": "CMU block firewall (load restricted; 1 h if combustible members framed in)",
+      "listingBody": "ULC",
+      "assemblyType": "Wall",
+      "ratings": ["4 h"],
+      "protection": ["Concrete/masonry"],
+      "loadBearing": null,
+      "url": null,
+      "lastChecked": null,
+      "approvedBy": null,
+      "reviewDate": null
+    }
+  ]
+}
