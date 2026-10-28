@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import guides from '../../data/guides.json';
+import { sectionBySlug } from '../../data/sections';
+
+const section = sectionBySlug('training');
+
+const TOPIC_ORDER = ['Revit', 'Matterport', 'Project', 'Office', 'AutoCAD', 'ACC'];
+const topics = TOPIC_ORDER.filter((t) => guides.some((g) => g.category === t));
+const apps = [...new Set(guides.flatMap((g) => g.apps))].sort((a, b) => a.localeCompare(b));
+const topicCounts = Object.fromEntries(topics.map((t) => [t, guides.filter((g) => g.category === t).length]));
+
+const rows = guides.map((g) => ({
+  ...g,
+  tags: [g.category, ...(g.series ? [g.series] : []), ...g.apps.filter((a) => a.toLowerCase() !== g.category.toLowerCase()).slice(0, 2)],
+  hay: [g.title, g.series ?? '', g.topics.join(' '), g.apps.join(' ')].join(' ').toLowerCase(),
+}));
+---
+
+<BaseLayout title="Training" description={section.description} crumbs={[{ label: 'Training' }]}>
+  <h1 class="page-title">Training</h1>
+  <p class="page-lede">
+    Step-by-step workflow guides. Each guide opens in Scribe in a new tab. Looking for add-in development training?
+    See the <a href="/internal/revit-academy/">Revit Add-in Academy</a>.
+  </p>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder='Search guides, e.g. "keynotes" or "Matterport"' autocomplete="off" aria-label="Search guides" />
+    <select id="app" aria-label="Filter by application">
+      <option value="">All applications</option>
+      {apps.map((a) => <option value={a}>{a}</option>)}
+    </select>
+  </div>
+  <div class="chips" id="topics" role="group" aria-label="Filter by topic">
+    <button type="button" class="chip active" data-topic="">All ({guides.length})</button>
+    {topics.map((t) => <button type="button" class="chip" data-topic={t}>{t} ({topicCounts[t]})</button>)}
+  </div>
+
+  <p class="count" id="count" aria-live="polite"></p>
+  <div class="list" id="list">
+    {
+      rows.map((g) => (
+        <a class="row" href={g.url} target="_blank" rel="noopener" data-topic={g.category} data-apps={g.apps.join('|')} data-hay={g.hay}>
+          <div>
+            <div class="row-title">{g.title}</div>
+            <div class="tags">{g.tags.map((t) => <span class="tag">{t}</span>)}</div>
+          </div>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      ))
+    }
+  </div>
+  <p class="empty" id="empty" hidden>No guides match those filters.</p>
+</BaseLayout>
+
+<style>
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  input, select {
+    font: inherit; font-size: 13px; color: var(--text-primary);
+    background: var(--surface); border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); padding: 8px 12px;
+  }
+  input { flex: 1 1 280px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-secondary);
+    background: var(--surface); border: 0.5px solid var(--border); border-radius: 999px; padding: 4px 12px;
+  }
+  .chip.active { color: var(--accent); background: var(--accent-bg); border-color: var(--accent); }
+  .count { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+  .list { display: flex; flex-direction: column; gap: 6px; }
+  .row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; text-decoration: none;
+    background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px;
+  }
+  .row:hover { border-color: var(--accent); }
+  .row[hidden] { display: none; }
+  .row-title { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .tag { font-size: 10px; font-weight: 600; letter-spacing: 0.03em; color: var(--text-secondary); background: var(--surface-2); border-radius: 5px; padding: 2px 7px; }
+  .arrow { color: var(--text-tertiary); }
+  .empty { padding: 2rem 1rem; text-align: center; color: var(--text-secondary); font-size: 13px; }
+  .page-lede a { color: var(--accent); }
+</style>
+
+<script>
+  const q = document.getElementById('q') as HTMLInputElement;
+  const app = document.getElementById('app') as HTMLSelectElement;
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('#topics .chip'));
+  const rows = Array.from(document.querySelectorAll<HTMLAnchorElement>('#list .row'));
+  const count = document.getElementById('count')!;
+  const empty = document.getElementById('empty')!;
+  let topic = '';
+
+  function render() {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    for (const row of rows) {
+      const ok =
+        (!topic || row.dataset.topic === topic) &&
+        (!app.value || row.dataset.apps!.split('|').includes(app.value)) &&
+        (!term || row.dataset.hay!.includes(term));
+      row.hidden = !ok;
+      if (ok) shown++;
+    }
+    count.textContent = `Showing ${shown} of ${rows.length} guides`;
+    empty.hidden = shown > 0;
+    chips.forEach((c) => c.classList.toggle('active', c.dataset.topic === topic));
+  }
+
+  q.addEventListener('input', render);
+  app.addEventListener('change', render);
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      topic = c.dataset.topic ?? '';
+      render();
+    }),
+  );
+  render();
+</script>

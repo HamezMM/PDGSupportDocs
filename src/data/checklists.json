@@ -1,0 +1,289 @@
+[
+  {
+    "title": "Residential Districts",
+    "items": [
+      {
+        "slug": "r1",
+        "label": "R-1"
+      },
+      {
+        "slug": "r1n",
+        "label": "R-1N"
+      },
+      {
+        "slug": "r2",
+        "label": "R-2"
+      },
+      {
+        "slug": "r2m",
+        "label": "R-2M"
+      },
+      {
+        "slug": "rc1",
+        "label": "R-C1"
+      },
+      {
+        "slug": "rc1l",
+        "label": "R-C1L"
+      },
+      {
+        "slug": "rc1n",
+        "label": "R-C1N"
+      },
+      {
+        "slug": "rc2",
+        "label": "R-C2"
+      },
+      {
+        "slug": "rcg",
+        "label": "R-CG"
+      },
+      {
+        "slug": "rg",
+        "label": "R-G"
+      },
+      {
+        "slug": "rmh",
+        "label": "R-MH"
+      }
+    ]
+  },
+  {
+    "title": "Multi-Residential Districts",
+    "items": [
+      {
+        "slug": "m1",
+        "label": "M-1"
+      },
+      {
+        "slug": "m2",
+        "label": "M-2"
+      },
+      {
+        "slug": "mc1",
+        "label": "M-C1"
+      },
+      {
+        "slug": "mc2",
+        "label": "M-C2"
+      },
+      {
+        "slug": "mcg",
+        "label": "M-CG"
+      },
+      {
+        "slug": "mg",
+        "label": "M-G"
+      },
+      {
+        "slug": "mh1",
+        "label": "M-H1"
+      },
+      {
+        "slug": "mh2",
+        "label": "M-H2"
+      },
+      {
+        "slug": "mh3",
+        "label": "M-H3"
+      },
+      {
+        "slug": "mx1",
+        "label": "M-X1"
+      },
+      {
+        "slug": "mx2",
+        "label": "M-X2"
+      }
+    ]
+  },
+  {
+    "title": "Mixed Use & Housing Districts",
+    "items": [
+      {
+        "slug": "mu1",
+        "label": "MU-1"
+      },
+      {
+        "slug": "mu2",
+        "label": "MU-2"
+      },
+      {
+        "slug": "hgo",
+        "label": "H-GO"
+      }
+    ]
+  },
+  {
+    "title": "Commercial Districts",
+    "items": [
+      {
+        "slug": "cn1",
+        "label": "C-N1"
+      },
+      {
+        "slug": "cn2",
+        "label": "C-N2"
+      },
+      {
+        "slug": "cc1",
+        "label": "C-C1"
+      },
+      {
+        "slug": "cc2",
+        "label": "C-C2"
+      },
+      {
+        "slug": "ccor1",
+        "label": "C-COR1"
+      },
+      {
+        "slug": "ccor2",
+        "label": "C-COR2"
+      },
+      {
+        "slug": "ccor3",
+        "label": "C-COR3"
+      },
+      {
+        "slug": "co",
+        "label": "C-O"
+      },
+      {
+        "slug": "cr1",
+        "label": "C-R1"
+      },
+      {
+        "slug": "cr2",
+        "label": "C-R2"
+      },
+      {
+        "slug": "cr3",
+        "label": "C-R3"
+      },
+      {
+        "slug": "cr20c20r20",
+        "label": "CR20-C20/R20"
+      }
+    ]
+  },
+  {
+    "title": "Centre City Districts",
+    "items": [
+      {
+        "slug": "cccor",
+        "label": "CC-COR"
+      },
+      {
+        "slug": "cceir",
+        "label": "CC-EIR"
+      },
+      {
+        "slug": "ccemu",
+        "label": "CC-EMU"
+      },
+      {
+        "slug": "ccepr",
+        "label": "CC-EPR"
+      },
+      {
+        "slug": "ccerr",
+        "label": "CC-ERR"
+      },
+      {
+        "slug": "ccer",
+        "label": "CC-ER"
+      },
+      {
+        "slug": "ccet",
+        "label": "CC-ET"
+      },
+      {
+        "slug": "ccmh",
+        "label": "CC-MH"
+      },
+      {
+        "slug": "ccmhx",
+        "label": "CC-MHX"
+      },
+      {
+        "slug": "ccx",
+        "label": "CC-X"
+      }
+    ]
+  },
+  {
+    "title": "Industrial Districts",
+    "items": [
+      {
+        "slug": "ib",
+        "label": "I-B"
+      },
+      {
+        "slug": "ic",
+        "label": "I-C"
+      },
+      {
+        "slug": "ie",
+        "label": "I-E"
+      },
+      {
+        "slug": "ig",
+        "label": "I-G"
+      },
+      {
+        "slug": "ih",
+        "label": "I-H"
+      },
+      {
+        "slug": "io",
+        "label": "I-O"
+      },
+      {
+        "slug": "ir",
+        "label": "I-R"
+      }
+    ]
+  },
+  {
+    "title": "Special Purpose Districts",
+    "items": [
+      {
+        "slug": "sun",
+        "label": "S-UN"
+      },
+      {
+        "slug": "sspr",
+        "label": "S-SPR"
+      },
+      {
+        "slug": "cri",
+        "label": "S-CRI"
+      },
+      {
+        "slug": "surp",
+        "label": "S-URP"
+      },
+      {
+        "slug": "sfud",
+        "label": "S-FUD"
+      },
+      {
+        "slug": "stuc",
+        "label": "S-TUC"
+      },
+      {
+        "slug": "sr",
+        "label": "S-R"
+      },
+      {
+        "slug": "ci",
+        "label": "S-CI"
+      },
+      {
+        "slug": "cs",
+        "label": "S-CS"
+      }
+    ]
+  }
+]

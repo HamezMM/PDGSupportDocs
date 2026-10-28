@@ -1,0 +1,822 @@
+[
+  {
+    "title": "ACC - Archiving a Project",
+    "url": "https://scribehow.com/viewer/ACC__How_to_Archive_a_Project__02nEtc8DQKS1r-wA9QbwHQ",
+    "category": "Project",
+    "series": "Project - Archiving",
+    "apps": [
+      "Web Browser",
+      "Autodesk Construction Cloud"
+    ],
+    "topics": [
+      "Project - Close Out"
+    ],
+    "teams": [
+      "Admin"
+    ]
+  },
+  {
+    "title": "ACC - Creating a project in Autodesk Construction Cloud",
+    "url": "https://scribehow.com/viewer/ACC__Creating_a_project_in_Autodesk_Construction_Cloud__74cBoZUPS_6sVTfN4iN7Cw",
+    "category": "ACC",
+    "series": null,
+    "apps": [
+      "Autodesk Construction Cloud",
+      "Web Browser"
+    ],
+    "topics": [
+      "ACC Project Management"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "ACC - Saving a Workshared Revit Model as a Standalone Revit Model",
+    "url": "https://scribehow.com/viewer/ACC__Saving_a_Workshared_Revit_Model_as_a_Standalone_Revit_Model__wkekwfxlReGbt3FQB0UeaA",
+    "category": "Revit",
+    "series": "Revit - Worksharing",
+    "apps": [
+      "Revit",
+      "Autodesk Construction Cloud",
+      "Web Browser"
+    ],
+    "topics": [
+      "Revit - File Startup"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Airtable - Adding a Project to the Job List",
+    "url": "https://scribehow.com/viewer/Airtable__Adding_a_Project_to_the_Job_List__i-W93mmNQkmdK9pAFaIvzA",
+    "category": "Project",
+    "series": "Project - MS Teams",
+    "apps": [
+      "Web Browser",
+      "MS Teams",
+      "Airtable"
+    ],
+    "topics": [
+      "Project - Start up"
+    ],
+    "teams": [
+      "Admin",
+      "Production"
+    ]
+  },
+  {
+    "title": "Airtable - Changing the name of job list in a project",
+    "url": "https://airtable.com/appDZKDvapg0r3c0h/tbl7knheomkfGmQ7T/recd98v2fmPJ3mCnQ",
+    "category": "Project",
+    "series": "Project - Proposals",
+    "apps": [
+      "Web Browser",
+      "Airtable"
+    ],
+    "topics": [
+      "Project - Start up"
+    ],
+    "teams": [
+      "Admin"
+    ]
+  },
+  {
+    "title": "Airtable - Changing the value of a fee proposal",
+    "url": "https://scribehow.com/viewer/Job_List__Updating_Proposal_Values___Y-vrRz5Rj6kPW6W4YGkrQ",
+    "category": "Project",
+    "series": "Project - Proposals",
+    "apps": [
+      "Web Browser",
+      "Airtable"
+    ],
+    "topics": [
+      "Project - Start up"
+    ],
+    "teams": [
+      "Admin"
+    ]
+  },
+  {
+    "title": "AutoCAD + Revit - Vehicle Path Tracking",
+    "url": "https://scribehow.com/viewer/AutoCAD__Revit__Vehicle_Path_Tracking__VHI0vFagQqaPSQXtEAu0tw",
+    "category": "Revit",
+    "series": "Revit - Vehicle Path",
+    "apps": [
+      "AutoCAD",
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Development Permits"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "AutoCAD - Exporting CADs from Revit",
+    "url": "https://scribehow.com/viewer/Autocad__Collate_dwg_files_Exported_from_Revit__u_qGa-27SO6I2DVI6tB1sA",
+    "category": "AutoCAD",
+    "series": "AutoCAD - CAD Backgrounds",
+    "apps": [
+      "AutoCAD"
+    ],
+    "topics": [
+      "AutoCAD - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "AutoCAD - How to Load and Apply LISP Routines",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/AutoCAD__How_to_Load_and_Apply_LISP_Routines__PdGYkMmLThyEovMmhZAuCg",
+    "category": "AutoCAD",
+    "series": null,
+    "apps": [
+      "AutoCAD"
+    ],
+    "topics": [
+      "AutoCAD - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "AutoCAD - Importing a PDF in AutoCAD",
+    "url": "https://scribehow.com/viewer/Import_a_PDF_into_AutoCAD__Q-k9NPCMSXCGDGTnC6sE_g",
+    "category": "Revit",
+    "series": "Revit - Import PDFs",
+    "apps": [
+      "AutoCAD",
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Claude - Marketing Copy Interview",
+    "url": "https://scribehow.com/viewer/Claude__Marketing_Copy_Interview__gFQ_i3XMQzSM63fwfQ0IqQ",
+    "category": "Project",
+    "series": "Project - Marketing Summary",
+    "apps": [
+      "Claude",
+      "Web Browser"
+    ],
+    "topics": [
+      "Project - Close Out"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Desktop Connector - Selecting ACC Projects to Syncronize",
+    "url": "https://scribehow.com/viewer/Desktop_Connector__Selecting_ACC_Projects_to_Syncronize__K9aCPMMzREWFxhAiZjYEhA",
+    "category": "ACC",
+    "series": null,
+    "apps": [
+      "Autodesk Desktop Connector",
+      "Autodesk Construction Cloud"
+    ],
+    "topics": [
+      "ACC Document Sync"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "How to Complete a Barrier Free Relaxation Application",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Complete_a_Barrier_Free_Relaxation_Application__KJ5vyQ_SSNyB3tE4Ceypiw",
+    "category": "Project",
+    "series": null,
+    "apps": [
+      "Web Browser"
+    ],
+    "topics": [
+      "Project - Barrier Free Application"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "How to Save out Meeting Notes Transcripts from the Audio Recorder",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Save_out_Meeting_Notes_Transcripts_from_the_Audio_Recorder__z4drJdCcS3ScjtRpog28AQ",
+    "category": "Office",
+    "series": null,
+    "apps": [
+      "Audio Recorder",
+      "MS Word"
+    ],
+    "topics": [
+      "Office - General"
+    ],
+    "teams": [
+      "Production",
+      "Admin"
+    ]
+  },
+  {
+    "title": "How to Sync Teams Folders from Sharepoint",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/How_to_Sync_Teams_Folders_from_Sharepoint__3EMM_-cVTM6siBwffIRfQQ",
+    "category": "Project",
+    "series": "Project - File Management",
+    "apps": [
+      "MS Teams",
+      "MS Sharepoint"
+    ],
+    "topics": [
+      "Project - Start up"
+    ],
+    "teams": [
+      "Admin",
+      "Production"
+    ]
+  },
+  {
+    "title": "How to Use the Project Diary",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG__How_to_Use_the_Project_Diary__wUebhzF2T9SkCFOEytegDg?referrer=workspace",
+    "category": "Office",
+    "series": null,
+    "apps": [
+      "MS Word"
+    ],
+    "topics": [
+      "Office - General"
+    ],
+    "teams": [
+      "Admin",
+      "Production"
+    ]
+  },
+  {
+    "title": "Keynotes - Adding a New Section to the Keynote File",
+    "url": "https://scribehow.com/viewer/Keynotes__Adding_a_New_Section_to_the_Keynote_File__mV89LBFKQYChyTpq5zW6dg",
+    "category": "Revit",
+    "series": "Revit - Keynotes",
+    "apps": [
+      "MS Excel",
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Keynotes - Creating the Keynote in Excel file to import to Revit",
+    "url": "https://scribehow.com/viewer/Keynote_Files__Creating_a_Projects_Keynote_File_in_xlsm_and_txt__Fb9ZPAQ8QrqZGZK_gbeY4Q",
+    "category": "Revit",
+    "series": "Revit - Keynotes",
+    "apps": [
+      "File Explorer",
+      "MS Excel"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Keynotes - Loading & Reloading the keynote file into Revit",
+    "url": "https://scribehow.com/viewer/Keynote_Files__Importing_the_txt_into_Revit__2OZmNpLFTEqk141MHqENJA",
+    "category": "Revit",
+    "series": "Revit - Keynotes",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - How to Archive a Space",
+    "url": "https://scribehow.com/viewer/Matterport__How_to_Archive_a_Space__Ym4XO3LQQ4m4N026n1WaAQ",
+    "category": "Matterport",
+    "series": "Matterport - Managing Scans",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - How to Share a Virtual Walkthrough Tour",
+    "url": "https://scribehow.com/viewer/Matterport__How_to_Share_a_Virtual_Walkthrough_Tour__gkMF5yaJSsqTZfQuNuNzOQ",
+    "category": "Matterport",
+    "series": "Matterport - Managing Scans",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - Merging Scans Matterport Tool Instruction",
+    "url": "https://scribehow.com/viewer/Matterport__Merging_Scans_Matterport_Tool_Instruction__6QRTxR_8SG6Pp7LLfR6Ylw",
+    "category": "Matterport",
+    "series": "Matterport - Merging Models",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - Merging Scans Together",
+    "url": "https://scribehow.com/viewer/Matterport__Merging_Scans_Together__xbcpmIeeQTqHWHvR1AtfBA",
+    "category": "Matterport",
+    "series": "Matterport - Merging Models",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - Purchasing a Matterpak Point Cloud",
+    "url": "https://scribehow.com/viewer/Purchasing_a_Matterpak_Point_Cloud__VADtu-FFQRqKE-2CMOAPbw",
+    "category": "Matterport",
+    "series": "Matterport - Managing Scans",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Matterport - Reactivating an Archived Scan",
+    "url": "https://scribehow.com/viewer/Matterport__Reactivating_an_Archived_Scan__UZJH-rAqS2WkMa9MMFxe2Q",
+    "category": "Matterport",
+    "series": "Matterport - Managing Scans",
+    "apps": [
+      "Matterport",
+      "Web Browser"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "MS Word - Document Quick Setup from Template",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/MS_Word__Document_Quick_Setup_from_Template__gaohZiCuTbC11elmIHVh9w",
+    "category": "Project",
+    "series": "Project - Proposals",
+    "apps": [
+      "MS Word"
+    ],
+    "topics": [
+      "Project - Start up"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "MS Word - Mapping PDG Document Templates",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Word__Pathing_PDG_Document_Template__FK7NtthBR3SXkeAudKPnlA",
+    "category": "Office",
+    "series": null,
+    "apps": [
+      "MS Word"
+    ],
+    "topics": [
+      "Office - General"
+    ],
+    "teams": [
+      "Production",
+      "Admin"
+    ]
+  },
+  {
+    "title": "Onedrive - How to Stop a Folder Sync",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Onedrive__How_to_Stop_a_Folder_Sync__iMLG6BVgQTymqklHkqf2bg",
+    "category": "Office",
+    "series": "OneDrive - Folder Management",
+    "apps": [
+      "OneDrive"
+    ],
+    "topics": [
+      "Office - General"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Outlook - Adding the PDG Contacts List to Outlook",
+    "url": "https://scribehow.com/viewer/Outlook__How_to_add_the_PDG_Contacts_list_to_Outlook__kxIwveslSlGnpVHNjjOAhQ",
+    "category": "Office",
+    "series": "Outlook - Contacts",
+    "apps": [
+      "MS Outlook"
+    ],
+    "topics": [
+      "Office - Onboarding"
+    ],
+    "teams": [
+      "Admin"
+    ]
+  },
+  {
+    "title": "Outlook - Giving a user access to the PDG Contacts list",
+    "url": "https://scribehow.com/viewer/Outlook__How_to_give_a_user_access_to_PDG_Contacts_list__QQDgl0SPScuCeRHjiKJF_Q",
+    "category": "Office",
+    "series": "Outlook - Contacts",
+    "apps": [
+      "MS Outlook"
+    ],
+    "topics": [
+      "Office - Onboarding"
+    ],
+    "teams": [
+      "Admin"
+    ]
+  },
+  {
+    "title": "PDF - Changing or Adding PDF Content",
+    "url": "https://scribehow.com/viewer/PDF__Changing_or_Adding_PDF_Content__fuJO9u6OS0mBuPhI1-1ESw",
+    "category": "Office",
+    "series": "PDFs - Editing Existing Documents",
+    "apps": [
+      "Bluebeam"
+    ],
+    "topics": [
+      "Office - General"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "PDG Revit Addin - Create Elevation Sheets",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Create_Elevation_Sheets___Clzk5kuTLGdVEO6epPV4A",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "PDG Revit Addin - Create Room Elevations",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Create_Elevations_for_Rooms__TUQCQWC5TjixQrAq9AyFsg",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "PDG Revit Addin - Give Feedback",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Give_Feedback__lXcEJulWQN2pz5l4ifZtDA",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit",
+      "Web Browser"
+    ],
+    "topics": [
+      "Revit - General"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "PDG Revit Addin - Place Wall Sweeps",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Place_Wall_Sweeps__y--qTJbkSRemEpQw_KSucw",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "PDG Revit Addin - Set Level Head Extent from View",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/PDG_Revit_Addin__Set_Level_Head_Extent_from_View__PW02U9a9SrWUu2ejaWwt4g",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Point Clouds - Processing & Publishing a Point Cloud to Import into Revit",
+    "url": "https://scribehow.com/viewer/Point_Clouds__Processing_and_Publishing_a_Point_Cloud_to_Import_into_Revit__GISx9955R4q1dnLA72oAnQ",
+    "category": "Matterport",
+    "series": null,
+    "apps": [
+      "ReCap Pro",
+      "Revit",
+      "Autodesk Desktop Connector",
+      "Autodesk Construction Cloud"
+    ],
+    "topics": [
+      "Matterport Scanning"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Batch Create Property Lines from Railings",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Batch_Create_Property_Lines_from_Railings__N2HgiwxARPGolJkh6AirAA",
+    "category": "Revit",
+    "series": "Revit - Development Planning",
+    "apps": [
+      "Revit",
+      "AutoCAD"
+    ],
+    "topics": [
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Batch Create Room Elevations",
+    "url": "https://scribehow.com/viewer/Revit__Batch_Creating_Room_Elevations__Ab6BFiN6RI26DVYUEbgSBw",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Building Finish Material Schedules",
+    "url": "https://scribehow.com/viewer/Revit__Building_Finish_Material_Schedules__qD7cN-klRzO7HmimhKB01Q",
+    "category": "Revit",
+    "series": "Revit - Schedules",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Creating & Setting View Filters",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_and_Setting_View_Filters__x8PzOv04SuqL3ZgWju997A",
+    "category": "Revit",
+    "series": "Revit - Graphics Settings",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Creating Revisions on Sheets",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_Revisions_on_Sheets__wuRGPmwUTnyDRs7nWPtS_Q",
+    "category": "Revit",
+    "series": "Revit - Drafting Corrections",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Creating Site Aerial Screenshots",
+    "url": "https://scribehow.com/viewer/Revit__Saving_Site_Aerials_for_a_Project__d1mnK3UxT-yjpdzjLrl2LA",
+    "category": "Revit",
+    "series": "Revit - Project Information Page",
+    "apps": [
+      "Web Browser",
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Creating Site Based Families with Nested Families",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Creating_Site_Based_Families_with_Nested_Details__XpANIq1EQh-QjjSjGm4Q7A",
+    "category": "Revit",
+    "series": "Revit - Topography",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Deleting Template Elements that can not be Found in a Model",
+    "url": "https://scribehow.com/viewer/Revit__Deleting_Template_Elements_that_can_not_be_Found_in_a_Model__kgY39jSsRzqPDABgi2-QMA",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation",
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Grading (Phasing) a Toposolid",
+    "url": "https://scribehow.com/viewer/Revit__Grading_Phasing_a_Toposolid__oH8yZrfdSbefn2C2vFDbbQ",
+    "category": "Revit",
+    "series": "Revit - Topography",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Mapping PDG Revit Templates",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Mapping_PDG_Revit_Templates__p-j8P9wORCuQ_08rK6XUbw",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit",
+      "Autodesk Desktop Connector"
+    ],
+    "topics": [
+      "Revit - General"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - PDG Tools - Creating New Shared Parameters",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__PDG_Tools__Creating_New_Shared_Parameters__z1WQLGjrRQe_QJRwZ02kYA",
+    "category": "Revit",
+    "series": "Revit - Shared Parameters",
+    "apps": [
+      "Revit",
+      "Web Browser",
+      "Autodesk Construction Cloud"
+    ],
+    "topics": [
+      "Revit - Process Development"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Phase Mapping for Linked Models",
+    "url": "https://scribehow.com/viewer/Revit__Phase_Mapping_for_Linked_Models__hzxxKhU1QtiKKyXT_opsyw",
+    "category": "Revit",
+    "series": null,
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Modelling"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Site Annotations in the Architectural Model",
+    "url": "https://scribehow.com/viewer/Revit__Site_Annotations_in_Architectural_Model__ZbLIUJomTWen2PQiWycKfQ",
+    "category": "Revit",
+    "series": "Revit - Topography",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - Documentation"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Revit - Starting a Workshared Revit Model",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Revit__Starting_a_Revit_Model__kfZAIQbgSw2IK0v58bZXEA",
+    "category": "Revit",
+    "series": "Revit - Worksharing",
+    "apps": [
+      "Revit"
+    ],
+    "topics": [
+      "Revit - File Startup"
+    ],
+    "teams": [
+      "Production"
+    ]
+  },
+  {
+    "title": "Spin2 - How to Pull Alberta Land Titles",
+    "url": "https://scribehow.com/o/buls0fYoSia5j0E9I_nc0A/viewer/Spin2__How_to_Pull_Alberta_Land_Titles__Lhie_KEgSNuHAfubqBVRgA",
+    "category": "Project",
+    "series": "Project - Land Title Review",
+    "apps": [
+      "Web Browser",
+      "MS Outlook",
+      "MS Word",
+      "File Explorer"
+    ],
+    "topics": [
+      "Project - Diligence"
+    ],
+    "teams": [
+      "Production"
+    ]
+  }
+]

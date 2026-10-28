@@ -1,0 +1,16 @@
+---
+import SectionPage from '../components/SectionPage.astro';
+import { sections } from '../data/sections';
+
+export function getStaticPaths() {
+  // Sections with bespoke pages (training, land-use) have their own files under src/pages/.
+  const custom = new Set(['training', 'land-use']);
+  return sections
+    .filter((s) => !custom.has(s.slug))
+    .map((s) => ({ params: { section: s.slug } }));
+}
+
+const { section } = Astro.params;
+---
+
+<SectionPage slug={section!} />
