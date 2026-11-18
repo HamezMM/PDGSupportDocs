@@ -116,6 +116,12 @@ export const sections: Section[] = [
         href: '/project-support/fee-proposal/',
       },
       {
+        title: 'PDG Fee Builder',
+        description: 'Build a fee proposal by phase: set phase fees, assign staff hours and consultants, track allocation against service fees, and export or import JSON.',
+        href: '/project-support/fee-builder/',
+        tag: 'Fee proposal',
+      },
+      {
         title: 'Calgary Commercial Permit Fee Calculator',
         description: 'City of Calgary commercial building permit fees (base, Safety Codes, partial permit, lot grading) plus PDG’s 9% admin handling fee.',
         href: '/project-support/calgary-permit-fees/',
