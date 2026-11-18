@@ -10,7 +10,7 @@ Internal training guides, calculators, reference tools, and working documents fo
 | Land Use Tools | `/land-use/` | Tenancy checker, 63 Calgary LUB 1P2007 district checklists, link to the City's bylaw page |
 | Building Code Tools | `/building-code/` | NBC calculators, slope calculator, fire-rated assemblies list |
 | Revit Support | `/revit/` | PDG Revit Tools reference |
-| Project Support | `/project-support/` | Fee proposal and Calgary permit fee calculators |
+| Project Support | `/project-support/` | Fee proposal calculator, fee builder and Calgary permit fee calculator |
 | Internal Tools | `/internal/` | Revit Add-in Academy, LISP routines, Playwright automations, folder restructure proposal |
 
 ## Local development

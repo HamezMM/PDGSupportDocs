@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDG Fee Builder</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  --bg:#f3f5f7;--surface:#ffffff;--surface-2:#eef1f4;--ink:#17212c;--muted:#596575;
+  --line:#dce1e7;--line-strong:#bfc7d1;
+  --badge:#0b6b6e;--teal:#0b6b6e;
+  --primary:#5236c9;--primary-ink:#ffffff;--link:#5236c9;--focus:#5236c9;
+  --danger:#b3243d;--danger-soft:#fbe9ec;--ok:#1b7a4c;--ok-soft:#e3f3ea;
+  --av-l:88%;--av-t:24%;--seg-l:50%;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10151b;--surface:#1a212a;--surface-2:#232c37;--ink:#e8ecf1;--muted:#9ba6b5;
+    --line:#2d3743;--line-strong:#434f5e;
+    --badge:#1b7c7f;--teal:#47b0b3;
+    --primary:#7058e6;--primary-ink:#ffffff;--link:#b0a4ff;--focus:#a99bff;
+    --danger:#ff8196;--danger-soft:#3b1d26;--ok:#5fcf97;--ok-soft:#173226;
+    --av-l:27%;--av-t:84%;--seg-l:58%;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10151b;--surface:#1a212a;--surface-2:#232c37;--ink:#e8ecf1;--muted:#9ba6b5;
+  --line:#2d3743;--line-strong:#434f5e;
+  --badge:#1b7c7f;--teal:#47b0b3;
+  --primary:#7058e6;--primary-ink:#ffffff;--link:#b0a4ff;--focus:#a99bff;
+  --danger:#ff8196;--danger-soft:#3b1d26;--ok:#5fcf97;--ok-soft:#173226;
+  --av-l:27%;--av-t:84%;--seg-l:58%;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 15px/1.45 "Barlow","DIN Alternate","Arial Narrow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input:focus{outline:2px solid var(--focus);outline-offset:0}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.chip{width:88px;background:var(--badge);color:#fff;border:0;border-radius:4px;padding:6px 8px;font:600 15px "Barlow Semi Condensed","Barlow",sans-serif;text-align:center}
+.chip::placeholder{color:rgba(255,255,255,.7)}
+.title{flex:1 1 220px;min-width:0;border:1px solid transparent;border-radius:4px;background:transparent;padding:4px 8px;font:600 26px/1.2 "Barlow Semi Condensed","Barlow",sans-serif}
+.title:hover{border-color:var(--line)}
+.saved{color:var(--muted);font-size:13px}
+.btn{padding:7px 14px;border:1px solid var(--line-strong);background:var(--surface);border-radius:5px;cursor:pointer;font-weight:500;font-size:14px}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{border-style:dashed;color:var(--link);width:100%}
+.link{background:none;border:0;padding:0;color:var(--link);font-weight:500;font-size:13px;text-decoration:underline;cursor:pointer}
+.icon-btn{width:28px;height:28px;border:0;border-radius:4px;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn:hover{background:var(--surface-2);color:var(--danger)}
+
+/* summary */
+.summary-wrap{background:var(--surface);border-bottom:1px solid var(--line)}
+.summary{display:flex;flex-wrap:wrap;gap:14px 36px;padding-top:18px;padding-bottom:14px}
+.hv.client{color:var(--teal);font-weight:600}
+.metric:last-child{text-align:right}
+.metric{flex:1 1 auto;min-width:max-content}
+.metric.edit{min-width:240px}
+.hv{white-space:nowrap}
+.hv{font:400 clamp(24px,2.6vw,32px)/1.1 "Barlow Semi Condensed","Barlow",sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hv.bad{color:var(--danger)}
+.hv.warn{color:#a96f00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hv.warn{color:#f2c744}}
+:root[data-theme="dark"] .hv.warn{color:#f2c744}
+.ml{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.hero{display:flex;align-items:baseline;gap:4px}
+.hero .pre-h{font-size:18px;color:var(--muted)}
+.hero input{flex:1;min-width:0;width:100%;background:transparent;border:0;border-bottom:1px dashed var(--line-strong);border-radius:0;padding:0 0 2px;font:400 clamp(24px,2.6vw,32px)/1.1 "Barlow Semi Condensed","Barlow",sans-serif;font-variant-numeric:tabular-nums}
+.hero input:hover{border-bottom-color:var(--ink)}
+.meter{display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden;background:var(--surface-2)}
+.meter i{display:block;min-width:2px}
+.meter.over{outline:2px solid var(--danger);outline-offset:1px}
+.meter.proj{height:14px;margin-bottom:8px}
+.meter.proj i{background:var(--teal);opacity:var(--o,.9)}
+.meter.proj i.gap{background:transparent}
+.phase .meter i{background:hsl(var(--h) 42% var(--seg-l))}
+.meter i.gap{background:repeating-linear-gradient(135deg,var(--danger) 0 3px,transparent 3px 7px);opacity:.55}
+.meter.proj i.gap{background:transparent;opacity:1}
+
+/* layout */
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:32px;padding-top:24px;padding-bottom:64px}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start;max-height:calc(100vh - 100px);overflow-y:auto;padding-right:4px}
+.side-sec{margin-bottom:28px}
+.side h2{margin:0 0 8px;font:600 17px "Barlow Semi Condensed","Barlow",sans-serif}
+.types{list-style:none;margin:0;padding:0}
+.types li{position:relative}
+.types li:not(:last-child)::after{content:"";position:absolute;left:14px;top:50%;height:100%;width:2px;background:var(--teal);opacity:.55}
+.type{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8px 10px;background:none;border:0;border-radius:4px;cursor:pointer;z-index:1}
+.type:hover{background:var(--surface-2)}
+.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--teal);background:var(--bg);flex:none;position:relative;z-index:1}
+.type.on .dot{background:var(--teal)}
+.tag{margin-left:auto;font-size:12px;color:var(--muted)}
+.type.on .tag{color:var(--teal)}
+.custom{display:flex;gap:8px;margin-top:12px}
+.custom input{flex:1;min-width:0;border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:6px 9px}
+.staff{display:grid;grid-template-columns:30px 1fr 28px;gap:6px 8px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.staff .second{grid-column:2 / 4;display:flex;gap:6px}
+.plain{min-width:0;width:100%;border:1px solid transparent;background:transparent;border-radius:4px;padding:3px 6px}
+.plain:hover{border-color:var(--line)}
+.staff .second .plain{flex:1}
+.staff .second .unit{width:104px;flex:none}
+.av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none;background:hsl(var(--h) 38% var(--av-l));color:hsl(var(--h) 55% var(--av-t))}
+
+/* inputs */
+.num{width:100%;text-align:right;padding:6px 9px;border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;font-variant-numeric:tabular-nums}
+.num.zero{border-color:var(--danger)}
+.unit{position:relative;display:block}
+.unit .sfx,.unit .pre{position:absolute;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:13px}
+.unit .sfx{right:9px}
+.unit .pre{left:9px}
+.unit.has-sfx .num{padding-right:24px}
+.unit.has-pre .num{padding-left:38px}
+
+/* phases */
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px 18px;margin-bottom:18px;transition:box-shadow .2s}
+.phase.flash{box-shadow:0 0 0 3px var(--focus)}
+.ph-head{display:flex;align-items:center;gap:12px}
+.badge{background:var(--badge);color:#fff;font-weight:600;font-size:12px;padding:3px 7px;border-radius:3px;flex:none}
+.ph-name{flex:1;min-width:0;border:1px solid transparent;background:transparent;border-radius:4px;padding:3px 6px;font:600 20px/1.25 "Barlow Semi Condensed","Barlow",sans-serif}
+.ph-name:hover{border-color:var(--line)}
+.ph-head .unit{width:178px;flex:none}
+.ph-head .unit .num{font:600 20px/1.2 "Barlow Semi Condensed","Barlow",sans-serif;padding-left:42px}
+.ph-sub{display:flex;align-items:center;gap:8px;margin:6px 0 12px;color:var(--muted);font-size:14px;flex-wrap:wrap}
+.date{border:1px solid transparent;background:transparent;border-radius:4px;padding:2px 4px;font-size:14px;color:var(--muted)}
+.date:hover{border-color:var(--line)}
+.grow{flex:1}
+.toggle{margin-top:12px;background:none;border:0;padding:0;color:var(--link);font-weight:500;font-size:14px;cursor:pointer}
+.toggle:hover{text-decoration:underline}
+.team{margin-top:10px;border:1px solid var(--line);border-radius:6px;overflow-x:auto}
+.team-in{min-width:640px}
+.grid{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(150px,1.2fr) 88px 88px 108px 28px;gap:10px;align-items:center;padding:8px 12px}
+.grid.head{background:var(--surface-2);color:var(--muted);font-size:13px;font-weight:500}
+.grid.row,.grid.total{border-top:1px solid var(--line)}
+.grid.total{font-weight:600}
+.r{text-align:right}
+.who{display:flex;align-items:center;gap:8px;min-width:0}
+.who span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role{color:var(--muted);font-size:14px}
+.budget{text-align:right;font-variant-numeric:tabular-nums}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:400}
+.pill{font-size:13px;font-weight:500;padding:2px 9px;border-radius:99px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--danger-soft);color:var(--danger)}
+.hint{color:var(--muted);font-size:13px;font-weight:400}
+.none{padding:14px 12px;color:var(--muted)}
+.assign{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.assign select{border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:7px 10px;min-width:220px}
+.assign .btn.ghost{width:auto}
+.empty{background:var(--surface);border:1px dashed var(--line-strong);border-radius:6px;padding:40px 24px;text-align:center}
+.empty h3{margin:0 0 6px;font:600 20px "Barlow Semi Condensed","Barlow",sans-serif}
+.empty p{margin:0;color:var(--muted)}
+
+/* toast + dialog */
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;display:flex;gap:16px;align-items:center;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:40}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{background:none;border:0;color:inherit;font-weight:600;text-decoration:underline;cursor:pointer}
+dialog{width:min(640px,92vw);border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog h2{margin:0 0 6px;font:600 20px "Barlow Semi Condensed","Barlow",sans-serif}
+dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px}
+
+.tabs{display:flex;gap:22px;padding-top:10px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:6px 2px 9px;font-weight:500;color:var(--muted);cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:18px}
+.card-h{margin:0;font:600 20px "Barlow Semi Condensed","Barlow",sans-serif}
+.card-p{margin:2px 0 14px;color:var(--muted)}
+.grid.c{grid-template-columns:minmax(170px,1.4fr) minmax(150px,1fr) 124px 124px 28px}
+.plain.strong{font-weight:600}
+.err{color:var(--danger);min-height:1.4em;margin:8px 0 0}
+.dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+.file{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.phase{border-left:5px solid var(--pc,var(--line))}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:18px;font-size:13px;color:var(--muted);min-height:1px}
+.lg{display:inline-flex;align-items:center;gap:6px}
+.lg i{display:block;width:11px;height:11px;border-radius:3px}
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .summary{grid-template-columns:1fr 1fr}
+  .layout{grid-template-columns:1fr;gap:20px}
+  .side{position:static;max-height:none;overflow:visible}
+  .ph-head{flex-wrap:wrap}
+  .ph-head .unit{width:100%;order:5}
+  .title{font-size:21px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<style>
+.pdg-topnav{background:#17171a;color:#e8e8e2;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:9px 18px;letter-spacing:.01em}
+.pdg-topnav a{color:inherit;text-decoration:none}
+.pdg-topnav a:hover{text-decoration:underline}
+</style>
+<div class="pdg-topnav"><a href="/">&larr; PDG Support Docs</a></div>
+
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <input id="projNumber" class="chip" data-f="projNumber" aria-label="Project number" placeholder="26-000" autocomplete="off">
+    <input id="projName" class="title" data-f="projName" aria-label="Project name" placeholder="Project name" autocomplete="off">
+    <span class="saved" id="saved" role="status"></span>
+    <button class="btn" data-act="openImport">Import</button>
+    <button class="btn" data-act="newProject">New project</button>
+    <button class="btn primary" data-act="copyJson">Copy JSON</button>
+  </div>
+</header>
+
+<div class="summary-wrap">
+  <div class="wrap">
+    <nav class="tabs" role="tablist" aria-label="Fee sections">
+      <button class="tab" role="tab" data-act="tab" data-tab="firm" aria-selected="true">Firm services</button>
+      <button class="tab" role="tab" data-act="tab" data-tab="consult" aria-selected="false">Consultant fees</button>
+    </nav>
+    <section class="summary" id="summary" aria-label="Fee summary"></section>
+    <div class="meter proj" id="projMeter" role="img" aria-label="Share of service fees allocated to each phase"></div>
+    <div class="legend" id="projLegend"></div>
+  </div>
+</div>
+
+<main class="wrap layout">
+  <aside class="side" id="side" aria-label="Phases and staff"></aside>
+  <div id="phases"></div>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="jsonDlg">
+  <h2>Copy JSON</h2>
+  <p>Your browser blocked direct clipboard access. Select everything below and copy it.</p>
+  <textarea id="jsonText" readonly aria-label="Fee JSON"></textarea>
+  <button class="btn primary" id="jsonClose">Done</button>
+</dialog>
+
+<dialog id="importDlg">
+  <h2>Import JSON</h2>
+  <p>Paste JSON exported from this tool, or choose a file. Importing replaces the current project, and Undo brings it back.</p>
+  <textarea id="importText" aria-label="JSON to import" placeholder="Paste JSON here"></textarea>
+  <label class="file"><span>Or choose a .json file</span><input type="file" id="importFile" accept=".json,application/json"></label>
+  <p id="importErr" class="err" role="alert"></p>
+  <div class="dlg-actions">
+    <button class="btn" data-act="closeImport">Cancel</button>
+    <button class="btn primary" data-act="doImport">Import</button>
+  </div>
+</dialog>
+
+<datalist id="dlNames"></datalist>
+<datalist id="dlTypes"></datalist>
+
+<script>
+(function(){
+'use strict';
+
+var KEY = 'pdg-fee-builder-v1';
+var HUES = [188,262,24,332,96,48,150,8];
+var TYPES = [
+  {n:'0.0 - START UP',c:'SU'},
+  {n:'1.0 - Prog + Due Dil',c:'PDD'},
+  {n:'2.0 - Schem Des',c:'SD'},
+  {n:'4.0 - Design Dev',c:'DD'},
+  {n:'5.0 - Const Docs',c:'CD'},
+  {n:'6.0 - PM - Pre Const',c:'PM'},
+  {n:'8.0 - Admin',c:'AD'}
+];
+var ADMIN_TYPE = 6;
+var LESLIE_RATE = 115;
+var PHASE_COLORS = [
+  {c:'#0b72b8',t:'#ffffff'}, {c:'#e69f00',t:'#1d1500'}, {c:'#0f9d73',t:'#ffffff'}, {c:'#8e44ad',t:'#ffffff'},
+  {c:'#d4551a',t:'#ffffff'}, {c:'#56b4e9',t:'#06202f'}, {c:'#7b8794',t:'#ffffff'}
+];
+var CUSTOM_COLORS = [{c:'#f0e442',t:'#1d1b00'},{c:'#8c564b',t:'#ffffff'},{c:'#17becf',t:'#04252a'},{c:'#c2185b',t:'#ffffff'}];
+function phaseColor(ph){
+  if(ph.type >= 0 && PHASE_COLORS[ph.type]) return PHASE_COLORS[ph.type];
+  var h = 0;
+  for(var i = 0; i < ph.id.length; i++) h = (h * 31 + ph.id.charCodeAt(i)) >>> 0;
+  return CUSTOM_COLORS[h % CUSTOM_COLORS.length];
+}
+var DISB = 0.09;
+var CONSULT_TYPES = ['Architect','Engineer - Mechanical','Engineer - Electrical','Engineer - Structural','Engineer - Civil','Surveyor','Geotechnical','Digital Scan'];
+var CONSULT_DEFAULTS = {'Architect':{name:'Ben Pond Architect',amount:2500},'Digital Scan':{name:'PDG - Matterport',amount:250}};
+var CONSULT_NAMES = ['Ben Pond Architect','HRS Engineering','Horizon Surveys','Natalie Spellen','PDG - Matterport','PDG - Matterport Hosting','Prairie Geo Engineering','Startec','Startech Engineering'];
+var X = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>';
+
+function $(s, r){ return (r||document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function r2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function num(v){ var n = parseFloat(String(v).replace(/[^0-9.]/g,'')); return isFinite(n) && n > 0 ? n : 0; }
+function plain(n){ return n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function money(n){ return (n < 0 ? '\u2212' : '') + 'CA$' + plain(Math.abs(n)); }
+function trim(n,d){ return String(Number(n.toFixed(d))); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function initials(name){
+  var w = String(name||'').trim().split(/\s+/).filter(Boolean);
+  if(!w.length) return '?';
+  if(w.length === 1) return w[0].slice(0,2).toUpperCase();
+  return (w[0][0] + w[1][0]).toUpperCase();
+}
+function codeFrom(name){
+  var w = name.replace(/^[\d.\s-]+/,'').split(/[^A-Za-z0-9]+/).filter(Boolean);
+  var c = w.slice(0,3).map(function(x){ return x[0]; }).join('').toUpperCase();
+  return c || 'PH';
+}
+
+/* ---------- state ---------- */
+function mk(t,start,end,fee,team){
+  var T = TYPES[t];
+  return {id:uid(),type:t,badge:T.c,name:T.n,start:start,end:end,fee:fee,open:true,
+    team:team.map(function(x){ return {staffId:x[0],hours:x[1]}; })};
+}
+function seed(){
+  var raw = [['Ken S.','Principal',160],['James M.','AT (Sr.)',145],['Aneesh R.','AT (Jr.)',115],
+             ['Kian H.','AT (Int.)',130],['Bruce K.','Consultant',60],['Stuart L.','AT (Int.)',130],['Leslie C.','Admin',115]];
+  var S = raw.map(function(x,i){ return {id:uid(),name:x[0],role:x[1],rate:x[2],hue:HUES[i % HUES.length]}; });
+  return {
+    project:{number:'',name:'',serviceFees:0,consultantFees:0},
+    consultants:[],
+    staff:S,
+    phases:[]
+  };
+}
+function ensureAdmin(st){
+  var les = st.staff.filter(function(x){ return x.name === 'Leslie C.'; })[0];
+  if(!les){
+    var used = st.staff.map(function(x){ return x.hue; });
+    var hue = HUES.filter(function(h){ return used.indexOf(h) < 0; })[0];
+    if(hue === undefined) hue = HUES[st.staff.length % HUES.length];
+    les = {id:uid(),name:'Leslie C.',role:'Admin',rate:LESLIE_RATE,hue:hue};
+    st.staff.push(les);
+  }
+  if(les.rate === 0) les.rate = LESLIE_RATE;
+  if(!st.phases.some(function(p){ return p.type === ADMIN_TYPE; })){
+    var T = TYPES[ADMIN_TYPE];
+    st.phases.push({id:uid(),type:ADMIN_TYPE,badge:T.c,name:T.n,start:'',end:'',fee:r2(les.rate),open:true,team:[{staffId:les.id,hours:1}]});
+    var key = function(p){ var m = p.name.match(/^\s*(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : Infinity; };
+    st.phases.sort(function(a,b){ return key(a) - key(b); });
+  }
+  st.phases.forEach(function(p){
+    if(p.type === ADMIN_TYPE && p.fee === 0){
+      var m = p.team.filter(function(t){ return t.staffId === les.id; })[0];
+      if(m) p.fee = r2(m.hours * les.rate);
+    }
+  });
+  return st;
+}
+function normalize(s){
+  s.consultants = Array.isArray(s.consultants) ? s.consultants : [];
+  s.project.consultantFees = s.project.consultantFees || 0;
+  ensureAdmin(s);
+  return s;
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var s = JSON.parse(raw);
+      if(s && s.project && Array.isArray(s.staff) && Array.isArray(s.phases)) return normalize(s);
+    }
+  }catch(e){}
+  return ensureAdmin(seed());
+}
+var state = load();
+var undoSnap = null;
+var tab = 'firm';
+
+function staffOf(id){ return state.staff.filter(function(s){ return s.id === id; })[0]; }
+function rateOf(a){ var s = staffOf(a.staffId); return s ? s.rate : 0; }
+function phaseById(id){ return state.phases.filter(function(p){ return p.id === id; })[0]; }
+function phaseOf(el){ var c = el.closest('[data-phase]'); return c ? phaseById(c.dataset.phase) : null; }
+function staffIndex(id){ for(var i=0;i<state.staff.length;i++){ if(state.staff[i].id === id) return i; } return 999; }
+
+function calc(ph){
+  var rows = ph.team.map(function(a){
+    var s = staffOf(a.staffId), rate = s ? s.rate : 0, budget = a.hours * rate;
+    return {a:a,s:s,rate:rate,budget:budget,pct:ph.fee > 0 ? budget / ph.fee * 100 : 0};
+  });
+  var assigned = 0, hours = 0, tol = 0.005;
+  rows.forEach(function(r){ assigned += r.budget; hours += r.a.hours; tol += r.rate * 0.005; });
+  var diff = ph.fee - assigned;
+  return {rows:rows,assigned:assigned,hours:hours,diff:diff,tol:tol,balanced:Math.abs(diff) <= tol};
+}
+
+/* ---------- persistence ---------- */
+var saveT;
+function setSaved(ok){
+  $('#saved').textContent = ok ? 'Saved on this device' : 'Not saved: browser storage is unavailable';
+}
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(function(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); setSaved(true); }
+    catch(e){ setSaved(false); }
+  }, 250);
+}
+function pushUndo(){ undoSnap = JSON.stringify(state); }
+
+/* ---------- toast ---------- */
+var toastT;
+function toast(msg, withUndo){
+  var t = $('#toast');
+  t.innerHTML = '<span>' + esc(msg) + '</span>' + (withUndo ? '<button data-act="undo">Undo</button>' : '');
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ t.classList.remove('show'); }, withUndo ? 8000 : 2600);
+}
+
+/* ---------- rendering ---------- */
+function staffHTML(s){
+  return '<div class="staff" data-staff="' + s.id + '" style="--h:' + s.hue + '">' +
+    '<span class="av" data-k="sav">' + esc(initials(s.name)) + '</span>' +
+    '<input class="plain" data-f="sName" value="' + esc(s.name) + '" placeholder="Name" aria-label="Staff name" autocomplete="off">' +
+    '<button class="icon-btn" data-act="rmStaff" aria-label="Remove staff member">' + X + '</button>' +
+    '<div class="second">' +
+      '<input class="plain" data-f="sRole" value="' + esc(s.role) + '" placeholder="Role" aria-label="Role" autocomplete="off">' +
+      '<div class="unit has-pre has-sfx"><span class="pre">CA$</span><input class="num" data-f="sRate" value="' + trim(s.rate,2) + '" inputmode="decimal" aria-label="Hourly rate" autocomplete="off"><span class="sfx">/hr</span></div>' +
+    '</div></div>';
+}
+function renderSidebar(){
+  if(tab === 'consult'){ renderConsultSide(); return; }
+  var added = {};
+  state.phases.forEach(function(p){ if(p.type >= 0) added[p.type] = true; });
+  $('#side').innerHTML =
+    '<section class="side-sec"><h2>Phases</h2><ol class="types">' +
+    TYPES.map(function(t,i){
+      return '<li><button class="type' + (added[i] ? ' on' : '') + '" data-act="addType" data-type="' + i + '">' +
+        '<span class="dot"></span><span>' + esc(t.n) + '</span><span class="tag">' + (added[i] ? 'Added' : 'Add') + '</span></button></li>';
+    }).join('') +
+    '</ol><div class="custom"><input id="customName" placeholder="Custom phase name" aria-label="Custom phase name" autocomplete="off"><button class="btn" data-act="addCustom">Add</button></div></section>' +
+    '<section class="side-sec"><h2>Staff</h2><div id="staffList">' + state.staff.map(staffHTML).join('') + '</div>' +
+    '<button class="btn ghost" data-act="addStaff">+ Add staff</button></section>';
+}
+
+function rowHTML(a){
+  var s = staffOf(a.staffId);
+  return '<div class="grid row" data-row="' + a.staffId + '" style="--h:' + (s ? s.hue : 0) + '">' +
+    '<span class="who"><span class="av" data-k="av"></span><span data-k="name"></span></span>' +
+    '<span class="role" data-k="role"></span>' +
+    '<div class="unit"><input class="num" data-f="hours" data-nav="hours" inputmode="decimal" autocomplete="off"></div>' +
+    '<div class="unit has-sfx"><input class="num" data-f="pct" data-nav="pct" inputmode="decimal" autocomplete="off"><span class="sfx">%</span></div>' +
+    '<span class="budget" data-k="budget"></span>' +
+    '<button class="icon-btn" data-act="rmRow" aria-label="Unassign from phase">' + X + '</button></div>';
+}
+function phaseHTML(ph){
+  var free = state.staff.filter(function(s){ return !ph.team.some(function(a){ return a.staffId === s.id; }); });
+  var col = phaseColor(ph);
+  return '<section class="phase" id="ph-' + ph.id + '" data-phase="' + ph.id + '" style="--pc:' + col.c + '">' +
+    '<div class="ph-head">' +
+      '<span class="badge" style="background:' + col.c + ';color:' + col.t + '">' + esc(ph.badge) + '</span>' +
+      '<input class="ph-name" data-f="phName" value="' + esc(ph.name) + '" aria-label="Phase name" autocomplete="off">' +
+      '<div class="unit has-pre"><span class="pre">CA$</span><input class="num" data-f="phFee" data-nav="fee" inputmode="decimal" value="' + plain(ph.fee) + '" aria-label="Phase fee" autocomplete="off"></div>' +
+      (ph.type === ADMIN_TYPE ? '<span style="width:28px;flex:none" aria-hidden="true"></span>' : '<button class="icon-btn" data-act="rmPhase" aria-label="Remove phase">' + X + '</button>') +
+    '</div>' +
+    '<div class="ph-sub">' +
+      '<input type="date" class="date" data-f="phStart" value="' + esc(ph.start || '') + '" aria-label="Start date">' +
+      '<span>to</span>' +
+      '<input type="date" class="date" data-f="phEnd" value="' + esc(ph.end || '') + '" aria-label="End date">' +
+      '<span>Fixed fee</span><span class="grow"></span><span data-k="share"></span>' +
+    '</div>' +
+    '<div class="meter" data-k="meter" role="img"></div>' +
+    '<button class="toggle" data-act="toggleTeam" data-k="toggle" aria-expanded="' + (ph.open ? 'true' : 'false') + '"></button>' +
+    '<div class="team"' + (ph.open ? '' : ' hidden') + '><div class="team-in">' +
+      (ph.team.length
+        ? '<div class="grid head"><span>Team member</span><span>Role and rate</span><span class="r">Hours</span><span class="r">Percent</span><span class="r">Budget</span><span></span></div>' + ph.team.map(rowHTML).join('')
+        : '<div class="none">No one is assigned yet.</div>') +
+      '<div class="grid total" data-k="total"></div>' +
+    '</div></div>' +
+    '<div class="assign"' + (free.length ? '' : ' hidden') + '>' +
+      '<select data-f="assign" aria-label="Assign team member"><option value="">Assign team member</option>' +
+      free.map(function(s){ return '<option value="' + s.id + '">' + esc(s.name || 'Unnamed') + '</option>'; }).join('') +
+      '</select>' +
+      '<button class="btn ghost" data-act="addAll">Add everyone</button>' +
+    '</div></section>';
+}
+function renderPhases(){
+  var el = $('#phases');
+  if(!state.phases.length){
+    el.innerHTML = '<div class="empty"><h3>No phases yet</h3><p>Pick a phase from the list on the left, set its fee, then assign staff hours.</p></div>';
+  } else {
+    el.innerHTML = state.phases.map(phaseHTML).join('');
+  }
+  refresh();
+}
+function syncHeader(){
+  var act = document.activeElement;
+  var n = $('#projNumber'), t = $('#projName'), f = $('#svcFees');
+  if(n !== act) n.value = state.project.number || '';
+  if(t !== act) t.value = state.project.name || '';
+  if(f && f !== act) f.value = plain(state.project.serviceFees || 0);
+}
+function renderMain(){ if(tab === 'consult') renderConsult(); else renderPhases(); }
+function renderAll(){ syncHeader(); renderSummary(); renderSidebar(); renderMain(); }
+
+/* patch computed values without touching focused inputs */
+function refresh(){
+  var act = document.activeElement;
+  var feesTotal = 0, hoursTotal = 0;
+  var svc = state.project.serviceFees || 0;
+
+  state.phases.forEach(function(ph){
+    var card = document.getElementById('ph-' + ph.id);
+    var c = calc(ph);
+    feesTotal += ph.fee; hoursTotal += c.hours;
+    if(!card) return;
+
+    c.rows.forEach(function(r){
+      var row = card.querySelector('[data-row="' + r.a.staffId + '"]');
+      if(!row || !r.s) return;
+      row.querySelector('[data-k=av]').textContent = initials(r.s.name);
+      row.querySelector('[data-k=name]').textContent = r.s.name || 'Unnamed';
+      row.querySelector('[data-k=role]').textContent = (r.s.role ? r.s.role + ' \u00b7 ' : '') + money(r.s.rate) + '/hr';
+      row.querySelector('[data-k=budget]').textContent = money(r.budget);
+      var h = row.querySelector('[data-f=hours]'), p = row.querySelector('[data-f=pct]');
+      h.setAttribute('aria-label', 'Hours for ' + (r.s.name || 'staff member'));
+      p.setAttribute('aria-label', 'Percent of phase fee for ' + (r.s.name || 'staff member'));
+      if(h !== act) h.value = trim(r.a.hours, 2);
+      if(p !== act) p.value = trim(r.pct, 1);
+      h.classList.toggle('zero', r.a.hours === 0);
+      p.classList.toggle('zero', r.a.hours === 0);
+    });
+
+    // meter
+    var segs = c.rows.filter(function(r){ return r.budget > 0 && r.s; }).map(function(r){
+      return '<i style="--h:' + r.s.hue + ';flex:' + r.budget + ' 1 0" title="' + esc(r.s.name) + ' ' + money(r.budget) + '"></i>';
+    });
+    if(c.diff > c.tol) segs.push('<i class="gap" style="flex:' + c.diff + ' 1 0" title="Unassigned ' + money(c.diff) + '"></i>');
+    var meter = card.querySelector('[data-k=meter]');
+    meter.innerHTML = segs.join('');
+    meter.classList.toggle('over', c.diff < -c.tol);
+    meter.setAttribute('aria-label', c.balanced ? 'Fee fully assigned' : (c.diff > 0 ? money(c.diff) + ' of the fee is unassigned' : 'Assigned hours exceed the fee by ' + money(-c.diff)));
+
+    // share of project
+    card.querySelector('[data-k=share]').textContent = svc > 0 ? trim(ph.fee / svc * 100, 2) + '% of service fees' : '';
+
+    // toggle label
+    card.querySelector('[data-k=toggle]').textContent = (ph.open ? 'Hide' : 'Show') + ' assigned team (' + ph.team.length + ')';
+
+    // totals
+    var status;
+    if(ph.fee === 0 && !ph.team.length) status = '<span class="hint">Set a fee, then assign staff</span>';
+    else if(c.balanced) status = '<span class="pill ok">Matches fee</span>';
+    else if(c.diff > 0) status = '<span class="pill bad">' + money(c.diff) + ' unassigned</span>' + (c.assigned > 0 ? '<button class="link" data-act="scale">Scale hours to fee</button><button class="link" data-act="feeToBudget">Scale fee to budget</button>' : '');
+    else status = '<span class="pill bad">' + money(-c.diff) + ' over fee</span>' + (ph.fee > 0 ? '<button class="link" data-act="scale">Scale hours to fee</button>' : '') + '<button class="link" data-act="feeToBudget">Scale fee to budget</button>';
+    var pctTxt = (c.balanced && ph.fee > 0) ? '100%' : trim(ph.fee > 0 ? c.assigned / ph.fee * 100 : 0, 1) + '%';
+    card.querySelector('[data-k=total]').innerHTML =
+      '<span>Total</span><span class="status">' + status + '</span>' +
+      '<span class="r">' + trim(c.hours, 2) + '</span><span class="r">' + pctTxt + '</span>' +
+      '<span class="r">' + money(c.assigned) + '</span><span></span>';
+  });
+
+  // summary
+  var un = svc - feesTotal;
+  if(tab === 'consult'){ refreshConsultSummary(); return; }
+  $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumClient').textContent = money(clientTotal());
+  $('#sumUnalloc').textContent = money(un);
+  $('#sumUnalloc').classList.toggle('bad', un < -0.005);
+  $('#unallocLabel').textContent = un < -0.005 ? 'Over-allocated' : 'Unallocated';
+  $('#sumPct').textContent = (svc > 0 ? trim(feesTotal / svc * 100, 1) : '0') + '%';
+  var apct = svc > 0 ? Number((feesTotal / svc * 100).toFixed(1)) : 0;
+  $('#sumPct').classList.toggle('bad', apct > 100);
+  $('#sumPct').classList.toggle('warn', apct > 80 && apct <= 100);
+  $('#sumPct').title = apct > 100 ? 'Phase fees exceed the service fees' : (apct > 80 ? 'Over 80% of the service fees is allocated' : '');
+  $('#sumHours').textContent = trim(hoursTotal, 2);
+
+  var ps = [];
+  state.phases.forEach(function(ph, i){
+    if(ph.fee > 0) ps.push('<i style="flex:' + ph.fee + ' 1 0;--o:1;background:' + phaseColor(ph).c + '" title="' + esc(ph.name) + ' ' + money(ph.fee) + '"></i>');
+  });
+  if(un > 0.005 && svc > 0) ps.push('<i class="gap" style="flex:' + un + ' 1 0" title="Unallocated ' + money(un) + '"></i>');
+  var pm = $('#projMeter');
+  pm.innerHTML = ps.join('');
+  pm.classList.toggle('over', un < -0.005);
+  $('#projLegend').innerHTML = state.phases.filter(function(ph){ return ph.fee > 0; }).map(function(ph){
+    return '<span class="lg" title="' + esc(ph.name) + ' ' + money(ph.fee) + '"><i style="background:' + phaseColor(ph).c + '"></i>' + esc(ph.badge) + '</span>';
+  }).join('');
+}
+
+/* ---------- actions ---------- */
+function flash(card){
+  card.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
+  card.classList.add('flash');
+  setTimeout(function(){ card.classList.remove('flash'); }, 1200);
+}
+function sortPhases(){
+  function key(p){ var m = p.name.match(/^\s*(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : Infinity; }
+  state.phases.sort(function(a,b){ return key(a) - key(b); });
+}
+function addPhase(type, custom){
+  if(type >= 0){
+    var ex = state.phases.filter(function(p){ return p.type === type; })[0];
+    if(ex){ flash(document.getElementById('ph-' + ex.id)); return; }
+  }
+  var T = type >= 0 ? TYPES[type] : null;
+  var name = T ? T.n : String(custom || '').trim();
+  if(!name){ toast('Enter a name for the custom phase'); var cn = $('#customName'); if(cn) cn.focus(); return; }
+  var ph = {id:uid(),type:type >= 0 ? type : -1,badge:T ? T.c : codeFrom(name),name:name,start:'',end:'',fee:0,open:true,team:[]};
+  state.phases.push(ph);
+  sortPhases();
+  renderSidebar(); renderPhases(); save();
+  var card = document.getElementById('ph-' + ph.id);
+  var fee = card.querySelector('[data-f=phFee]');
+  card.scrollIntoView({block:'nearest'});
+  fee.focus();
+}
+function sortTeam(ph){
+  ph.team.sort(function(a,b){ return staffIndex(a.staffId) - staffIndex(b.staffId); });
+}
+function focusHours(ph, staffId){
+  var el = $('#ph-' + ph.id + ' [data-row="' + staffId + '"] [data-f=hours]');
+  if(el) el.focus();
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]');
+  if(!b) return;
+  var act = b.dataset.act;
+  var ph = phaseOf(b);
+  if(handleExtra(act, b)) return;
+
+  if(act === 'addType'){ addPhase(parseInt(b.dataset.type,10)); }
+  else if(act === 'addCustom'){ addPhase(-1, $('#customName').value); }
+  else if(act === 'rmPhase' && ph && ph.type !== ADMIN_TYPE){
+    pushUndo();
+    state.phases = state.phases.filter(function(p){ return p.id !== ph.id; });
+    renderSidebar(); renderPhases(); save();
+    toast('Removed ' + ph.name, true);
+  }
+  else if(act === 'toggleTeam' && ph){
+    ph.open = !ph.open;
+    var card = document.getElementById('ph-' + ph.id);
+    card.querySelector('.team').hidden = !ph.open;
+    b.setAttribute('aria-expanded', ph.open ? 'true' : 'false');
+    refresh(); save();
+  }
+  else if(act === 'rmRow' && ph){
+    var sid = b.closest('[data-row]').dataset.row;
+    var s = staffOf(sid);
+    pushUndo();
+    ph.team = ph.team.filter(function(a){ return a.staffId !== sid; });
+    renderPhases(); save();
+    toast('Unassigned ' + (s ? s.name : 'staff member') + ' from ' + ph.name, true);
+  }
+  else if(act === 'addAll' && ph){
+    var added = [];
+    state.staff.forEach(function(s){
+      if(!ph.team.some(function(a){ return a.staffId === s.id; })){ ph.team.push({staffId:s.id,hours:0}); added.push(s.id); }
+    });
+    sortTeam(ph); renderPhases(); save();
+    if(added.length) focusHours(ph, added[0]);
+  }
+  else if(act === 'scale' && ph){
+    var c = calc(ph);
+    if(c.assigned > 0 && ph.fee > 0){
+      pushUndo();
+      var k = ph.fee / c.assigned;
+      ph.team.forEach(function(a){ a.hours = r2(a.hours * k); });
+      refresh(); save();
+      toast('Hours scaled to match the fee', true);
+    }
+  }
+  else if(act === 'addStaff'){
+    var used = state.staff.map(function(s){ return s.hue; });
+    var hue = HUES.filter(function(h){ return used.indexOf(h) < 0; })[0];
+    if(hue === undefined) hue = HUES[state.staff.length % HUES.length];
+    var ns = {id:uid(),name:'',role:'AT (Int.)',rate:130,hue:hue};
+    state.staff.push(ns);
+    renderSidebar(); renderPhases(); save();
+    var inp = $('#staffList [data-staff="' + ns.id + '"] [data-f=sName]');
+    if(inp){ inp.scrollIntoView({block:'nearest'}); inp.focus(); }
+  }
+  else if(act === 'rmStaff'){
+    var sid2 = b.closest('[data-staff]').dataset.staff;
+    var st = staffOf(sid2);
+    pushUndo();
+    state.staff = state.staff.filter(function(x){ return x.id !== sid2; });
+    state.phases.forEach(function(p){ p.team = p.team.filter(function(a){ return a.staffId !== sid2; }); });
+    renderSidebar(); renderPhases(); save();
+    toast('Removed ' + ((st && st.name) || 'staff member'), true);
+  }
+  else if(act === 'newProject'){
+    pushUndo();
+    state.project = {number:'',name:'',serviceFees:0,consultantFees:0};
+    state.consultants = [];
+    state.phases = [];
+    ensureAdmin(state);
+    renderAll(); save();
+    $('#projNumber').focus();
+    toast('Started a new project. Your staff list is kept.', true);
+  }
+  else if(act === 'undo'){
+    if(undoSnap){
+      state = JSON.parse(undoSnap); undoSnap = null;
+      renderAll(); save();
+      $('#toast').classList.remove('show');
+    }
+  }
+  else if(act === 'copyJson'){ copyJSON(); }
+});
+
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if(t.dataset && t.dataset.f === 'assign' && t.value){
+    var ph = phaseOf(t);
+    if(!ph) return;
+    var sid = t.value;
+    ph.team.push({staffId:sid,hours:0});
+    sortTeam(ph); renderPhases(); save();
+    focusHours(ph, sid);
+  }
+});
+
+var snap = null, justFocused = false;
+document.addEventListener('focusin', function(e){
+  var t = e.target;
+  if(t.matches && (t.matches('input.num') || t.matches('input.num-hero'))){ t.select(); justFocused = true; }
+  if(t.dataset && t.dataset.f === 'phFee'){
+    var ph = phaseOf(t);
+    if(ph){
+      var shares = {};
+      ph.team.forEach(function(a){ shares[a.staffId] = ph.fee > 0 ? a.hours * rateOf(a) / ph.fee : 0; });
+      snap = {id:ph.id,oldFee:ph.fee,shares:shares};
+    }
+  }
+});
+document.addEventListener('mouseup', function(e){
+  if(justFocused){ e.preventDefault(); justFocused = false; }
+});
+document.addEventListener('focusout', function(e){
+  var t = e.target, f = t.dataset && t.dataset.f;
+  if(!f) return;
+  if(f === 'phFee'){ var ph = phaseOf(t); if(ph) t.value = plain(ph.fee); snap = null; }
+  else if(f === 'svcFees'){ t.value = plain(state.project.serviceFees || 0); }
+  else if(f === 'cAmt' || f === 'cMk'){
+    var cx = consultById(t.closest('[data-consult]').dataset.consult);
+    if(cx) t.value = plain(f === 'cAmt' ? cx.amount : cx.markup);
+  }
+  else if(f === 'sRate'){ var s = staffOf(t.closest('[data-staff]').dataset.staff); if(s) t.value = trim(s.rate, 2); }
+  setTimeout(refresh, 0);
+});
+
+document.addEventListener('input', function(e){
+  var t = e.target, f = t.dataset && t.dataset.f;
+  if(!f || f === 'assign') return;
+  var ph = phaseOf(t);
+  var rowEl = t.closest('[data-row]');
+  var a = ph && rowEl ? ph.team.filter(function(x){ return x.staffId === rowEl.dataset.row; })[0] : null;
+  var stEl = t.closest('[data-staff]');
+  var s = stEl ? staffOf(stEl.dataset.staff) : null;
+
+  switch(f){
+    case 'projNumber': state.project.number = t.value; break;
+    case 'projName': state.project.name = t.value; break;
+    case 'svcFees': state.project.serviceFees = num(t.value); refresh(); break;
+    case 'phName': if(ph) ph.name = t.value; break;
+    case 'phStart': if(ph) ph.start = t.value; break;
+    case 'phEnd': if(ph) ph.end = t.value; break;
+    case 'phFee':
+      if(!ph) break;
+      ph.fee = num(t.value);
+      if(snap && snap.id === ph.id && snap.oldFee > 0){
+        ph.team.forEach(function(x){
+          var sh = snap.shares[x.staffId], rate = rateOf(x);
+          if(sh != null) x.hours = rate > 0 ? r2(sh * ph.fee / rate) : 0;
+        });
+      }
+      refresh(); break;
+    case 'hours': if(a){ a.hours = r2(num(t.value)); refresh(); } break;
+    case 'pct':
+      if(a && ph){
+        var rate = rateOf(a);
+        a.hours = (ph.fee > 0 && rate > 0) ? r2(num(t.value) / 100 * ph.fee / rate) : 0;
+        refresh();
+      }
+      break;
+    case 'sName':
+      if(s){
+        s.name = t.value;
+        stEl.querySelector('[data-k=sav]').textContent = initials(s.name);
+        $$('option[value="' + s.id + '"]').forEach(function(o){ o.textContent = s.name || 'Unnamed'; });
+        refresh();
+      }
+      break;
+    case 'cName': case 'cType': case 'cAmt': case 'cMk': {
+      var cr = t.closest('[data-consult]');
+      var cc = cr ? consultById(cr.dataset.consult) : null;
+      if(cc){
+        if(f === 'cName') cc.name = t.value;
+        else if(f === 'cType') cc.type = t.value;
+        else if(f === 'cAmt') cc.amount = r2(num(t.value));
+        else cc.markup = r2(num(t.value));
+        refresh();
+      }
+      break;
+    }
+    case 'sRole': if(s){ s.role = t.value; refresh(); } break;
+    case 'sRate': if(s){ s.rate = num(t.value); refresh(); } break;
+  }
+  save();
+});
+
+/* Enter moves down a column of hours / percent fields, or from a fee to its first hours field */
+document.addEventListener('keydown', function(e){
+  var t = e.target;
+  if(e.key === 'Enter' && t.id === 'customName'){ e.preventDefault(); addPhase(-1, t.value); return; }
+  if(e.key === 'Enter' && t.id === 'customCType'){ e.preventDefault(); handleExtra('addConsultCustom'); return; }
+  if(e.key !== 'Enter' || e.isComposing || !t.dataset || !t.dataset.nav) return;
+  var kind = t.dataset.nav;
+  if(kind === 'svc' || kind === 'cfees'){ e.preventDefault(); t.blur(); return; }
+  e.preventDefault();
+  if(kind === 'fee'){
+    var card = t.closest('[data-phase]');
+    var first = card && card.querySelector('[data-nav=hours]');
+    if(first && !card.querySelector('.team').hidden){ first.focus(); return; }
+  }
+  var list = $$('[data-nav="' + kind + '"]').filter(function(el){ return el.offsetParent !== null; });
+  var i = list.indexOf(t) + (e.shiftKey ? -1 : 1);
+  if(list[i]) list[i].focus(); else t.blur();
+});
+
+/* ---------- export ---------- */
+function buildJSON(){
+  var svc = state.project.serviceFees || 0, fees = 0;
+  state.phases.forEach(function(p){ fees += p.fee; });
+  return {
+    schemaVersion:2,
+    exportedAt:new Date().toISOString(),
+    currency:'CAD',
+    project:{
+      number:state.project.number || '',
+      name:state.project.name || '',
+      serviceFees:r2(svc),
+      allocatedFees:r2(fees),
+      unallocatedFees:r2(svc - fees),
+      allocatedPercent:svc > 0 ? r2(fees / svc * 100) : 0,
+      consultantFees:r2(sumC('amount')),
+      consultantMarkup:r2(sumC('markup')),
+      totalProjectFees:r2(totalProjectFees()),
+      disbursementPercent:r2(DISB * 100),
+      clientTotal:r2(clientTotal())
+    },
+    consultants:state.consultants.map(function(c){ return {id:c.id,name:c.name,type:c.type,fee:r2(c.amount),markup:r2(c.markup)}; }),
+    staff:state.staff.map(function(s){ return {id:s.id,name:s.name,role:s.role,hourlyRate:r2(s.rate)}; }),
+    phases:state.phases.map(function(ph,i){
+      var c = calc(ph);
+      return {
+        order:i + 1,
+        code:ph.badge,
+        name:ph.name,
+        startDate:ph.start || null,
+        endDate:ph.end || null,
+        feeType:'fixed',
+        fee:r2(ph.fee),
+        percentOfServiceFees:svc > 0 ? r2(ph.fee / svc * 100) : 0,
+        team:c.rows.map(function(r){
+          return {
+            staffId:r.a.staffId,
+            name:r.s ? r.s.name : '',
+            role:r.s ? r.s.role : '',
+            hourlyRate:r2(r.rate),
+            hours:r2(r.a.hours),
+            percentOfPhaseFee:r2(r.pct),
+            budget:r2(r.budget)
+          };
+        }),
+        totals:{hours:r2(c.hours),budget:r2(c.assigned),matchesFee:c.balanced}
+      };
+    })
+  };
+}
+function copyJSON(){
+  var txt = JSON.stringify(buildJSON(), null, 2);
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.setAttribute('readonly','');
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(err){}
+    ta.remove();
+    if(ok){ toast('Fee JSON copied to clipboard'); return; }
+    var d = $('#jsonDlg'), area = $('#jsonText');
+    area.value = txt; d.showModal(); area.focus(); area.select();
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ toast('Fee JSON copied to clipboard'); }, fallback);
+  } else fallback();
+}
+$('#jsonClose').addEventListener('click', function(){ $('#jsonDlg').close(); });
+
+/* ---------- consultants ---------- */
+function consultById(id){ return state.consultants.filter(function(c){ return c.id === id; })[0]; }
+function sumC(k){ var t = 0; state.consultants.forEach(function(c){ t += c[k] || 0; }); return t; }
+function totalProjectFees(){ return (state.project.serviceFees || 0) + sumC('amount') + sumC('markup'); }
+function clientTotal(){ return totalProjectFees() * (1 + DISB); }
+
+function renderSummary(){
+  $$('.tab').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab === tab ? 'true' : 'false'); });
+  var total = '<div class="metric"><div class="hv" id="sumTotal"></div><span class="ml">Total project fees</span></div>';
+  var client = '<div class="metric"><div class="hv client" id="sumClient"></div><span class="ml">Client total (+9% disbursements)</span></div>';
+  var el = $('#summary');
+  if(tab === 'consult'){
+    el.innerHTML = total +
+      '<div class="metric"><div class="hv" id="sumCons"></div><span class="ml">Consultant fees</span></div>' +
+      '<div class="metric"><div class="hv" id="sumMarkup"></div><span class="ml">Markup</span></div>' +
+      client;
+  } else {
+    el.innerHTML = total +
+      '<div class="metric edit"><div class="hero"><span class="pre-h">CA$</span><input id="svcFees" data-f="svcFees" data-nav="svc" inputmode="decimal" class="num-hero" aria-label="Service fees" autocomplete="off"></div><label class="ml" for="svcFees">Service fees</label></div>' +
+      '<div class="metric"><div class="hv" id="sumUnalloc"></div><span class="ml" id="unallocLabel">Unallocated</span></div>' +
+      '<div class="metric"><div class="hv" id="sumPct"></div><span class="ml">Allocated</span></div>' +
+      '<div class="metric"><div class="hv" id="sumHours"></div><span class="ml">Hours assigned</span></div>' +
+      client;
+    $('#svcFees').value = plain(state.project.serviceFees || 0);
+  }
+}
+
+function renderConsultSide(){
+  var counts = {};
+  state.consultants.forEach(function(c){ counts[c.type] = (counts[c.type] || 0) + 1; });
+  $('#side').innerHTML =
+    '<section class="side-sec"><h2>Add a consultant</h2><ol class="types">' +
+    CONSULT_TYPES.map(function(t,i){
+      var n = counts[t] || 0;
+      return '<li><button class="type' + (n ? ' on' : '') + '" data-act="addConsult" data-type="' + i + '">' +
+        '<span class="dot"></span><span>' + esc(t) + '</span><span class="tag">' + (n ? n : 'Add') + '</span></button></li>';
+    }).join('') +
+    '</ol><div class="custom"><input id="customCType" placeholder="Custom type" aria-label="Custom consultant type" autocomplete="off"><button class="btn" data-act="addConsultCustom">Add</button></div></section>';
+}
+
+function renderConsult(){
+  var names = CONSULT_NAMES.slice(), types = CONSULT_TYPES.slice();
+  state.consultants.forEach(function(c){
+    if(c.name && names.indexOf(c.name) < 0) names.push(c.name);
+    if(c.type && types.indexOf(c.type) < 0) types.push(c.type);
+  });
+  names.sort(function(a,b){ return a.localeCompare(b); });
+  $('#dlNames').innerHTML = names.map(function(n){ return '<option value="' + esc(n) + '">'; }).join('');
+  $('#dlTypes').innerHTML = types.map(function(n){ return '<option value="' + esc(n) + '">'; }).join('');
+
+  var rows = state.consultants.map(function(c){
+    return '<div class="grid c row" data-consult="' + c.id + '">' +
+      '<input class="plain strong" data-f="cName" list="dlNames" value="' + esc(c.name) + '" placeholder="Consultant name" aria-label="Consultant name" autocomplete="off">' +
+      '<input class="plain" data-f="cType" list="dlTypes" value="' + esc(c.type) + '" placeholder="Type" aria-label="Consultant type" autocomplete="off">' +
+      '<div class="unit has-pre"><span class="pre">CA$</span><input class="num" data-f="cAmt" data-nav="camt" inputmode="decimal" value="' + plain(c.amount) + '" aria-label="Consultant fee" autocomplete="off"></div>' +
+      '<div class="unit has-pre"><span class="pre">CA$</span><input class="num" data-f="cMk" data-nav="cmk" inputmode="decimal" value="' + plain(c.markup) + '" aria-label="Markup" autocomplete="off"></div>' +
+      '<button class="icon-btn" data-act="rmConsult" aria-label="Remove consultant">' + X + '</button></div>';
+  });
+  $('#phases').innerHTML =
+    '<section class="card"><h2 class="card-h">Project consultants</h2>' +
+    '<p class="card-p">Consultants working on this project who are not tied to a phase.</p>' +
+    '<div class="team"><div class="team-in">' +
+    (rows.length
+      ? '<div class="grid c head"><span>Consultant</span><span>Type</span><span class="r">Fee</span><span class="r">Markup</span><span></span></div>' + rows.join('')
+      : '<div class="none">No consultants yet. Pick a type on the left to add one.</div>') +
+    '<div class="grid c total" id="cTotal"></div></div></div>' +
+    '<div class="assign"><button class="btn ghost" data-act="addConsultBlank">+ Add consultant</button></div></section>';
+  refresh();
+}
+
+function refreshConsultSummary(){
+  var amt = sumC('amount'), mk = sumC('markup');
+  $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumClient').textContent = money(clientTotal());
+  $('#sumCons').textContent = money(amt);
+  $('#sumMarkup').textContent = money(mk);
+
+  var ps = [];
+  state.consultants.forEach(function(c, i){
+    if(c.amount > 0) ps.push('<i style="flex:' + c.amount + ' 1 0;--o:1;background:' + PHASE_COLORS[i % PHASE_COLORS.length].c + '" title="' + esc(c.name || 'Unnamed') + ' ' + money(c.amount) + '"></i>');
+  });
+  var pm = $('#projMeter');
+  pm.innerHTML = ps.join('');
+  pm.classList.remove('over');
+  $('#projLegend').innerHTML = state.consultants.map(function(c, i){
+    return c.amount > 0 ? '<span class="lg"><i style="background:' + PHASE_COLORS[i % PHASE_COLORS.length].c + '"></i>' + esc(c.name || 'Unnamed') + '</span>' : '';
+  }).join('');
+
+  var tot = $('#cTotal');
+  if(tot){
+    tot.innerHTML = '<span>Total</span><span></span><span class="r">' + money(amt) + '</span><span class="r">' + money(mk) + '</span><span></span>';
+  }
+}
+
+function addConsultant(type){
+  var dflt = CONSULT_DEFAULTS[type];
+  var c = {id:uid(),name:dflt ? dflt.name : '',type:type || '',amount:dflt ? dflt.amount : 0,markup:0};
+  state.consultants.push(c);
+  renderConsult(); renderSidebar(); save();
+  var inp = $('#phases [data-consult="' + c.id + '"] [data-f=' + (dflt ? 'cAmt' : 'cName') + ']');
+  if(inp){ inp.scrollIntoView({block:'nearest'}); inp.focus(); }
+}
+
+function handleExtra(act, b){
+  switch(act){
+    case 'tab':
+      if(b.dataset.tab !== tab){ tab = b.dataset.tab; renderSummary(); renderSidebar(); renderMain(); }
+      return true;
+    case 'addConsult': addConsultant(CONSULT_TYPES[parseInt(b.dataset.type,10)]); return true;
+    case 'addConsultCustom': {
+      var inp = $('#customCType'), v = inp ? inp.value.trim() : '';
+      if(!v){ toast('Enter a consultant type'); if(inp) inp.focus(); return true; }
+      addConsultant(v); return true;
+    }
+    case 'addConsultBlank': addConsultant(''); return true;
+    case 'rmConsult': {
+      var row = b.closest('[data-consult]');
+      var c = consultById(row.dataset.consult);
+      pushUndo();
+      state.consultants = state.consultants.filter(function(x){ return x.id !== row.dataset.consult; });
+      renderConsult(); renderSidebar(); save();
+      toast('Removed ' + ((c && c.name) || 'consultant'), true);
+      return true;
+    }
+    case 'feeToBudget': {
+      var pp = phaseOf(b);
+      if(!pp) return true;
+      var pc = calc(pp);
+      if(pc.assigned <= 0) return true;
+      pushUndo();
+      pp.fee = r2(pc.assigned);
+      var fi = $('#ph-' + pp.id + ' [data-f=phFee]');
+      if(fi) fi.value = plain(pp.fee);
+      refresh(); save();
+      toast('Fee set to the allocated budget', true);
+      return true;
+    }
+    case 'openImport': openImport(); return true;
+    case 'doImport': runImport(); return true;
+    case 'closeImport': $('#importDlg').close(); return true;
+  }
+  return false;
+}
+
+/* ---------- import ---------- */
+function openImport(){
+  $('#importText').value = '';
+  $('#importErr').textContent = '';
+  $('#importFile').value = '';
+  $('#importDlg').showModal();
+  $('#importText').focus();
+}
+$('#importFile').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){ $('#importText').value = String(rd.result); $('#importErr').textContent = ''; };
+  rd.onerror = function(){ $('#importErr').textContent = 'Could not read that file.'; };
+  rd.readAsText(f);
+});
+
+function fromJSON(o){
+  if(!o || typeof o !== 'object' || !o.project || !Array.isArray(o.phases)){
+    throw new Error('This does not look like fee builder JSON. It needs a project and a phases list.');
+  }
+  var staff = [], map = {};
+  function addStaffMember(id, name, role, rate){
+    if(id && map[id]) return map[id];
+    if(!id){
+      for(var i = 0; i < staff.length; i++){ if(name && staff[i].name === name) return staff[i]; }
+    }
+    var st = {id:id || uid(),name:String(name || ''),role:String(role || ''),rate:num(rate),hue:HUES[staff.length % HUES.length]};
+    staff.push(st); map[st.id] = st;
+    return st;
+  }
+  (Array.isArray(o.staff) ? o.staff : []).forEach(function(m){
+    addStaffMember(m.id, m.name, m.role, m.hourlyRate != null ? m.hourlyRate : m.rate);
+  });
+  var phases = o.phases.map(function(p){
+    var name = String(p.name || 'Untitled phase'), t = -1;
+    TYPES.forEach(function(T, i){ if(T.n === name) t = i; });
+    return {
+      id:uid(),type:t,badge:String(p.code || (t >= 0 ? TYPES[t].c : codeFrom(name))),name:name,
+      start:p.startDate || '',end:p.endDate || '',fee:num(p.fee),open:true,
+      team:(Array.isArray(p.team) ? p.team : []).map(function(m){
+        var st = addStaffMember(m.staffId, m.name, m.role, m.hourlyRate);
+        return {staffId:st.id,hours:r2(num(m.hours))};
+      })
+    };
+  });
+  var cons = (Array.isArray(o.consultants) ? o.consultants : []).map(function(c){
+    return {id:uid(),name:String(c.name || ''),type:String(c.type || ''),amount:r2(num(c.fee != null ? c.fee : c.amount)),markup:r2(num(c.markup))};
+  });
+  var camt = 0; cons.forEach(function(c){ camt += c.amount; });
+  var P = o.project;
+  return {
+    project:{number:String(P.number || ''),name:String(P.name || ''),serviceFees:num(P.serviceFees),consultantFees:P.consultantFees != null ? num(P.consultantFees) : camt},
+    staff:staff,phases:phases,consultants:cons
+  };
+}
+function runImport(){
+  var txt = $('#importText').value.trim(), err = $('#importErr');
+  if(!txt){ err.textContent = 'Paste the JSON or choose a file first.'; return; }
+  var obj, res;
+  try{ obj = JSON.parse(txt); }catch(e){ err.textContent = 'That is not valid JSON: ' + e.message; return; }
+  try{ res = fromJSON(obj); ensureAdmin(res); }catch(e){ err.textContent = e.message; return; }
+  pushUndo();
+  state = res;
+  renderAll(); save();
+  $('#importDlg').close();
+  toast('Imported ' + (state.project.name || 'project'), true);
+}
+
+/* ---------- boot ---------- */
+renderAll();
+save();
+})();
+</script>
+</body>
+</html>
