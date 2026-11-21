@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PDG Fee Builder</title>
+<title>Fee builder</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;600&display=swap">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -194,6 +194,21 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:18px;font-size:13px;color:var(--muted);min-height:1px}
 .lg{display:inline-flex;align-items:center;gap:6px}
 .lg i{display:block;width:11px;height:11px;border-radius:3px}
+.grid.d{grid-template-columns:minmax(200px,1.6fr) 210px 100px 28px}
+.alloc{display:flex;gap:8px;align-items:center}
+.alloc .unit{width:84px;flex:none}
+.mini{border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:6px 8px;font-size:14px}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar p{flex:1 1 280px;margin:0;color:var(--muted)}
+.ph-title{font:600 20px/1.25 "Barlow Semi Condensed","Barlow",sans-serif}
+.pill.mute{background:var(--surface-2);color:var(--muted)}
+dialog.wide{width:min(820px,94vw)}
+#settingsBody{max-height:62vh;overflow:auto;margin-top:8px;padding-right:4px}
+.st-type{margin-bottom:20px}
+.st-type h3{margin:0 0 6px;font:600 17px "Barlow Semi Condensed","Barlow",sans-serif;display:flex;align-items:center;gap:8px}
+.dotc{display:block;width:11px;height:11px;border-radius:3px}
+.st-row{display:grid;grid-template-columns:minmax(200px,1fr) 90px 28px;gap:8px;align-items:center;margin-bottom:6px}
+.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
 @media (max-width:900px){
   .wrap{padding:0 16px}
   .summary{grid-template-columns:1fr 1fr}
@@ -209,13 +224,6 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 </style>
 </head>
 <body>
-<style>
-.pdg-topnav{background:#17171a;color:#e8e8e2;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:9px 18px;letter-spacing:.01em}
-.pdg-topnav a{color:inherit;text-decoration:none}
-.pdg-topnav a:hover{text-decoration:underline}
-</style>
-<div class="pdg-topnav"><a href="/">&larr; PDG Support Docs</a></div>
-
 
 <header class="bar">
   <div class="wrap bar-in">
@@ -233,6 +241,7 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
     <nav class="tabs" role="tablist" aria-label="Fee sections">
       <button class="tab" role="tab" data-act="tab" data-tab="firm" aria-selected="true">Firm services</button>
       <button class="tab" role="tab" data-act="tab" data-tab="consult" aria-selected="false">Consultant fees</button>
+      <button class="tab" role="tab" data-act="tab" data-tab="deliver" aria-selected="false">Deliverables</button>
     </nav>
     <section class="summary" id="summary" aria-label="Fee summary"></section>
     <div class="meter proj" id="projMeter" role="img" aria-label="Share of service fees allocated to each phase"></div>
@@ -268,6 +277,14 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 
 <datalist id="dlNames"></datalist>
 <datalist id="dlTypes"></datalist>
+<datalist id="dlDel"></datalist>
+
+<dialog id="settingsDlg" class="wide">
+  <h2>Deliverable settings</h2>
+  <p>Standard deliverables for each phase type. Tick Default to add a standard automatically whenever that phase is added to a project. Hours are set per project on the Deliverables tab, not here. Settings are saved in this browser.</p>
+  <div id="settingsBody"></div>
+  <div class="dlg-actions"><button class="btn primary" data-act="closeSettings">Done</button></div>
+</dialog>
 
 <script>
 (function(){
@@ -285,6 +302,7 @@ var TYPES = [
   {n:'8.0 - Admin',c:'AD'}
 ];
 var ADMIN_TYPE = 6;
+var NO_DELIVERABLES = [0, ADMIN_TYPE];
 var LESLIE_RATE = 115;
 var PHASE_COLORS = [
   {c:'#0b72b8',t:'#ffffff'}, {c:'#e69f00',t:'#1d1500'}, {c:'#0f9d73',t:'#ffffff'}, {c:'#8e44ad',t:'#ffffff'},
@@ -307,6 +325,7 @@ function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function r2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function r6(n){ return Math.round((n + Number.EPSILON) * 1000000) / 1000000; }
 function num(v){ var n = parseFloat(String(v).replace(/[^0-9.]/g,'')); return isFinite(n) && n > 0 ? n : 0; }
 function plain(n){ return n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function money(n){ return (n < 0 ? '\u2212' : '') + 'CA$' + plain(Math.abs(n)); }
@@ -353,7 +372,7 @@ function ensureAdmin(st){
   if(les.rate === 0) les.rate = LESLIE_RATE;
   if(!st.phases.some(function(p){ return p.type === ADMIN_TYPE; })){
     var T = TYPES[ADMIN_TYPE];
-    st.phases.push({id:uid(),type:ADMIN_TYPE,badge:T.c,name:T.n,start:'',end:'',fee:r2(les.rate),open:true,team:[{staffId:les.id,hours:1}]});
+    st.phases.push({id:uid(),type:ADMIN_TYPE,badge:T.c,name:T.n,start:'',end:'',fee:r2(les.rate),open:true,team:[{staffId:les.id,hours:1}],deliverables:defaultDeliverables(ADMIN_TYPE)});
     var key = function(p){ var m = p.name.match(/^\s*(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : Infinity; };
     st.phases.sort(function(a,b){ return key(a) - key(b); });
   }
@@ -367,6 +386,7 @@ function ensureAdmin(st){
 }
 function normalize(s){
   s.consultants = Array.isArray(s.consultants) ? s.consultants : [];
+  s.phases.forEach(function(p){ p.deliverables = (Array.isArray(p.deliverables) && NO_DELIVERABLES.indexOf(p.type) < 0) ? p.deliverables : []; });
   s.project.consultantFees = s.project.consultantFees || 0;
   ensureAdmin(s);
   return s;
@@ -381,6 +401,16 @@ function load(){
   }catch(e){}
   return ensureAdmin(seed());
 }
+var STD_KEY = 'pdg-fee-builder-standards-v1';
+function loadStandards(){
+  try{
+    var raw = localStorage.getItem(STD_KEY);
+    if(raw){ var o = JSON.parse(raw); if(o && o.byType && typeof o.byType === 'object') return o; }
+  }catch(e){}
+  return {byType:{}};
+}
+var standards = loadStandards();
+function saveStandards(){ try{ localStorage.setItem(STD_KEY, JSON.stringify(standards)); }catch(e){} }
 var state = load();
 var undoSnap = null;
 var tab = 'firm';
@@ -439,6 +469,7 @@ function staffHTML(s){
 }
 function renderSidebar(){
   if(tab === 'consult'){ renderConsultSide(); return; }
+  if(tab === 'deliver'){ renderDeliverSide(); return; }
   var added = {};
   state.phases.forEach(function(p){ if(p.type >= 0) added[p.type] = true; });
   $('#side').innerHTML =
@@ -509,7 +540,7 @@ function syncHeader(){
   if(t !== act) t.value = state.project.name || '';
   if(f && f !== act) f.value = plain(state.project.serviceFees || 0);
 }
-function renderMain(){ if(tab === 'consult') renderConsult(); else renderPhases(); }
+function renderMain(){ if(tab === 'consult') renderConsult(); else if(tab === 'deliver') renderDeliver(); else renderPhases(); }
 function renderAll(){ syncHeader(); renderSummary(); renderSidebar(); renderMain(); }
 
 /* patch computed values without touching focused inputs */
@@ -571,6 +602,7 @@ function refresh(){
 
   // summary
   var un = svc - feesTotal;
+  if(tab === 'deliver'){ refreshDeliver(); return; }
   if(tab === 'consult'){ refreshConsultSummary(); return; }
   $('#sumTotal').textContent = money(totalProjectFees());
   $('#sumClient').textContent = money(clientTotal());
@@ -615,7 +647,7 @@ function addPhase(type, custom){
   var T = type >= 0 ? TYPES[type] : null;
   var name = T ? T.n : String(custom || '').trim();
   if(!name){ toast('Enter a name for the custom phase'); var cn = $('#customName'); if(cn) cn.focus(); return; }
-  var ph = {id:uid(),type:type >= 0 ? type : -1,badge:T ? T.c : codeFrom(name),name:name,start:'',end:'',fee:0,open:true,team:[]};
+  var ph = {id:uid(),type:type >= 0 ? type : -1,badge:T ? T.c : codeFrom(name),name:name,start:'',end:'',fee:0,open:true,team:[],deliverables:defaultDeliverables(type >= 0 ? type : -1)};
   state.phases.push(ph);
   sortPhases();
   renderSidebar(); renderPhases(); save();
@@ -675,7 +707,7 @@ document.addEventListener('click', function(e){
     if(c.assigned > 0 && ph.fee > 0){
       pushUndo();
       var k = ph.fee / c.assigned;
-      ph.team.forEach(function(a){ a.hours = r2(a.hours * k); });
+      ph.team.forEach(function(a){ a.hours = r6(a.hours * k); });
       refresh(); save();
       toast('Hours scaled to match the fee', true);
     }
@@ -782,7 +814,7 @@ document.addEventListener('input', function(e){
       if(snap && snap.id === ph.id && snap.oldFee > 0){
         ph.team.forEach(function(x){
           var sh = snap.shares[x.staffId], rate = rateOf(x);
-          if(sh != null) x.hours = rate > 0 ? r2(sh * ph.fee / rate) : 0;
+          if(sh != null) x.hours = rate > 0 ? r6(sh * ph.fee / rate) : 0;
         });
       }
       refresh(); break;
@@ -790,7 +822,7 @@ document.addEventListener('input', function(e){
     case 'pct':
       if(a && ph){
         var rate = rateOf(a);
-        a.hours = (ph.fee > 0 && rate > 0) ? r2(num(t.value) / 100 * ph.fee / rate) : 0;
+        a.hours = (ph.fee > 0 && rate > 0) ? r6(num(t.value) / 100 * ph.fee / rate) : 0;
         refresh();
       }
       break;
@@ -811,6 +843,32 @@ document.addEventListener('input', function(e){
         else if(f === 'cAmt') cc.amount = r2(num(t.value));
         else cc.markup = r2(num(t.value));
         refresh();
+      }
+      break;
+    }
+    case 'dName': case 'dMode': case 'dVal': {
+      var dc = t.closest('[data-dphase]'), dpp = dc ? phaseById(dc.dataset.dphase) : null;
+      var dro = t.closest('[data-del]');
+      var dx = (dpp && dro) ? dpp.deliverables.filter(function(x){ return x.id === dro.dataset.del; })[0] : null;
+      if(dx){
+        if(f === 'dName') dx.name = t.value;
+        else if(f === 'dVal') dx.value = num(t.value);
+        else if(t.value !== dx.mode){
+          var ph0 = phaseHours(dpp), cur = delHours(dpp, dx);
+          dx.mode = t.value;
+          dx.value = dx.mode === 'percent' ? (ph0 > 0 ? r6(cur / ph0 * 100) : 0) : r6(cur);
+        }
+        refresh();
+      }
+      break;
+    }
+    case 'stName': case 'stDef': {
+      var sr = t.closest('[data-std]');
+      var sd = sr ? stdList(parseInt(sr.dataset.type, 10)).filter(function(x){ return x.id === sr.dataset.std; })[0] : null;
+      if(sd){
+        if(f === 'stName') sd.name = t.value;
+        else sd.def = !!t.checked;
+        saveStandards();
       }
       break;
     }
@@ -844,7 +902,7 @@ function buildJSON(){
   var svc = state.project.serviceFees || 0, fees = 0;
   state.phases.forEach(function(p){ fees += p.fee; });
   return {
-    schemaVersion:2,
+    schemaVersion:3,
     exportedAt:new Date().toISOString(),
     currency:'CAD',
     project:{
@@ -860,6 +918,7 @@ function buildJSON(){
       disbursementPercent:r2(DISB * 100),
       clientTotal:r2(clientTotal())
     },
+    standards:exportStandards(),
     consultants:state.consultants.map(function(c){ return {id:c.id,name:c.name,type:c.type,fee:r2(c.amount),markup:r2(c.markup)}; }),
     staff:state.staff.map(function(s){ return {id:s.id,name:s.name,role:s.role,hourlyRate:r2(s.rate)}; }),
     phases:state.phases.map(function(ph,i){
@@ -879,18 +938,21 @@ function buildJSON(){
             name:r.s ? r.s.name : '',
             role:r.s ? r.s.role : '',
             hourlyRate:r2(r.rate),
-            hours:r2(r.a.hours),
+            hours:r6(r.a.hours),
             percentOfPhaseFee:r2(r.pct),
             budget:r2(r.budget)
           };
         }),
-        totals:{hours:r2(c.hours),budget:r2(c.assigned),matchesFee:c.balanced}
+        totals:{hours:r2(c.hours),budget:r2(c.assigned),matchesFee:c.balanced},
+        deliverables:ph.deliverables.map(function(d){
+          return {name:d.name,mode:d.mode,value:r6(d.value),hours:r2(delHours(ph, d))};
+        })
       };
     })
   };
 }
-function copyJSON(){
-  var txt = JSON.stringify(buildJSON(), null, 2);
+function copyJSON(){ copyText(JSON.stringify(buildJSON(), null, 2), 'Fee JSON copied to clipboard'); }
+function copyText(txt, okMsg){
   function fallback(){
     var ta = document.createElement('textarea');
     ta.value = txt; ta.setAttribute('readonly','');
@@ -899,12 +961,12 @@ function copyJSON(){
     var ok = false;
     try{ ok = document.execCommand('copy'); }catch(err){}
     ta.remove();
-    if(ok){ toast('Fee JSON copied to clipboard'); return; }
+    if(ok){ toast(okMsg); return; }
     var d = $('#jsonDlg'), area = $('#jsonText');
     area.value = txt; d.showModal(); area.focus(); area.select();
   }
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(function(){ toast('Fee JSON copied to clipboard'); }, fallback);
+    navigator.clipboard.writeText(txt).then(function(){ toast(okMsg); }, fallback);
   } else fallback();
 }
 $('#jsonClose').addEventListener('click', function(){ $('#jsonDlg').close(); });
@@ -920,7 +982,13 @@ function renderSummary(){
   var total = '<div class="metric"><div class="hv" id="sumTotal"></div><span class="ml">Total project fees</span></div>';
   var client = '<div class="metric"><div class="hv client" id="sumClient"></div><span class="ml">Client total (+9% disbursements)</span></div>';
   var el = $('#summary');
-  if(tab === 'consult'){
+  if(tab === 'deliver'){
+    el.innerHTML = total +
+      '<div class="metric"><div class="hv" id="sumPH"></div><span class="ml">Phase hours</span></div>' +
+      '<div class="metric"><div class="hv" id="sumDH"></div><span class="ml">Deliverable hours</span></div>' +
+      '<div class="metric"><div class="hv" id="sumUH"></div><span class="ml" id="uhLabel">Unallocated hours</span></div>' +
+      client;
+  } else if(tab === 'consult'){
     el.innerHTML = total +
       '<div class="metric"><div class="hv" id="sumCons"></div><span class="ml">Consultant fees</span></div>' +
       '<div class="metric"><div class="hv" id="sumMarkup"></div><span class="ml">Markup</span></div>' +
@@ -1046,6 +1114,38 @@ function handleExtra(act, b){
       toast('Fee set to the allocated budget', true);
       return true;
     }
+    case 'dRm': {
+      var dpc = b.closest('[data-dphase]'), dph = dpc ? phaseById(dpc.dataset.dphase) : null, drow = b.closest('[data-del]');
+      if(!dph || !drow) return true;
+      var dd = dph.deliverables.filter(function(x){ return x.id === drow.dataset.del; })[0];
+      pushUndo();
+      dph.deliverables = dph.deliverables.filter(function(x){ return x.id !== drow.dataset.del; });
+      renderDeliver(); renderSidebar(); save();
+      toast('Removed ' + ((dd && dd.name) || 'deliverable'), true);
+      return true;
+    }
+    case 'dExport': copyDeliverables(); return true;
+    case 'jumpPhase': { var jc = document.getElementById('dl-' + b.dataset.id); if(jc) flash(jc); return true; }
+    case 'openSettings': renderSettings(); $('#settingsDlg').showModal(); return true;
+    case 'closeSettings': $('#settingsDlg').close(); return true;
+    case 'stAdd': {
+      var ty = parseInt(b.dataset.type, 10);
+      if(!standards.byType[ty]) standards.byType[ty] = [];
+      var ns2 = {id:uid(),name:'',def:false};
+      standards.byType[ty].push(ns2);
+      saveStandards(); renderSettings();
+      var sin = $('#settingsBody [data-std="' + ns2.id + '"] [data-f=stName]');
+      if(sin) sin.focus();
+      return true;
+    }
+    case 'stRm': {
+      var srow = b.closest('[data-std]');
+      if(!srow) return true;
+      var ty2 = parseInt(srow.dataset.type, 10);
+      standards.byType[ty2] = stdList(ty2).filter(function(x){ return x.id !== srow.dataset.std; });
+      saveStandards(); renderSettings();
+      return true;
+    }
     case 'openImport': openImport(); return true;
     case 'doImport': runImport(); return true;
     case 'closeImport': $('#importDlg').close(); return true;
@@ -1092,10 +1192,10 @@ function fromJSON(o){
     TYPES.forEach(function(T, i){ if(T.n === name) t = i; });
     return {
       id:uid(),type:t,badge:String(p.code || (t >= 0 ? TYPES[t].c : codeFrom(name))),name:name,
-      start:p.startDate || '',end:p.endDate || '',fee:num(p.fee),open:true,
+      start:p.startDate || '',end:p.endDate || '',fee:num(p.fee),open:true,deliverables:NO_DELIVERABLES.indexOf(t) >= 0 ? [] : parseDels(p.deliverables),
       team:(Array.isArray(p.team) ? p.team : []).map(function(m){
         var st = addStaffMember(m.staffId, m.name, m.role, m.hourlyRate);
-        return {staffId:st.id,hours:r2(num(m.hours))};
+        return {staffId:st.id,hours:r6(num(m.hours))};
       })
     };
   });
@@ -1114,13 +1214,197 @@ function runImport(){
   if(!txt){ err.textContent = 'Paste the JSON or choose a file first.'; return; }
   var obj, res;
   try{ obj = JSON.parse(txt); }catch(e){ err.textContent = 'That is not valid JSON: ' + e.message; return; }
-  try{ res = fromJSON(obj); ensureAdmin(res); }catch(e){ err.textContent = e.message; return; }
+  try{ res = fromJSON(obj); mergeStandards(obj.standards); ensureAdmin(res); }catch(e){ err.textContent = e.message; return; }
   pushUndo();
   state = res;
   renderAll(); save();
   $('#importDlg').close();
   toast('Imported ' + (state.project.name || 'project'), true);
 }
+
+/* ---------- deliverables ---------- */
+function phaseHours(ph){ var h = 0; ph.team.forEach(function(a){ h += a.hours; }); return h; }
+function delHours(ph, d){ return d.mode === 'percent' ? phaseHours(ph) * d.value / 100 : d.value; }
+function stdList(type){ return NO_DELIVERABLES.indexOf(type) >= 0 ? [] : (standards.byType[type] || []); }
+function dPhases(){ return state.phases.filter(function(ph){ return NO_DELIVERABLES.indexOf(ph.type) < 0; }); }
+function defaultDeliverables(type){
+  return stdList(type).filter(function(x){ return x.def && x.name; }).map(function(x){
+    return {id:uid(),name:x.name,mode:'hours',value:0};
+  });
+}
+function parseDels(list){
+  return (Array.isArray(list) ? list : []).map(function(d){
+    return {id:uid(),name:String(d.name || d.type || ''),mode:d.mode === 'percent' ? 'percent' : 'hours',value:num(d.value != null ? d.value : d.hours)};
+  });
+}
+function exportStandards(){
+  return TYPES.map(function(T, i){
+    return {phaseType:T.n,items:stdList(i).filter(function(x){ return x.name; }).map(function(x){
+      return {name:x.name,default:!!x.def};
+    })};
+  }).filter(function(e){ return e.items.length; });
+}
+function mergeStandards(list){
+  if(!Array.isArray(list)) return;
+  list.forEach(function(e){
+    var idx = -1;
+    TYPES.forEach(function(T, i){ if(e && T.n === e.phaseType) idx = i; });
+    if(idx < 0 || NO_DELIVERABLES.indexOf(idx) >= 0 || !Array.isArray(e.items)) return;
+    if(!standards.byType[idx]) standards.byType[idx] = [];
+    e.items.forEach(function(it){
+      var nm = String(it.name || '').trim();
+      if(!nm) return;
+      var exists = standards.byType[idx].some(function(x){ return x.name.toLowerCase() === nm.toLowerCase(); });
+      if(!exists) standards.byType[idx].push({id:uid(),name:nm,def:!!it.default});
+    });
+  });
+  saveStandards();
+}
+
+function renderDeliverSide(){
+  $('#side').innerHTML = '<section class="side-sec"><h2>Phases</h2>' +
+    (dPhases().length
+      ? '<ol class="types">' + dPhases().map(function(ph){
+          var col = phaseColor(ph).c, n = ph.deliverables.length;
+          return '<li><button class="type" data-act="jumpPhase" data-id="' + ph.id + '"><span class="dot" style="border-color:' + col + ';background:' + col + '"></span><span>' + esc(ph.name) + '</span><span class="tag">' + (n ? n : '') + '</span></button></li>';
+        }).join('') + '</ol>'
+      : '<p class="hint">No phases with deliverables yet.</p>') + '</section>';
+}
+
+function delRowHTML(d){
+  return '<div class="grid d row" data-del="' + d.id + '">' +
+    '<input class="plain strong" data-f="dName" list="dlDel" value="' + esc(d.name) + '" placeholder="Deliverable" aria-label="Deliverable name" autocomplete="off">' +
+    '<div class="alloc"><div class="unit"><input class="num" data-f="dVal" data-nav="dval" inputmode="decimal" aria-label="Allocation" autocomplete="off"></div>' +
+    '<select class="mini" data-f="dMode" aria-label="Allocation unit"><option value="hours">hours</option><option value="percent">% of phase</option></select></div>' +
+    '<span class="budget" data-k="dh"></span>' +
+    '<button class="icon-btn" data-act="dRm" aria-label="Remove deliverable">' + X + '</button></div>';
+}
+function dlCardHTML(ph){
+  var col = phaseColor(ph);
+  var opts = stdList(ph.type).filter(function(x){ return x.name; }).map(function(x){
+    return '<option value="std:' + x.id + '">' + esc(x.name) + '</option>';
+  }).join('');
+  return '<section class="phase" id="dl-' + ph.id + '" data-dphase="' + ph.id + '" style="--pc:' + col.c + '">' +
+    '<div class="ph-head"><span class="badge" style="background:' + col.c + ';color:' + col.t + '">' + esc(ph.badge) + '</span><span class="ph-title">' + esc(ph.name) + '</span><span class="grow"></span><div class="status" data-k="dstat"></div></div>' +
+    '<div class="team"><div class="team-in">' +
+    (ph.deliverables.length
+      ? '<div class="grid d head"><span>Deliverable</span><span>Allocation</span><span class="r">Hours</span><span></span></div>' + ph.deliverables.map(delRowHTML).join('')
+      : '<div class="none">No deliverables yet.</div>') +
+    '<div class="grid d total" data-k="dtotal"></div></div></div>' +
+    '<div class="assign"><select data-f="dAddSel" aria-label="Add deliverable"><option value="">+ Add deliverable</option>' + opts + '<option value="custom">Custom deliverable</option></select></div></section>';
+}
+function renderDeliver(){
+  var names = [];
+  Object.keys(standards.byType).forEach(function(k){
+    standards.byType[k].forEach(function(x){ if(x.name && names.indexOf(x.name) < 0) names.push(x.name); });
+  });
+  dPhases().forEach(function(ph){ ph.deliverables.forEach(function(d){ if(d.name && names.indexOf(d.name) < 0) names.push(d.name); }); });
+  names.sort(function(a, b){ return a.localeCompare(b); });
+  $('#dlDel').innerHTML = names.map(function(n){ return '<option value="' + esc(n) + '">'; }).join('');
+  var bar = '<div class="toolbar"><p>Rough hour allocations for each phase. A deliverable is either a fixed number of hours or a share of the hours assigned to the phase.</p>' +
+    '<button class="btn" data-act="openSettings">Settings</button><button class="btn primary" data-act="dExport">Export deliverables</button></div>';
+  $('#phases').innerHTML = bar + (dPhases().length
+    ? dPhases().map(dlCardHTML).join('')
+    : '<div class="empty"><h3>No phases with deliverables yet</h3><p>Add phases on the Firm services tab, then set their deliverables here. Phases 0.0 and 8.0 do not have deliverables.</p></div>');
+  refresh();
+}
+function refreshDeliver(){
+  var act = document.activeElement, totPH = 0, totDH = 0, ps = [], lg = [];
+  dPhases().forEach(function(ph){
+    var hrs = phaseHours(ph), dh = 0, hasPct = false;
+    totPH += hrs;
+    ph.deliverables.forEach(function(d){
+      var h = delHours(ph, d);
+      dh += h;
+      if(d.mode === 'percent') hasPct = true;
+      var row = document.querySelector('#dl-' + ph.id + ' [data-del="' + d.id + '"]');
+      if(!row) return;
+      var v = row.querySelector('[data-f=dVal]'), m = row.querySelector('[data-f=dMode]');
+      if(v !== act) v.value = trim(d.value, 2);
+      if(m !== act) m.value = d.mode;
+      row.querySelector('[data-k=dh]').textContent = trim(h, 2) + ' h';
+    });
+    totDH += dh;
+    var card = document.getElementById('dl-' + ph.id);
+    if(card){
+      var diff = hrs - dh, status;
+      if(hrs === 0 && hasPct) status = '<span class="hint">Percent deliverables need hours on the Firm services tab</span>';
+      else if(!ph.deliverables.length) status = '<span class="hint">' + trim(hrs, 2) + ' h assigned to this phase</span>';
+      else if(Math.abs(diff) <= 0.005) status = '<span class="pill ok">All ' + trim(hrs, 2) + ' h allocated</span>';
+      else if(diff > 0) status = '<span class="pill mute">' + trim(diff, 2) + ' h unallocated of ' + trim(hrs, 2) + ' h</span>';
+      else status = '<span class="pill bad">' + trim(-diff, 2) + ' h over the ' + trim(hrs, 2) + ' h assigned</span>';
+      card.querySelector('[data-k=dstat]').innerHTML = status;
+      card.querySelector('[data-k=dtotal]').innerHTML = '<span>Total</span><span></span><span class="r">' + trim(dh, 2) + ' h</span><span></span>';
+    }
+    if(hrs > 0){
+      var col = phaseColor(ph).c;
+      ps.push('<i style="flex:' + hrs + ' 1 0;--o:1;background:' + col + '" title="' + esc(ph.name) + ' ' + trim(hrs, 2) + ' h"></i>');
+      lg.push('<span class="lg" title="' + esc(ph.name) + '"><i style="background:' + col + '"></i>' + esc(ph.badge) + '</span>');
+    }
+  });
+  var un = totPH - totDH, over = un < -0.005;
+  $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumClient').textContent = money(clientTotal());
+  $('#sumPH').textContent = trim(totPH, 2);
+  $('#sumDH').textContent = trim(totDH, 2);
+  $('#sumUH').textContent = trim(un, 2);
+  $('#sumUH').classList.toggle('bad', over);
+  $('#uhLabel').textContent = over ? 'Over-allocated hours' : 'Unallocated hours';
+  var pm = $('#projMeter');
+  pm.innerHTML = ps.join('');
+  pm.classList.remove('over');
+  $('#projLegend').innerHTML = lg.join('');
+}
+
+function copyDeliverables(){
+  var pn = String(state.project.number || '').trim();
+  if(!pn){ toast('Add the project number first, it is part of the export'); var f = $('#projNumber'); if(f) f.focus(); return; }
+  var rows = [];
+  dPhases().forEach(function(ph){
+    ph.deliverables.forEach(function(d){
+      if(!String(d.name || '').trim()) return;
+      rows.push({projectNumber:pn,deliverableType:d.name,hours:r2(delHours(ph, d))});
+    });
+  });
+  if(!rows.length){ toast('There are no named deliverables to export yet'); return; }
+  copyText(JSON.stringify(rows, null, 2), 'Deliverables JSON copied to clipboard');
+}
+
+function renderSettings(){
+  $('#settingsBody').innerHTML = TYPES.map(function(T, i){
+    if(NO_DELIVERABLES.indexOf(i) >= 0) return '';
+    var col = PHASE_COLORS[i].c;
+    var rows = stdList(i).map(function(x){
+      return '<div class="st-row" data-std="' + x.id + '" data-type="' + i + '">' +
+        '<input class="plain" data-f="stName" value="' + esc(x.name) + '" placeholder="Deliverable name" aria-label="Standard deliverable name" autocomplete="off">' +
+        '<label class="chk"><input type="checkbox" data-f="stDef"' + (x.def ? ' checked' : '') + '> Default</label>' +
+        '<button class="icon-btn" data-act="stRm" aria-label="Remove standard">' + X + '</button></div>';
+    }).join('');
+    return '<div class="st-type"><h3><i class="dotc" style="background:' + col + '"></i>' + esc(T.n) + '</h3>' +
+      (rows || '<p class="hint">No standards yet.</p>') +
+      '<button class="link" data-act="stAdd" data-type="' + i + '">+ Add standard</button></div>';
+  }).join('');
+}
+$('#settingsDlg').addEventListener('close', function(){ if(tab === 'deliver') renderDeliver(); });
+
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if(!t.dataset || t.dataset.f !== 'dAddSel' || !t.value) return;
+  var dc = t.closest('[data-dphase]'), ph = dc ? phaseById(dc.dataset.dphase) : null;
+  if(!ph) return;
+  var nd, custom = t.value === 'custom';
+  if(custom){ nd = {id:uid(),name:'',mode:'hours',value:0}; }
+  else {
+    var sid = t.value.slice(4);
+    var sd = stdList(ph.type).filter(function(x){ return x.id === sid; })[0];
+    if(!sd) return;
+    nd = {id:uid(),name:sd.name,mode:'hours',value:0};
+  }
+  ph.deliverables.push(nd);
+  renderDeliver(); renderSidebar(); save();
+  var inp = document.querySelector('#dl-' + ph.id + ' [data-del="' + nd.id + '"] [data-f=' + (custom ? 'dName' : 'dVal') + ']');
+  if(inp) inp.focus();
+});
 
 /* ---------- boot ---------- */
 renderAll();
