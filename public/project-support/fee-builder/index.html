@@ -226,6 +226,12 @@ dialog.wide{width:min(820px,94vw)}
 #toast{width:max-content;max-width:min(560px,92vw)}
 #problemList{margin:8px 0 4px;padding-left:20px;max-height:50vh;overflow:auto}
 #problemList li{margin-bottom:6px}
+.pi-sec{margin-bottom:22px}
+.pi-sec h3{margin:0 0 8px;font:600 17px "Barlow Semi Condensed","Barlow",sans-serif}
+.pi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 18px}
+.pi-field label{display:block;font-weight:500;margin-bottom:4px}
+.pi-field .tok{color:var(--muted);font-size:12px;font-weight:400;margin-left:8px}
+.pi-field input{width:100%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:4px;padding:7px 10px}
 @media (max-width:900px){
   .wrap{padding:0 16px}
   .summary{grid-template-columns:1fr 1fr}
@@ -259,6 +265,7 @@ dialog.wide{width:min(820px,94vw)}
       <button class="tab" role="tab" data-act="tab" data-tab="firm" aria-selected="true">Firm services</button>
       <button class="tab" role="tab" data-act="tab" data-tab="consult" aria-selected="false">Consultant fees</button>
       <button class="tab" role="tab" data-act="tab" data-tab="deliver" aria-selected="false">Deliverables</button>
+      <button class="tab" role="tab" data-act="tab" data-tab="proposal" aria-selected="false">Proposal info</button>
     </nav>
     <section class="summary" id="summary" aria-label="Fee summary"></section>
     <div class="meter proj" id="projMeter" role="img" aria-label="Share of service fees allocated to each phase"></div>
@@ -327,6 +334,19 @@ var TYPES = [
   {n:'7.0 - Construction Admin',c:'CA'}
 ];
 var ADMIN_TYPE = 6;
+var PI_SECTIONS = [
+  {h:'Client', f:[['recipient','Recipient','[RECIPIENT]'],['title','Title','[TITLE]'],['company','Company','[COMPANY]'],['companyAbbreviation','Company abbreviation','[COMPANY ABBREVIATION]']]},
+  {h:'Client address', f:[['address1','Address 1','[ADDRESS 1]'],['address2','Address 2','[ADDRESS 2]']]},
+  {h:'Project', f:[['projectAddress1','Project address 1','[PROJECT ADDRESS 1]']]}
+];
+function blankProposal(){ var o = {}; PI_SECTIONS.forEach(function(sec){ sec.f.forEach(function(f){ o[f[0]] = ''; }); }); return o; }
+function piVal(k){ return norm((state.proposal || {})[k]); }
+function parseProposal(o){
+  var b = blankProposal(), c = (o && o.client && typeof o.client === 'object') ? o.client : {}, P = (o && o.project) || {};
+  ['recipient','title','company','companyAbbreviation','address1','address2'].forEach(function(k){ if(c[k] != null) b[k] = String(c[k]); });
+  if(P.projectAddress1 != null) b.projectAddress1 = String(P.projectAddress1);
+  return b;
+}
 var NO_DELIVERABLES = [];
 var NEVER_EXPORT = [0, ADMIN_TYPE];          // 0.0 and 8.0: internal only, never exported
 var PROPOSAL_SKIP = [0, 5, ADMIN_TYPE];      // 0.0, 6.0 and 8.0 are left out of the proposal export
@@ -417,6 +437,7 @@ function seed(){
   return {
     project:{number:'',name:'',serviceFees:0,consultantFees:0},
     consultants:[],
+    proposal:blankProposal(),
     staff:S,
     phases:[]
   };
@@ -453,6 +474,7 @@ function ensureAdmin(st){
 }
 function normalize(s){
   s.consultants = Array.isArray(s.consultants) ? s.consultants : [];
+  s.proposal = Object.assign(blankProposal(), (s.proposal && typeof s.proposal === 'object') ? s.proposal : {});
   s.phases.forEach(function(p){
     if(p.type === -1){ TYPES.forEach(function(T, i){ if(T.n === p.name) p.type = i; }); }
   });
@@ -548,6 +570,7 @@ function staffHTML(s){
 function renderSidebar(){
   if(tab === 'consult'){ renderConsultSide(); return; }
   if(tab === 'deliver'){ renderDeliverSide(); return; }
+  if(tab === 'proposal'){ renderProposalSide(); return; }
   var added = {};
   state.phases.forEach(function(p){ if(p.type >= 0) added[p.type] = true; });
   $('#side').innerHTML =
@@ -618,7 +641,7 @@ function syncHeader(){
   if(t !== act) t.value = state.project.name || '';
   if(f && f !== act) f.value = plain(state.project.serviceFees || 0);
 }
-function renderMain(){ if(tab === 'consult') renderConsult(); else if(tab === 'deliver') renderDeliver(); else renderPhases(); }
+function renderMain(){ if(tab === 'proposal') renderProposal(); else if(tab === 'consult') renderConsult(); else if(tab === 'deliver') renderDeliver(); else renderPhases(); }
 function renderAll(){ syncHeader(); renderSummary(); renderSidebar(); renderMain(); }
 
 /* patch computed values without touching focused inputs */
@@ -680,9 +703,11 @@ function refresh(){
 
   // summary
   var un = svc - feesTotal;
+  if(tab === 'proposal'){ refreshProposal(); return; }
   if(tab === 'deliver'){ refreshDeliver(); return; }
   if(tab === 'consult'){ refreshConsultSummary(); return; }
   $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumDisb').textContent = money(disbValue());
   $('#sumClient').textContent = money(clientTotal());
   $('#sumUnalloc').textContent = money(un);
   $('#sumUnalloc').classList.toggle('bad', un < -0.005);
@@ -822,6 +847,7 @@ document.addEventListener('click', function(e){
     pushUndo();
     state.project = {number:'',name:'',serviceFees:0,consultantFees:0};
     state.consultants = [];
+    state.proposal = blankProposal();
     state.phases = [];
     ensureAdmin(state);
     renderAll(); save();
@@ -933,6 +959,7 @@ document.addEventListener('input', function(e){
       }
       break;
     }
+    case 'piField': if(t.dataset.pi){ state.proposal[t.dataset.pi] = t.value; } break;
     case 'dName': case 'dMode': case 'dVal': case 'dKind': {
       var dc = t.closest('[data-dphase]'), dpp = dc ? phaseById(dc.dataset.dphase) : null;
       var dro = t.closest('[data-del]');
@@ -1004,12 +1031,13 @@ function buildJSON(){
   var svc = state.project.serviceFees || 0, fees = 0;
   state.phases.forEach(function(p){ fees += p.fee; });
   return {
-    schemaVersion:3,
+    schemaVersion:4,
     exportedAt:new Date().toISOString(),
     currency:'CAD',
     project:{
       number:state.project.number || '',
       name:state.project.name || '',
+      projectAddress1:piVal('projectAddress1'),
       totalProjectFees:r2(totalProjectFees()),
       serviceFees:r2(svc),
       consultantFees:r2(sumC('amount')),
@@ -1020,6 +1048,7 @@ function buildJSON(){
       unallocatedFees:r2(svc - fees),
       allocatedPercent:svc > 0 ? r2(fees / svc * 100) : 0
     },
+    client:{recipient:piVal('recipient'),title:piVal('title'),company:piVal('company'),companyAbbreviation:piVal('companyAbbreviation'),address1:piVal('address1'),address2:piVal('address2')},
     standards:exportStandards(),
     consultants:state.consultants.map(function(c){ return {id:c.id,name:c.name,type:c.type,fee:r2(c.amount),markup:r2(c.markup)}; }),
     staff:state.staff.map(function(s){ return {id:s.id,name:s.name,role:s.role,hourlyRate:r2(s.rate)}; }),
@@ -1077,14 +1106,18 @@ $('#jsonClose').addEventListener('click', function(){ $('#jsonDlg').close(); });
 function consultById(id){ return state.consultants.filter(function(c){ return c.id === id; })[0]; }
 function sumC(k){ var t = 0; state.consultants.forEach(function(c){ t += c[k] || 0; }); return t; }
 function totalProjectFees(){ return (state.project.serviceFees || 0) + sumC('amount') + sumC('markup'); }
-function clientTotal(){ return totalProjectFees() * (1 + DISB); }
+function disbValue(){ return r2(r2(totalProjectFees()) * DISB); }
+function clientTotal(){ return r2(r2(totalProjectFees()) + disbValue()); }
 
 function renderSummary(){
   $$('.tab').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab === tab ? 'true' : 'false'); });
   var total = '<div class="metric"><div class="hv" id="sumTotal"></div><span class="ml">Total project fees</span></div>';
-  var client = '<div class="metric"><div class="hv client" id="sumClient"></div><span class="ml">Client total (+9% disbursements)</span></div>';
+  var client = '<div class="metric"><div class="hv" id="sumDisb"></div><span class="ml">Disbursements (' + Math.round(DISB * 100) + '%)</span></div>' +
+    '<div class="metric"><div class="hv client" id="sumClient"></div><span class="ml">Client total (+9% disbursements)</span></div>';
   var el = $('#summary');
-  if(tab === 'deliver'){
+  if(tab === 'proposal'){
+    el.innerHTML = total + client;
+  } else if(tab === 'deliver'){
     el.innerHTML = total +
       '<div class="metric"><div class="hv" id="sumPH"></div><span class="ml">Phase hours</span></div>' +
       '<div class="metric"><div class="hv" id="sumDH"></div><span class="ml">Deliverable hours</span></div>' +
@@ -1154,6 +1187,7 @@ function renderConsult(){
 function refreshConsultSummary(){
   var amt = sumC('amount'), mk = sumC('markup');
   $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumDisb').textContent = money(disbValue());
   $('#sumClient').textContent = money(clientTotal());
   $('#sumCons').textContent = money(amt);
   $('#sumMarkup').textContent = money(mk);
@@ -1344,7 +1378,7 @@ function fromJSON(o){
   var P = o.project;
   return {
     project:{number:String(P.number || ''),name:String(P.name || ''),serviceFees:num(P.serviceFees),consultantFees:P.consultantFees != null ? num(P.consultantFees) : camt},
-    staff:staff,phases:phases,consultants:cons
+    staff:staff,phases:phases,consultants:cons,proposal:parseProposal(o)
   };
 }
 function runImport(){
@@ -1470,6 +1504,7 @@ function refreshDeliver(){
   });
   var un = totPH - totDH, over = un < -0.005;
   $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumDisb').textContent = money(disbValue());
   $('#sumClient').textContent = money(clientTotal());
   $('#sumPH').textContent = trim(totPH, 2);
   $('#sumDH').textContent = trim(totDH, 2);
@@ -1540,10 +1575,11 @@ function buildDeliverablesExport(){
   });
   var pdg = r2(totalProjectFees()), ahf = r2(pdg * DISB);
   return {
-    schemaVersion:'1.1',
+    schemaVersion:'1.2',
     exportedAt:isoLocal(new Date()),
     boilerplateVersion:libVersion(),
-    project:{projectNumber:pn},
+    project:{projectNumber:pn,projectAddress1:piVal('projectAddress1')},
+    client:{recipient:piVal('recipient'),title:piVal('title'),company:piVal('company'),companyAbbreviation:piVal('companyAbbreviation'),address1:piVal('address1'),address2:piVal('address2')},
     fees:{currency:'CAD',pdgFees:pdg,ahfRate:DISB,ahf:ahf,total:r2(pdg + ahf)},
     renderOptions:{insertPosition:'afterHeading',emptyPhases:'remove'},
     deliverables:items
@@ -1553,8 +1589,7 @@ function norm(x){ return String(x == null ? '' : x).replace(/\s+/g, ' ').trim();
 function buildMilestoneExport(){
   var problems = [], rows = [], rounded = 0, seen = {}, dups = [];
   var pn = norm(state.project.number);
-  if(!pn) problems.push('The project number is missing.');
-  else if(pn.length > 80) problems.push('The project number is longer than 80 characters.');
+  if(pn.length > 80) problems.push('The project number is longer than 80 characters.');
   dPhases().forEach(function(ph){
     var pnum = parseFloat(ph.name);
     if(!(pnum >= 1 && pnum < 7)) return;
@@ -1594,11 +1629,12 @@ function copyMilestone(){
   var msg = 'Milestone JSON copied (' + r.rows.length + (r.rows.length === 1 ? ' row' : ' rows') + ').';
   if(r.rounded) msg += ' Hours were rounded to whole numbers on ' + r.rounded + (r.rounded === 1 ? ' row.' : ' rows.');
   if(r.dups.length) msg += ' The board skips repeats of: ' + r.dups.slice(0, 3).join(', ') + (r.dups.length > 3 ? ' and ' + (r.dups.length - 3) + ' more' : '') + '.';
-  copyText(JSON.stringify(r.rows, null, 2), msg, (r.rounded || r.dups.length) ? 8000 : 0);
+  var noNum = !norm(state.project.number);
+  if(noNum) msg += ' The project number is empty, but Milestone needs one on every row, so set it before importing.';
+  copyText(JSON.stringify(r.rows, null, 2), msg, (r.rounded || r.dups.length || noNum) ? 8000 : 0);
 }
 function copyDeliverables(){
   var pn = String(state.project.number || '').trim();
-  if(!pn){ toast('Add the project number first, it is part of the export'); var f = $('#projNumber'); if(f) f.focus(); return; }
   var bad = [];
   dPhases().forEach(function(ph){
     if(PROPOSAL_SKIP.indexOf(ph.type) >= 0) return;
@@ -1616,7 +1652,7 @@ function copyDeliverables(){
   }
   var data = buildDeliverablesExport();
   if(!data.deliverables.length){ toast('There are no external deliverables to export yet'); return; }
-  copyText(JSON.stringify(data, null, 2), 'Proposal JSON copied to clipboard');
+  copyText(JSON.stringify(data, null, 2), 'Proposal JSON copied to clipboard' + (pn ? '' : '. Note: the project number is empty.'), pn ? 0 : 6000);
 }
 
 var bpOpen = {};
@@ -1673,6 +1709,30 @@ document.addEventListener('change', function(e){
   var inp = document.querySelector('#dl-' + ph.id + ' [data-del="' + nd.id + '"] [data-f=' + (custom ? 'dName' : 'dVal') + ']');
   if(inp) inp.focus();
 });
+
+/* ---------- proposal info (4th tab) ---------- */
+function renderProposalSide(){
+  $('#side').innerHTML = '<section class="side-sec"><h2>Proposal info</h2><p class="hint">The client, address and project details that fill the placeholders in the fee proposal template. They are included in both the project JSON and Export to Proposal.</p></section>';
+}
+function renderProposal(){
+  $('#phases').innerHTML = '<section class="card"><h2 class="card-h">Project and fee proposal information</h2>' +
+    '<p class="card-p">Leave a field empty if it does not apply.</p>' +
+    PI_SECTIONS.map(function(sec){
+      return '<div class="pi-sec"><h3>' + esc(sec.h) + '</h3><div class="pi-grid">' + sec.f.map(function(f){
+        return '<div class="pi-field"><label for="pi-' + f[0] + '">' + esc(f[1]) + '<span class="tok">' + esc(f[2]) + '</span></label>' +
+          '<input id="pi-' + f[0] + '" data-f="piField" data-pi="' + f[0] + '" value="' + esc(state.proposal[f[0]] || '') + '" autocomplete="off"></div>';
+      }).join('') + '</div></div>';
+    }).join('') + '</section>';
+  refresh();
+}
+function refreshProposal(){
+  $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumDisb').textContent = money(disbValue());
+  $('#sumClient').textContent = money(clientTotal());
+  var pm = $('#projMeter');
+  pm.innerHTML = ''; pm.classList.remove('over');
+  $('#projLegend').innerHTML = '';
+}
 
 /* ---------- boot ---------- */
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
