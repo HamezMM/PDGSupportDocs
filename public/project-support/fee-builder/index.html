@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PDG Fee Builder</title>
+<title>Fee builder</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;600&display=swap">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -194,6 +194,38 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:18px;font-size:13px;color:var(--muted);min-height:1px}
 .lg{display:inline-flex;align-items:center;gap:6px}
 .lg i{display:block;width:11px;height:11px;border-radius:3px}
+.grid.d{grid-template-columns:minmax(180px,1.5fr) 210px 170px 96px 28px}
+.team-in.wide{min-width:780px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:5px;overflow:hidden}
+.seg label{position:relative;cursor:pointer;display:block}
+.seg input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+.seg span{display:block;padding:5px 10px;font-size:13px;color:var(--muted);background:var(--surface)}
+.seg input:checked + span{background:var(--primary);color:var(--primary-ink)}
+.seg input:focus-visible + span{outline:2px solid var(--focus);outline-offset:-2px}
+.seg input:disabled{cursor:not-allowed}
+.seg input:disabled + span{opacity:.65}
+.alloc{display:flex;gap:8px;align-items:center}
+.alloc .unit{width:84px;flex:none}
+.mini{border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:6px 8px;font-size:14px}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar p{flex:1 1 280px;margin:0;color:var(--muted)}
+.ph-title{font:600 20px/1.25 "Barlow Semi Condensed","Barlow",sans-serif}
+.pill.mute{background:var(--surface-2);color:var(--muted)}
+dialog.wide{width:min(820px,94vw)}
+#settingsBody{max-height:62vh;overflow:auto;margin-top:8px;padding-right:4px}
+.st-type{margin-bottom:20px}
+.st-type h3{margin:0 0 6px;font:600 17px "Barlow Semi Condensed","Barlow",sans-serif;display:flex;align-items:center;gap:8px}
+.dotc{display:block;width:11px;height:11px;border-radius:3px}
+.st-item{margin-bottom:8px}
+.st-row{display:grid;grid-template-columns:minmax(200px,1fr) 90px 110px 130px 28px;gap:8px;align-items:center;margin-bottom:6px}
+.mini-btn{padding:5px 10px;font-size:13px}
+.bp{margin:6px 0 12px 8px;padding-left:12px;border-left:3px solid var(--line)}
+.bp-row{display:grid;grid-template-columns:130px 120px 1fr 28px;gap:8px;margin-bottom:8px;align-items:start}
+.bp-row textarea{width:100%;font:inherit;font-size:14px;line-height:1.4;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:4px;padding:6px 9px;resize:vertical}
+.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+#toast{width:max-content;max-width:min(560px,92vw)}
+#problemList{margin:8px 0 4px;padding-left:20px;max-height:50vh;overflow:auto}
+#problemList li{margin-bottom:6px}
 @media (max-width:900px){
   .wrap{padding:0 16px}
   .summary{grid-template-columns:1fr 1fr}
@@ -209,13 +241,6 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 </style>
 </head>
 <body>
-<style>
-.pdg-topnav{background:#17171a;color:#e8e8e2;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:9px 18px;letter-spacing:.01em}
-.pdg-topnav a{color:inherit;text-decoration:none}
-.pdg-topnav a:hover{text-decoration:underline}
-</style>
-<div class="pdg-topnav"><a href="/">&larr; PDG Support Docs</a></div>
-
 
 <header class="bar">
   <div class="wrap bar-in">
@@ -233,6 +258,7 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
     <nav class="tabs" role="tablist" aria-label="Fee sections">
       <button class="tab" role="tab" data-act="tab" data-tab="firm" aria-selected="true">Firm services</button>
       <button class="tab" role="tab" data-act="tab" data-tab="consult" aria-selected="false">Consultant fees</button>
+      <button class="tab" role="tab" data-act="tab" data-tab="deliver" aria-selected="false">Deliverables</button>
     </nav>
     <section class="summary" id="summary" aria-label="Fee summary"></section>
     <div class="meter proj" id="projMeter" role="img" aria-label="Share of service fees allocated to each phase"></div>
@@ -256,7 +282,7 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 
 <dialog id="importDlg">
   <h2>Import JSON</h2>
-  <p>Paste JSON exported from this tool, or choose a file. Importing replaces the current project, and Undo brings it back.</p>
+  <p>Paste JSON exported from this tool, or choose a file. Importing replaces the current project, and Undo brings it back. Your deliverable settings are never changed by an import.</p>
   <textarea id="importText" aria-label="JSON to import" placeholder="Paste JSON here"></textarea>
   <label class="file"><span>Or choose a .json file</span><input type="file" id="importFile" accept=".json,application/json"></label>
   <p id="importErr" class="err" role="alert"></p>
@@ -268,6 +294,21 @@ dialog textarea{width:100%;height:300px;margin:12px 0;font:12px/1.4 ui-monospace
 
 <datalist id="dlNames"></datalist>
 <datalist id="dlTypes"></datalist>
+<datalist id="dlDel"></datalist>
+
+<dialog id="problemDlg">
+  <h2 id="problemTitle"></h2>
+  <p id="problemIntro"></p>
+  <ul id="problemList"></ul>
+  <div class="dlg-actions"><button class="btn primary" data-act="closeProblems">Close</button></div>
+</dialog>
+
+<dialog id="settingsDlg" class="wide">
+  <h2>Deliverable settings</h2>
+  <p>Standard deliverables for each phase type. Tick Default to add a standard automatically whenever that phase is added to a project. Hours are set per project on the Deliverables tab, not here. Boilerplate language (scope, exclusions, client role) is set here for each deliverable, and it is only ever changed here, never by importing a JSON file. Settings are saved in this browser.</p>
+  <div id="settingsBody"></div>
+  <div class="dlg-actions"><button class="btn primary" data-act="closeSettings">Done</button></div>
+</dialog>
 
 <script>
 (function(){
@@ -282,13 +323,49 @@ var TYPES = [
   {n:'4.0 - Design Dev',c:'DD'},
   {n:'5.0 - Const Docs',c:'CD'},
   {n:'6.0 - PM - Pre Const',c:'PM'},
-  {n:'8.0 - Admin',c:'AD'}
+  {n:'8.0 - Admin',c:'AD'},
+  {n:'7.0 - Construction Admin',c:'CA'}
 ];
 var ADMIN_TYPE = 6;
+var NO_DELIVERABLES = [];
+var NEVER_EXPORT = [0, ADMIN_TYPE];          // 0.0 and 8.0: internal only, never exported
+var PROPOSAL_SKIP = [0, 5, ADMIN_TYPE];      // 0.0, 6.0 and 8.0 are left out of the proposal export
+var BUILTIN_STANDARDS = [
+  {t:0,k:'internal',n:['Fee Proposal','File Manager Assignment','Project Scope','Client Billing Data','Consultant Team']},
+  {t:1,k:'external',n:['As-Built Drawing','Code + Land Use Review','Matterport','Site Survey','Due Diligence Report']},
+  {t:2,k:'external',n:['Space Plan','Exterior Massing','Issue for Consultants']},
+  {t:3,k:'external',n:['Development Permit','Change of Use Application','Barrier Free Application','DSSP']},
+  {t:4,k:'external',n:['Building Permit Drawings','Construction Drawings','Pricing Drawings','Tender','Shop Drawing Review']},
+  {t:7,k:'external',n:['Site Instructions']},
+  {t:6,k:'internal',n:['Billing']}
+];
+function ensureBuiltins(){
+  var changed = false;
+  BUILTIN_STANDARDS.forEach(function(g){
+    var list = standards.byType[g.t] || (standards.byType[g.t] = []);
+    g.n.forEach(function(name){
+      var key = 'std-' + g.t + '-' + slug(name);
+      if(list.some(function(x){ return x.key === key; })) return;
+      var adopt = list.filter(function(x){ return !x.key && String(x.name || '').trim().toLowerCase() === name.toLowerCase(); })[0];
+      if(adopt){ adopt.key = key; adopt.builtin = true; if(!adopt.kind) adopt.kind = g.k; changed = true; return; }
+      list.push({id:uid(),key:key,builtin:true,name:name,def:true,kind:g.k,bver:1,fresh:true,ins:[]});
+      changed = true;
+    });
+  });
+  if(changed) saveStandards();
+}
+var PERMANENT = [0, ADMIN_TYPE];
+function typeOrder(){
+  return TYPES.map(function(_, i){ return i; }).sort(function(a, b){ return parseFloat(TYPES[a].n) - parseFloat(TYPES[b].n); });
+}
+var BP_STYLES = ['ScopeItem1','ScopeItem2'];
+var EXPORT_PHASES = ['PDD','SD','DD','CD','CA'];
+var BP_EXTRA = [{v:'NotIncluded',l:'Not included'},{v:'ClientRole',l:'Client role'}];
+function bpSections(){ return TYPES.map(function(T){ return {v:T.c,l:T.c + ' scope'}; }).concat(BP_EXTRA); }
 var LESLIE_RATE = 115;
 var PHASE_COLORS = [
   {c:'#0b72b8',t:'#ffffff'}, {c:'#e69f00',t:'#1d1500'}, {c:'#0f9d73',t:'#ffffff'}, {c:'#8e44ad',t:'#ffffff'},
-  {c:'#d4551a',t:'#ffffff'}, {c:'#56b4e9',t:'#06202f'}, {c:'#7b8794',t:'#ffffff'}
+  {c:'#d4551a',t:'#ffffff'}, {c:'#56b4e9',t:'#06202f'}, {c:'#7b8794',t:'#ffffff'}, {c:'#c2185b',t:'#ffffff'}
 ];
 var CUSTOM_COLORS = [{c:'#f0e442',t:'#1d1b00'},{c:'#8c564b',t:'#ffffff'},{c:'#17becf',t:'#04252a'},{c:'#c2185b',t:'#ffffff'}];
 function phaseColor(ph){
@@ -298,6 +375,8 @@ function phaseColor(ph){
   return CUSTOM_COLORS[h % CUSTOM_COLORS.length];
 }
 var DISB = 0.09;
+var ALLOC_TARGET = 0.75;
+var HOURLY_FOR_LEFT = 130;
 var CONSULT_TYPES = ['Architect','Engineer - Mechanical','Engineer - Electrical','Engineer - Structural','Engineer - Civil','Surveyor','Geotechnical','Digital Scan'];
 var CONSULT_DEFAULTS = {'Architect':{name:'Ben Pond Architect',amount:2500},'Digital Scan':{name:'PDG - Matterport',amount:250}};
 var CONSULT_NAMES = ['Ben Pond Architect','HRS Engineering','Horizon Surveys','Natalie Spellen','PDG - Matterport','PDG - Matterport Hosting','Prairie Geo Engineering','Startec','Startech Engineering'];
@@ -307,6 +386,7 @@ function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function r2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function r6(n){ return Math.round((n + Number.EPSILON) * 1000000) / 1000000; }
 function num(v){ var n = parseFloat(String(v).replace(/[^0-9.]/g,'')); return isFinite(n) && n > 0 ? n : 0; }
 function plain(n){ return n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function money(n){ return (n < 0 ? '\u2212' : '') + 'CA$' + plain(Math.abs(n)); }
@@ -353,9 +433,15 @@ function ensureAdmin(st){
   if(les.rate === 0) les.rate = LESLIE_RATE;
   if(!st.phases.some(function(p){ return p.type === ADMIN_TYPE; })){
     var T = TYPES[ADMIN_TYPE];
-    st.phases.push({id:uid(),type:ADMIN_TYPE,badge:T.c,name:T.n,start:'',end:'',fee:r2(les.rate),open:true,team:[{staffId:les.id,hours:1}]});
+    st.phases.push({id:uid(),type:ADMIN_TYPE,badge:T.c,name:T.n,start:'',end:'',fee:r2(les.rate),open:true,team:[{staffId:les.id,hours:1}],deliverables:defaultDeliverables(ADMIN_TYPE)});
     var key = function(p){ var m = p.name.match(/^\s*(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : Infinity; };
     st.phases.sort(function(a,b){ return key(a) - key(b); });
+  }
+  if(!st.phases.some(function(p){ return p.type === 0; })){
+    var T0 = TYPES[0];
+    st.phases.push({id:uid(),type:0,badge:T0.c,name:T0.n,start:'',end:'',fee:0,open:true,team:[],deliverables:defaultDeliverables(0)});
+    var k0 = function(p){ var m = p.name.match(/^\s*(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : Infinity; };
+    st.phases.sort(function(a,b){ return k0(a) - k0(b); });
   }
   st.phases.forEach(function(p){
     if(p.type === ADMIN_TYPE && p.fee === 0){
@@ -367,6 +453,14 @@ function ensureAdmin(st){
 }
 function normalize(s){
   s.consultants = Array.isArray(s.consultants) ? s.consultants : [];
+  s.phases.forEach(function(p){
+    if(p.type === -1){ TYPES.forEach(function(T, i){ if(T.n === p.name) p.type = i; }); }
+  });
+  s.phases.forEach(function(p){
+    p.deliverables = (Array.isArray(p.deliverables) && NO_DELIVERABLES.indexOf(p.type) < 0) ? p.deliverables : [];
+    p.deliverables.forEach(function(d){ if(d.kind !== 'internal') d.kind = 'external'; });
+  });
+  linkDeliverables(s);
   s.project.consultantFees = s.project.consultantFees || 0;
   ensureAdmin(s);
   return s;
@@ -381,6 +475,20 @@ function load(){
   }catch(e){}
   return ensureAdmin(seed());
 }
+var STD_KEY = 'pdg-fee-builder-standards-v1';
+function loadStandards(){
+  var raw0 = null;
+  try{
+    var raw = localStorage.getItem(STD_KEY);
+    raw0 = raw;
+    if(raw){ var o = JSON.parse(raw); if(o && o.byType && typeof o.byType === 'object') return o; }
+  }catch(e){}
+  try{ if(raw0) localStorage.setItem(STD_KEY + '-recovered', raw0); }catch(e){}
+  return {byType:{}};
+}
+var standards = loadStandards();
+function saveStandards(){ try{ localStorage.setItem(STD_KEY, JSON.stringify(standards)); }catch(e){} }
+ensureBuiltins();
 var state = load();
 var undoSnap = null;
 var tab = 'firm';
@@ -418,12 +526,12 @@ function pushUndo(){ undoSnap = JSON.stringify(state); }
 
 /* ---------- toast ---------- */
 var toastT;
-function toast(msg, withUndo){
+function toast(msg, withUndo, ms){
   var t = $('#toast');
   t.innerHTML = '<span>' + esc(msg) + '</span>' + (withUndo ? '<button data-act="undo">Undo</button>' : '');
   t.classList.add('show');
   clearTimeout(toastT);
-  toastT = setTimeout(function(){ t.classList.remove('show'); }, withUndo ? 8000 : 2600);
+  toastT = setTimeout(function(){ t.classList.remove('show'); }, ms || (withUndo ? 8000 : 2600));
 }
 
 /* ---------- rendering ---------- */
@@ -439,11 +547,12 @@ function staffHTML(s){
 }
 function renderSidebar(){
   if(tab === 'consult'){ renderConsultSide(); return; }
+  if(tab === 'deliver'){ renderDeliverSide(); return; }
   var added = {};
   state.phases.forEach(function(p){ if(p.type >= 0) added[p.type] = true; });
   $('#side').innerHTML =
     '<section class="side-sec"><h2>Phases</h2><ol class="types">' +
-    TYPES.map(function(t,i){
+    typeOrder().map(function(i){ var t = TYPES[i];
       return '<li><button class="type' + (added[i] ? ' on' : '') + '" data-act="addType" data-type="' + i + '">' +
         '<span class="dot"></span><span>' + esc(t.n) + '</span><span class="tag">' + (added[i] ? 'Added' : 'Add') + '</span></button></li>';
     }).join('') +
@@ -470,7 +579,7 @@ function phaseHTML(ph){
       '<span class="badge" style="background:' + col.c + ';color:' + col.t + '">' + esc(ph.badge) + '</span>' +
       '<input class="ph-name" data-f="phName" value="' + esc(ph.name) + '" aria-label="Phase name" autocomplete="off">' +
       '<div class="unit has-pre"><span class="pre">CA$</span><input class="num" data-f="phFee" data-nav="fee" inputmode="decimal" value="' + plain(ph.fee) + '" aria-label="Phase fee" autocomplete="off"></div>' +
-      (ph.type === ADMIN_TYPE ? '<span style="width:28px;flex:none" aria-hidden="true"></span>' : '<button class="icon-btn" data-act="rmPhase" aria-label="Remove phase">' + X + '</button>') +
+      (PERMANENT.indexOf(ph.type) >= 0 ? '<span style="width:28px;flex:none" aria-hidden="true"></span>' : '<button class="icon-btn" data-act="rmPhase" aria-label="Remove phase">' + X + '</button>') +
     '</div>' +
     '<div class="ph-sub">' +
       '<input type="date" class="date" data-f="phStart" value="' + esc(ph.start || '') + '" aria-label="Start date">' +
@@ -509,7 +618,7 @@ function syncHeader(){
   if(t !== act) t.value = state.project.name || '';
   if(f && f !== act) f.value = plain(state.project.serviceFees || 0);
 }
-function renderMain(){ if(tab === 'consult') renderConsult(); else renderPhases(); }
+function renderMain(){ if(tab === 'consult') renderConsult(); else if(tab === 'deliver') renderDeliver(); else renderPhases(); }
 function renderAll(){ syncHeader(); renderSummary(); renderSidebar(); renderMain(); }
 
 /* patch computed values without touching focused inputs */
@@ -571,6 +680,7 @@ function refresh(){
 
   // summary
   var un = svc - feesTotal;
+  if(tab === 'deliver'){ refreshDeliver(); return; }
   if(tab === 'consult'){ refreshConsultSummary(); return; }
   $('#sumTotal').textContent = money(totalProjectFees());
   $('#sumClient').textContent = money(clientTotal());
@@ -583,6 +693,15 @@ function refresh(){
   $('#sumPct').classList.toggle('warn', apct > 80 && apct <= 100);
   $('#sumPct').title = apct > 100 ? 'Phase fees exceed the service fees' : (apct > 80 ? 'Over 80% of the service fees is allocated' : '');
   $('#sumHours').textContent = trim(hoursTotal, 2);
+  var left = svc * ALLOC_TARGET - feesTotal;
+  if(Math.abs(left) < 0.005) left = 0;
+  var tp = Math.round(ALLOC_TARGET * 100) + '% target';
+  $('#sumLeft').textContent = money(left);
+  $('#sumLeft').classList.toggle('bad', left < 0);
+  $('#leftLabel').textContent = left < 0 ? 'Fee over the ' + tp : 'Fee left to assign (' + tp + ')';
+  $('#sumLeftH').textContent = trim(left / HOURLY_FOR_LEFT, 1);
+  $('#sumLeftH').classList.toggle('bad', left < 0);
+  $('#leftHLabel').textContent = (left < 0 ? 'Hours over the target' : 'Hours left to assign') + ' (at CA$' + HOURLY_FOR_LEFT + ')';
 
   var ps = [];
   state.phases.forEach(function(ph, i){
@@ -615,7 +734,7 @@ function addPhase(type, custom){
   var T = type >= 0 ? TYPES[type] : null;
   var name = T ? T.n : String(custom || '').trim();
   if(!name){ toast('Enter a name for the custom phase'); var cn = $('#customName'); if(cn) cn.focus(); return; }
-  var ph = {id:uid(),type:type >= 0 ? type : -1,badge:T ? T.c : codeFrom(name),name:name,start:'',end:'',fee:0,open:true,team:[]};
+  var ph = {id:uid(),type:type >= 0 ? type : -1,badge:T ? T.c : codeFrom(name),name:name,start:'',end:'',fee:0,open:true,team:[],deliverables:defaultDeliverables(type >= 0 ? type : -1)};
   state.phases.push(ph);
   sortPhases();
   renderSidebar(); renderPhases(); save();
@@ -641,7 +760,7 @@ document.addEventListener('click', function(e){
 
   if(act === 'addType'){ addPhase(parseInt(b.dataset.type,10)); }
   else if(act === 'addCustom'){ addPhase(-1, $('#customName').value); }
-  else if(act === 'rmPhase' && ph && ph.type !== ADMIN_TYPE){
+  else if(act === 'rmPhase' && ph && PERMANENT.indexOf(ph.type) < 0){
     pushUndo();
     state.phases = state.phases.filter(function(p){ return p.id !== ph.id; });
     renderSidebar(); renderPhases(); save();
@@ -675,7 +794,7 @@ document.addEventListener('click', function(e){
     if(c.assigned > 0 && ph.fee > 0){
       pushUndo();
       var k = ph.fee / c.assigned;
-      ph.team.forEach(function(a){ a.hours = r2(a.hours * k); });
+      ph.team.forEach(function(a){ a.hours = r6(a.hours * k); });
       refresh(); save();
       toast('Hours scaled to match the fee', true);
     }
@@ -782,7 +901,7 @@ document.addEventListener('input', function(e){
       if(snap && snap.id === ph.id && snap.oldFee > 0){
         ph.team.forEach(function(x){
           var sh = snap.shares[x.staffId], rate = rateOf(x);
-          if(sh != null) x.hours = rate > 0 ? r2(sh * ph.fee / rate) : 0;
+          if(sh != null) x.hours = rate > 0 ? r6(sh * ph.fee / rate) : 0;
         });
       }
       refresh(); break;
@@ -790,7 +909,7 @@ document.addEventListener('input', function(e){
     case 'pct':
       if(a && ph){
         var rate = rateOf(a);
-        a.hours = (ph.fee > 0 && rate > 0) ? r2(num(t.value) / 100 * ph.fee / rate) : 0;
+        a.hours = (ph.fee > 0 && rate > 0) ? r6(num(t.value) / 100 * ph.fee / rate) : 0;
         refresh();
       }
       break;
@@ -811,6 +930,47 @@ document.addEventListener('input', function(e){
         else if(f === 'cAmt') cc.amount = r2(num(t.value));
         else cc.markup = r2(num(t.value));
         refresh();
+      }
+      break;
+    }
+    case 'dName': case 'dMode': case 'dVal': case 'dKind': {
+      var dc = t.closest('[data-dphase]'), dpp = dc ? phaseById(dc.dataset.dphase) : null;
+      var dro = t.closest('[data-del]');
+      var dx = (dpp && dro) ? dpp.deliverables.filter(function(x){ return x.id === dro.dataset.del; })[0] : null;
+      if(dx){
+        if(f === 'dName') dx.name = t.value;
+        else if(f === 'dVal') dx.value = num(t.value);
+        else if(f === 'dKind') dx.kind = t.value === 'internal' ? 'internal' : 'external';
+        else if(t.value !== dx.mode){
+          var ph0 = phaseHours(dpp), cur = delHours(dpp, dx);
+          dx.mode = t.value;
+          dx.value = dx.mode === 'percent' ? (ph0 > 0 ? r6(cur / ph0 * 100) : 0) : r6(cur);
+        }
+        refresh();
+      }
+      break;
+    }
+    case 'stName': case 'stDef': case 'stKind': {
+      var sr = t.closest('[data-std]');
+      var sd = sr ? stdList(parseInt(sr.dataset.type, 10)).filter(function(x){ return x.id === sr.dataset.std; })[0] : null;
+      if(sd){
+        if(f === 'stName') sd.name = t.value;
+        else if(f === 'stKind') sd.kind = t.value === 'internal' ? 'internal' : 'external';
+        else sd.def = !!t.checked;
+        saveStandards();
+      }
+      break;
+    }
+    case 'biSec': case 'biSty': case 'biTxt': {
+      var bi = t.closest('[data-std]'), br = t.closest('[data-ins]');
+      var bs = bi ? stdList(parseInt(bi.dataset.type, 10)).filter(function(x){ return x.id === bi.dataset.std; })[0] : null;
+      var bn = (bs && br) ? (bs.ins || []).filter(function(n){ return n.id === br.dataset.ins; })[0] : null;
+      if(bn){
+        if(f === 'biSec') bn.section = t.value;
+        else if(f === 'biSty') bn.style = t.value;
+        else bn.text = t.value;
+        (standards.pending = standards.pending || {})[bs.id] = true;
+        saveStandards();
       }
       break;
     }
@@ -844,22 +1004,23 @@ function buildJSON(){
   var svc = state.project.serviceFees || 0, fees = 0;
   state.phases.forEach(function(p){ fees += p.fee; });
   return {
-    schemaVersion:2,
+    schemaVersion:3,
     exportedAt:new Date().toISOString(),
     currency:'CAD',
     project:{
       number:state.project.number || '',
       name:state.project.name || '',
+      totalProjectFees:r2(totalProjectFees()),
       serviceFees:r2(svc),
-      allocatedFees:r2(fees),
-      unallocatedFees:r2(svc - fees),
-      allocatedPercent:svc > 0 ? r2(fees / svc * 100) : 0,
       consultantFees:r2(sumC('amount')),
       consultantMarkup:r2(sumC('markup')),
-      totalProjectFees:r2(totalProjectFees()),
       disbursementPercent:r2(DISB * 100),
-      clientTotal:r2(clientTotal())
+      clientTotal:r2(clientTotal()),
+      allocatedFees:r2(fees),
+      unallocatedFees:r2(svc - fees),
+      allocatedPercent:svc > 0 ? r2(fees / svc * 100) : 0
     },
+    standards:exportStandards(),
     consultants:state.consultants.map(function(c){ return {id:c.id,name:c.name,type:c.type,fee:r2(c.amount),markup:r2(c.markup)}; }),
     staff:state.staff.map(function(s){ return {id:s.id,name:s.name,role:s.role,hourlyRate:r2(s.rate)}; }),
     phases:state.phases.map(function(ph,i){
@@ -879,18 +1040,21 @@ function buildJSON(){
             name:r.s ? r.s.name : '',
             role:r.s ? r.s.role : '',
             hourlyRate:r2(r.rate),
-            hours:r2(r.a.hours),
+            hours:r6(r.a.hours),
             percentOfPhaseFee:r2(r.pct),
             budget:r2(r.budget)
           };
         }),
-        totals:{hours:r2(c.hours),budget:r2(c.assigned),matchesFee:c.balanced}
+        totals:{hours:r2(c.hours),budget:r2(c.assigned),matchesFee:c.balanced},
+        deliverables:ph.deliverables.map(function(d){
+          return {name:d.name,kind:d.kind === 'internal' ? 'internal' : 'external',mode:d.mode,value:r6(d.value),hours:r2(delHours(ph, d))};
+        })
       };
     })
   };
 }
-function copyJSON(){
-  var txt = JSON.stringify(buildJSON(), null, 2);
+function copyJSON(){ copyText(JSON.stringify(buildJSON(), null, 2), 'Fee JSON copied to clipboard'); }
+function copyText(txt, okMsg, ms){
   function fallback(){
     var ta = document.createElement('textarea');
     ta.value = txt; ta.setAttribute('readonly','');
@@ -899,12 +1063,12 @@ function copyJSON(){
     var ok = false;
     try{ ok = document.execCommand('copy'); }catch(err){}
     ta.remove();
-    if(ok){ toast('Fee JSON copied to clipboard'); return; }
+    if(ok){ toast(okMsg, false, ms); return; }
     var d = $('#jsonDlg'), area = $('#jsonText');
     area.value = txt; d.showModal(); area.focus(); area.select();
   }
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(function(){ toast('Fee JSON copied to clipboard'); }, fallback);
+    navigator.clipboard.writeText(txt).then(function(){ toast(okMsg, false, ms); }, fallback);
   } else fallback();
 }
 $('#jsonClose').addEventListener('click', function(){ $('#jsonDlg').close(); });
@@ -920,7 +1084,13 @@ function renderSummary(){
   var total = '<div class="metric"><div class="hv" id="sumTotal"></div><span class="ml">Total project fees</span></div>';
   var client = '<div class="metric"><div class="hv client" id="sumClient"></div><span class="ml">Client total (+9% disbursements)</span></div>';
   var el = $('#summary');
-  if(tab === 'consult'){
+  if(tab === 'deliver'){
+    el.innerHTML = total +
+      '<div class="metric"><div class="hv" id="sumPH"></div><span class="ml">Phase hours</span></div>' +
+      '<div class="metric"><div class="hv" id="sumDH"></div><span class="ml">Deliverable hours</span></div>' +
+      '<div class="metric"><div class="hv" id="sumUH"></div><span class="ml" id="uhLabel">Unallocated hours</span></div>' +
+      client;
+  } else if(tab === 'consult'){
     el.innerHTML = total +
       '<div class="metric"><div class="hv" id="sumCons"></div><span class="ml">Consultant fees</span></div>' +
       '<div class="metric"><div class="hv" id="sumMarkup"></div><span class="ml">Markup</span></div>' +
@@ -931,6 +1101,8 @@ function renderSummary(){
       '<div class="metric"><div class="hv" id="sumUnalloc"></div><span class="ml" id="unallocLabel">Unallocated</span></div>' +
       '<div class="metric"><div class="hv" id="sumPct"></div><span class="ml">Allocated</span></div>' +
       '<div class="metric"><div class="hv" id="sumHours"></div><span class="ml">Hours assigned</span></div>' +
+      '<div class="metric"><div class="hv" id="sumLeft"></div><span class="ml" id="leftLabel"></span></div>' +
+      '<div class="metric"><div class="hv" id="sumLeftH"></div><span class="ml" id="leftHLabel"></span></div>' +
       client;
     $('#svcFees').value = plain(state.project.serviceFees || 0);
   }
@@ -1046,6 +1218,72 @@ function handleExtra(act, b){
       toast('Fee set to the allocated budget', true);
       return true;
     }
+    case 'dRm': {
+      var dpc = b.closest('[data-dphase]'), dph = dpc ? phaseById(dpc.dataset.dphase) : null, drow = b.closest('[data-del]');
+      if(!dph || !drow) return true;
+      var dd = dph.deliverables.filter(function(x){ return x.id === drow.dataset.del; })[0];
+      pushUndo();
+      dph.deliverables = dph.deliverables.filter(function(x){ return x.id !== drow.dataset.del; });
+      renderDeliver(); renderSidebar(); save();
+      toast('Removed ' + ((dd && dd.name) || 'deliverable'), true);
+      return true;
+    }
+    case 'dExport': copyDeliverables(); return true;
+    case 'dExportMilestone': copyMilestone(); return true;
+    case 'closeProblems': $('#problemDlg').close(); return true;
+    case 'jumpPhase': { var jc = document.getElementById('dl-' + b.dataset.id); if(jc) flash(jc); return true; }
+    case 'openSettings': renderSettings(); $('#settingsDlg').showModal(); return true;
+    case 'closeSettings': $('#settingsDlg').close(); return true;
+    case 'stAdd': {
+      var ty = parseInt(b.dataset.type, 10);
+      if(!standards.byType[ty]) standards.byType[ty] = [];
+      var ns2 = {id:uid(),name:'',def:false,bver:1,fresh:true,ins:[]};
+      standards.byType[ty].push(ns2);
+      saveStandards(); renderSettings();
+      var sin = $('#settingsBody [data-std="' + ns2.id + '"] [data-f=stName]');
+      if(sin) sin.focus();
+      return true;
+    }
+    case 'stRm': {
+      var srow = b.closest('[data-std]');
+      if(!srow) return true;
+      var ty2 = parseInt(srow.dataset.type, 10);
+      standards.byType[ty2] = stdList(ty2).filter(function(x){ return x.id !== srow.dataset.std || x.builtin; });
+      saveStandards(); renderSettings();
+      return true;
+    }
+    case 'bpToggle': {
+      var bpi = b.closest('[data-std]');
+      if(bpi){ bpOpen[bpi.dataset.std] = !bpOpen[bpi.dataset.std]; renderSettings(); }
+      return true;
+    }
+    case 'biAdd': {
+      var bpr = b.closest('[data-std]');
+      if(!bpr) return true;
+      var ty3 = parseInt(bpr.dataset.type, 10);
+      var bps = stdList(ty3).filter(function(x){ return x.id === bpr.dataset.std; })[0];
+      if(bps){
+        bps.ins = bps.ins || [];
+        var nsi = {id:uid(),section:TYPES[ty3].c,style:'ScopeItem1',text:''};
+        bps.ins.push(nsi);
+        (standards.pending = standards.pending || {})[bps.id] = true;
+        saveStandards(); renderSettings();
+        var bta = $('#settingsBody [data-ins="' + nsi.id + '"] textarea');
+        if(bta) bta.focus();
+      }
+      return true;
+    }
+    case 'biRm': {
+      var bpr2 = b.closest('[data-std]'), brow = b.closest('[data-ins]');
+      if(!bpr2 || !brow) return true;
+      var bps2 = stdList(parseInt(bpr2.dataset.type, 10)).filter(function(x){ return x.id === bpr2.dataset.std; })[0];
+      if(bps2){
+        bps2.ins = (bps2.ins || []).filter(function(n){ return n.id !== brow.dataset.ins; });
+        (standards.pending = standards.pending || {})[bps2.id] = true;
+        saveStandards(); renderSettings();
+      }
+      return true;
+    }
     case 'openImport': openImport(); return true;
     case 'doImport': runImport(); return true;
     case 'closeImport': $('#importDlg').close(); return true;
@@ -1092,10 +1330,10 @@ function fromJSON(o){
     TYPES.forEach(function(T, i){ if(T.n === name) t = i; });
     return {
       id:uid(),type:t,badge:String(p.code || (t >= 0 ? TYPES[t].c : codeFrom(name))),name:name,
-      start:p.startDate || '',end:p.endDate || '',fee:num(p.fee),open:true,
+      start:p.startDate || '',end:p.endDate || '',fee:num(p.fee),open:true,deliverables:NO_DELIVERABLES.indexOf(t) >= 0 ? [] : parseDels(p.deliverables),
       team:(Array.isArray(p.team) ? p.team : []).map(function(m){
         var st = addStaffMember(m.staffId, m.name, m.role, m.hourlyRate);
-        return {staffId:st.id,hours:r2(num(m.hours))};
+        return {staffId:st.id,hours:r6(num(m.hours))};
       })
     };
   });
@@ -1114,7 +1352,7 @@ function runImport(){
   if(!txt){ err.textContent = 'Paste the JSON or choose a file first.'; return; }
   var obj, res;
   try{ obj = JSON.parse(txt); }catch(e){ err.textContent = 'That is not valid JSON: ' + e.message; return; }
-  try{ res = fromJSON(obj); ensureAdmin(res); }catch(e){ err.textContent = e.message; return; }
+  try{ res = fromJSON(obj); linkDeliverables(res); ensureAdmin(res); }catch(e){ err.textContent = e.message; return; }
   pushUndo();
   state = res;
   renderAll(); save();
@@ -1122,7 +1360,323 @@ function runImport(){
   toast('Imported ' + (state.project.name || 'project'), true);
 }
 
+/* ---------- deliverables ---------- */
+function phaseHours(ph){ var h = 0; ph.team.forEach(function(a){ h += a.hours; }); return h; }
+function delHours(ph, d){ return d.mode === 'percent' ? phaseHours(ph) * d.value / 100 : d.value; }
+function stdList(type){ return NO_DELIVERABLES.indexOf(type) >= 0 ? [] : (standards.byType[type] || []); }
+function dPhases(){ return state.phases.filter(function(ph){ return NO_DELIVERABLES.indexOf(ph.type) < 0; }); }
+function defaultDeliverables(type){
+  return stdList(type).filter(function(x){ return x.def && x.name; }).map(function(x){
+    return {id:uid(),name:x.name,mode:'hours',value:0,stdId:x.id,kind:x.kind === 'internal' ? 'internal' : 'external'};
+  });
+}
+function parseDels(list){
+  return (Array.isArray(list) ? list : []).map(function(d){
+    return {id:uid(),name:String(d.name || d.type || ''),mode:d.mode === 'percent' ? 'percent' : 'hours',value:num(d.value != null ? d.value : d.hours),kind:d.kind === 'internal' ? 'internal' : 'external'};
+  });
+}
+function exportStandards(){
+  return TYPES.map(function(T, i){
+    return {phaseType:T.n,items:stdList(i).filter(function(x){ return x.name; }).map(function(x){
+      return {name:x.name,kind:x.kind === 'internal' ? 'internal' : 'external',default:!!x.def,version:x.bver || 1,insertions:(x.ins || []).map(function(n){ return {section:n.section,style:n.style,text:n.text}; })};
+    })};
+  }).filter(function(e){ return e.items.length; });
+}
+function renderDeliverSide(){
+  $('#side').innerHTML = '<section class="side-sec"><h2>Phases</h2>' +
+    (dPhases().length
+      ? '<ol class="types">' + dPhases().map(function(ph){
+          var col = phaseColor(ph).c, n = ph.deliverables.length;
+          return '<li><button class="type" data-act="jumpPhase" data-id="' + ph.id + '"><span class="dot" style="border-color:' + col + ';background:' + col + '"></span><span>' + esc(ph.name) + '</span><span class="tag">' + (n ? n : '') + '</span></button></li>';
+        }).join('') + '</ol>'
+      : '<p class="hint">No phases with deliverables yet.</p>') + '</section>';
+}
+
+function delRowHTML(d, locked){
+  return '<div class="grid d row" data-del="' + d.id + '">' +
+    '<input class="plain strong" data-f="dName" list="dlDel" value="' + esc(d.name) + '" placeholder="Deliverable" aria-label="Deliverable name" autocomplete="off">' +
+    '<div class="alloc"><div class="unit"><input class="num" data-f="dVal" data-nav="dval" inputmode="decimal" aria-label="Allocation" autocomplete="off"></div>' +
+    '<select class="mini" data-f="dMode" aria-label="Allocation unit"><option value="hours">hours</option><option value="percent">% of phase</option></select></div>' +
+    '<div class="seg" role="radiogroup" aria-label="Internal or external">' +
+      '<label><input type="radio" name="k-' + d.id + '" value="external" data-f="dKind"' + (locked ? ' disabled' : '') + '><span>External</span></label>' +
+      '<label><input type="radio" name="k-' + d.id + '" value="internal" data-f="dKind"' + (locked ? ' disabled' : '') + '><span>Internal</span></label></div>' +
+    '<span class="budget" data-k="dh"></span>' +
+    '<button class="icon-btn" data-act="dRm" aria-label="Remove deliverable">' + X + '</button></div>';
+}
+function dlCardHTML(ph){
+  var col = phaseColor(ph);
+  var opts = stdList(ph.type).filter(function(x){ return x.name; }).map(function(x){
+    return '<option value="std:' + x.id + '">' + esc(x.name) + '</option>';
+  }).join('');
+  return '<section class="phase" id="dl-' + ph.id + '" data-dphase="' + ph.id + '" style="--pc:' + col.c + '">' +
+    '<div class="ph-head"><span class="badge" style="background:' + col.c + ';color:' + col.t + '">' + esc(ph.badge) + '</span><span class="ph-title">' + esc(ph.name) + '</span><span class="grow"></span><div class="status" data-k="dstat"></div></div>' +
+    '<div class="team"><div class="team-in wide">' +
+    (ph.deliverables.length
+      ? '<div class="grid d head"><span>Deliverable</span><span>Allocation</span><span>Audience</span><span class="r">Hours</span><span></span></div>' + ph.deliverables.map(function(d){ return delRowHTML(d, NEVER_EXPORT.indexOf(ph.type) >= 0); }).join('')
+      : '<div class="none">No deliverables yet.</div>') +
+    '<div class="grid d total" data-k="dtotal"></div></div></div>' +
+    '<div class="assign"><select data-f="dAddSel" aria-label="Add deliverable"><option value="">+ Add deliverable</option>' + opts + '<option value="custom">Custom deliverable</option></select></div></section>';
+}
+function renderDeliver(){
+  var names = [];
+  Object.keys(standards.byType).forEach(function(k){
+    standards.byType[k].forEach(function(x){ if(x.name && names.indexOf(x.name) < 0) names.push(x.name); });
+  });
+  dPhases().forEach(function(ph){ ph.deliverables.forEach(function(d){ if(d.name && names.indexOf(d.name) < 0) names.push(d.name); }); });
+  names.sort(function(a, b){ return a.localeCompare(b); });
+  $('#dlDel').innerHTML = names.map(function(n){ return '<option value="' + esc(n) + '">'; }).join('');
+  var bar = '<div class="toolbar"><p>Rough hour allocations for each phase. A deliverable is either a fixed number of hours or a share of the hours assigned to the phase.</p>' +
+    '<button class="btn" data-act="openSettings">Settings</button><button class="btn primary" data-act="dExport">Export to Proposal</button><button class="btn primary" data-act="dExportMilestone">Export to Milestone</button></div>';
+  $('#phases').innerHTML = bar + (dPhases().length
+    ? dPhases().map(dlCardHTML).join('')
+    : '<div class="empty"><h3>No phases with deliverables yet</h3><p>Add phases on the Firm services tab, then set their deliverables here.</p></div>');
+  refresh();
+}
+function refreshDeliver(){
+  var act = document.activeElement, totPH = 0, totDH = 0, ps = [], lg = [];
+  dPhases().forEach(function(ph){
+    var hrs = phaseHours(ph), dh = 0, hasPct = false;
+    totPH += hrs;
+    ph.deliverables.forEach(function(d){
+      var h = delHours(ph, d);
+      dh += h;
+      if(d.mode === 'percent') hasPct = true;
+      var row = document.querySelector('#dl-' + ph.id + ' [data-del="' + d.id + '"]');
+      if(!row) return;
+      var v = row.querySelector('[data-f=dVal]'), m = row.querySelector('[data-f=dMode]');
+      if(v !== act) v.value = trim(d.value, 2);
+      if(m !== act) m.value = d.mode;
+      row.querySelector('[data-k=dh]').textContent = trim(h, 2) + ' h';
+      var ek = NEVER_EXPORT.indexOf(ph.type) >= 0 ? 'internal' : (d.kind === 'internal' ? 'internal' : 'external');
+      [].forEach.call(row.querySelectorAll('[data-f=dKind]'), function(r){ r.checked = (r.value === ek); });
+    });
+    totDH += dh;
+    var card = document.getElementById('dl-' + ph.id);
+    if(card){
+      var diff = hrs - dh, status;
+      if(hrs === 0 && hasPct) status = '<span class="hint">Percent deliverables need hours on the Firm services tab</span>';
+      else if(!ph.deliverables.length) status = '<span class="hint">' + trim(hrs, 2) + ' h assigned to this phase</span>';
+      else if(Math.abs(diff) <= 0.005) status = '<span class="pill ok">All ' + trim(hrs, 2) + ' h allocated</span>';
+      else if(diff > 0) status = '<span class="pill mute">' + trim(diff, 2) + ' h unallocated of ' + trim(hrs, 2) + ' h</span>';
+      else status = '<span class="pill bad">' + trim(-diff, 2) + ' h over the ' + trim(hrs, 2) + ' h assigned</span>';
+      card.querySelector('[data-k=dstat]').innerHTML = status;
+      card.querySelector('[data-k=dtotal]').innerHTML = '<span>Total</span><span></span><span></span><span class="r">' + trim(dh, 2) + ' h</span><span></span>';
+    }
+    if(hrs > 0){
+      var col = phaseColor(ph).c;
+      ps.push('<i style="flex:' + hrs + ' 1 0;--o:1;background:' + col + '" title="' + esc(ph.name) + ' ' + trim(hrs, 2) + ' h"></i>');
+      lg.push('<span class="lg" title="' + esc(ph.name) + '"><i style="background:' + col + '"></i>' + esc(ph.badge) + '</span>');
+    }
+  });
+  var un = totPH - totDH, over = un < -0.005;
+  $('#sumTotal').textContent = money(totalProjectFees());
+  $('#sumClient').textContent = money(clientTotal());
+  $('#sumPH').textContent = trim(totPH, 2);
+  $('#sumDH').textContent = trim(totDH, 2);
+  $('#sumUH').textContent = trim(un, 2);
+  $('#sumUH').classList.toggle('bad', over);
+  $('#uhLabel').textContent = over ? 'Over-allocated hours' : 'Unallocated hours';
+  var pm = $('#projMeter');
+  pm.innerHTML = ps.join('');
+  pm.classList.remove('over');
+  $('#projLegend').innerHTML = lg.join('');
+}
+
+function slug(x){ return String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function localDate(d){ return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function isoLocal(d){
+  var off = -d.getTimezoneOffset(), sign = off >= 0 ? '+' : '-', a = Math.abs(off);
+  return localDate(d) + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()) + sign + pad2(Math.floor(a / 60)) + ':' + pad2(a % 60);
+}
+function findStd(type, id){ return id ? stdList(type).filter(function(x){ return x.id === id; })[0] : null; }
+function libVersion(){ var l = standards.lib; return (l && l.date) ? l.date + '.' + l.n : localDate(new Date()) + '.1'; }
+function linkDeliverables(st){
+  st.phases.forEach(function(ph){
+    if(NO_DELIVERABLES.indexOf(ph.type) >= 0) return;
+    ph.deliverables.forEach(function(d){
+      if(d.stdId && findStd(ph.type, d.stdId)) return;
+      var nm = String(d.name || '').trim().toLowerCase();
+      var m = nm ? stdList(ph.type).filter(function(x){ return String(x.name || '').trim().toLowerCase() === nm; })[0] : null;
+      if(m) d.stdId = m.id; else delete d.stdId;
+    });
+  });
+}
+/* edits to boilerplate bump versions once they are committed (dialog closed or page reloaded) */
+function processPending(){
+  var p = standards.pending, ids = p ? Object.keys(p) : [];
+  if(!ids.length) return;
+  Object.keys(standards.byType).forEach(function(k){
+    standards.byType[k].forEach(function(x){
+      if(!p[x.id]) return;
+      if(x.fresh) x.fresh = false; else x.bver = (x.bver || 1) + 1;
+    });
+  });
+  var today = localDate(new Date()), l = standards.lib;
+  standards.lib = (l && l.date === today) ? {date:today,n:l.n + 1} : {date:today,n:1};
+  standards.pending = {};
+  saveStandards();
+}
+
+function buildDeliverablesExport(){
+  processPending();
+  var pn = String(state.project.number || '').trim(), used = {}, items = [];
+  dPhases().forEach(function(ph){
+    if(PROPOSAL_SKIP.indexOf(ph.type) >= 0) return;
+    ph.deliverables.forEach(function(d){
+      if(d.kind === 'internal') return;
+      var name = String(d.name || '').trim();
+      if(!name) return;
+      var base = slug(ph.badge) + '-' + slug(name), id = base, n = 2;
+      while(used[id]){ id = base + '-' + n; n++; }
+      used[id] = true;
+      var h = r2(delHours(ph, d));
+      var std = findStd(ph.type, d.stdId);
+      var ins = std ? (std.ins || []).filter(function(i){ return String(i.text || '').trim(); }).map(function(i){
+        return {section:i.section,style:i.style,text:String(i.text).trim()};
+      }) : [];
+      items.push({id:id,deliverableType:name,phase:String(ph.badge || '').trim(),hours:h,boilerplate:{version:std ? (std.bver || 1) : 1,insertions:ins}});
+    });
+  });
+  var pdg = r2(totalProjectFees()), ahf = r2(pdg * DISB);
+  return {
+    schemaVersion:'1.1',
+    exportedAt:isoLocal(new Date()),
+    boilerplateVersion:libVersion(),
+    project:{projectNumber:pn},
+    fees:{currency:'CAD',pdgFees:pdg,ahfRate:DISB,ahf:ahf,total:r2(pdg + ahf)},
+    renderOptions:{insertPosition:'afterHeading',emptyPhases:'remove'},
+    deliverables:items
+  };
+}
+function norm(x){ return String(x == null ? '' : x).replace(/\s+/g, ' ').trim(); }
+function buildMilestoneExport(){
+  var problems = [], rows = [], rounded = 0, seen = {}, dups = [];
+  var pn = norm(state.project.number);
+  if(!pn) problems.push('The project number is missing.');
+  else if(pn.length > 80) problems.push('The project number is longer than 80 characters.');
+  dPhases().forEach(function(ph){
+    var pnum = parseFloat(ph.name);
+    if(!(pnum >= 1 && pnum < 7)) return;
+    var where = String(ph.badge || '').trim() || ph.name;
+    ph.deliverables.forEach(function(d){
+      var name = norm(d.name);
+      if(!name){ problems.push('A deliverable in ' + where + ' has no name.'); return; }
+      if(name.length > 120){ problems.push('\u201c' + name.slice(0, 40) + '\u2026\u201d in ' + where + ' is longer than 120 characters.'); return; }
+      var raw = delHours(ph, d), h = Math.round(raw);
+      if(h < 1){ problems.push('\u201c' + name + '\u201d in ' + where + ' needs at least 1 hour (it has ' + trim(raw, 2) + ').'); return; }
+      if(h > 999){ problems.push('\u201c' + name + '\u201d in ' + where + ' is over 999 hours (it has ' + trim(raw, 2) + ').'); return; }
+      if(Math.abs(raw - h) > 0.0005) rounded++;
+      var key = name.toLowerCase();
+      if(seen[key] && dups.indexOf(name) < 0) dups.push(name);
+      seen[key] = true;
+      rows.push({projectNumber:pn,deliverableType:name,hours:h});
+    });
+  });
+  if(!problems.length && !rows.length) problems.push('There are no deliverables to export yet.');
+  if(rows.length > 1000) problems.push('There are ' + rows.length + ' deliverables, but the limit is 1,000.');
+  return {problems:problems,rows:rows,rounded:rounded,dups:dups};
+}
+function showProblems(title, list, intro){
+  $('#problemTitle').textContent = title;
+  $('#problemIntro').textContent = intro || '';
+  var more = list.length - 10;
+  $('#problemList').innerHTML = list.slice(0, 10).map(function(p){ return '<li>' + esc(p) + '</li>'; }).join('') +
+    (more > 0 ? '<li>\u2026and ' + more + ' more ' + (more === 1 ? 'problem' : 'problems') + '.</li>' : '');
+  $('#problemDlg').showModal();
+}
+function copyMilestone(){
+  var r = buildMilestoneExport();
+  if(r.problems.length){
+    showProblems('Can\u2019t export to Milestone', r.problems, 'Nothing was copied. The export is all-or-nothing, so fix these and try again.');
+    return;
+  }
+  var msg = 'Milestone JSON copied (' + r.rows.length + (r.rows.length === 1 ? ' row' : ' rows') + ').';
+  if(r.rounded) msg += ' Hours were rounded to whole numbers on ' + r.rounded + (r.rounded === 1 ? ' row.' : ' rows.');
+  if(r.dups.length) msg += ' The board skips repeats of: ' + r.dups.slice(0, 3).join(', ') + (r.dups.length > 3 ? ' and ' + (r.dups.length - 3) + ' more' : '') + '.';
+  copyText(JSON.stringify(r.rows, null, 2), msg, (r.rounded || r.dups.length) ? 8000 : 0);
+}
+function copyDeliverables(){
+  var pn = String(state.project.number || '').trim();
+  if(!pn){ toast('Add the project number first, it is part of the export'); var f = $('#projNumber'); if(f) f.focus(); return; }
+  var bad = [];
+  dPhases().forEach(function(ph){
+    if(PROPOSAL_SKIP.indexOf(ph.type) >= 0) return;
+    var code = String(ph.badge || '').trim();
+    if(EXPORT_PHASES.indexOf(code) >= 0) return;
+    ph.deliverables.forEach(function(d){
+      if(d.kind === 'internal') return;
+      var nm = String(d.name || '').trim();
+      if(nm) bad.push('\u201c' + nm + '\u201d (' + (code ? 'phase code ' + code : 'no phase') + ')');
+    });
+  });
+  if(bad.length){
+    toast('Export blocked. No valid phase for: ' + bad.slice(0, 3).join(', ') + (bad.length > 3 ? ' and ' + (bad.length - 3) + ' more' : '') + '. Allowed phases: ' + EXPORT_PHASES.join(', ') + '.', false, 10000);
+    return;
+  }
+  var data = buildDeliverablesExport();
+  if(!data.deliverables.length){ toast('There are no external deliverables to export yet'); return; }
+  copyText(JSON.stringify(data, null, 2), 'Proposal JSON copied to clipboard');
+}
+
+var bpOpen = {};
+function bpSelect(field, opts, cur, label){
+  if(!opts.some(function(o){ return o.v === cur; })) opts = opts.concat([{v:cur,l:cur}]);
+  return '<select class="mini" data-f="' + field + '" aria-label="' + label + '">' + opts.map(function(o){
+    return '<option value="' + esc(o.v) + '"' + (o.v === cur ? ' selected' : '') + '>' + esc(o.l) + '</option>';
+  }).join('') + '</select>';
+}
+function renderSettings(){
+  var body = $('#settingsBody'), top = body.scrollTop;
+  var secs = bpSections(), styles = BP_STYLES.map(function(v){ return {v:v,l:v}; });
+  body.innerHTML = typeOrder().map(function(i){ var T = TYPES[i];
+    if(NO_DELIVERABLES.indexOf(i) >= 0) return '';
+    var col = PHASE_COLORS[i].c;
+    var items = stdList(i).map(function(x){
+      var ins = x.ins || [], open = !!bpOpen[x.id];
+      var bp = open ? '<div class="bp">' + ins.map(function(n){
+        return '<div class="bp-row" data-ins="' + n.id + '">' +
+          bpSelect('biSec', secs, n.section, 'Section') + bpSelect('biSty', styles, n.style, 'Style') +
+          '<textarea data-f="biTxt" rows="2" placeholder="Boilerplate text" aria-label="Boilerplate text">' + esc(n.text) + '</textarea>' +
+          '<button class="icon-btn" data-act="biRm" aria-label="Remove insertion">' + X + '</button></div>';
+      }).join('') + '<button class="link" data-act="biAdd">+ Add insertion</button></div>' : '';
+      return '<div class="st-item" data-std="' + x.id + '" data-type="' + i + '"><div class="st-row">' +
+        '<input class="plain" data-f="stName" value="' + esc(x.name) + '" placeholder="Deliverable name" aria-label="Standard deliverable name" autocomplete="off">' +
+        '<label class="chk"><input type="checkbox" data-f="stDef"' + (x.def ? ' checked' : '') + '> Default</label>' +
+        '<select class="mini" data-f="stKind" aria-label="Internal or external"><option value="external"' + (x.kind === 'internal' ? '' : ' selected') + '>External</option><option value="internal"' + (x.kind === 'internal' ? ' selected' : '') + '>Internal</option></select>' +
+        '<button class="btn mini-btn" data-act="bpToggle" aria-expanded="' + open + '">Boilerplate (' + ins.length + ')</button>' +
+        (x.builtin ? '<span style="width:28px" title="Built-in standard, cannot be removed" aria-hidden="true"></span>' : '<button class="icon-btn" data-act="stRm" aria-label="Remove standard">' + X + '</button>') + '</div>' + bp + '</div>';
+    }).join('');
+    return '<div class="st-type"><h3><i class="dotc" style="background:' + col + '"></i>' + esc(T.n) + '</h3>' +
+      (items || '<p class="hint">No standards yet.</p>') +
+      '<button class="link" data-act="stAdd" data-type="' + i + '">+ Add standard</button></div>';
+  }).join('');
+  body.scrollTop = top;
+}
+$('#settingsDlg').addEventListener('close', function(){ processPending(); if(tab === 'deliver') renderDeliver(); });
+
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if(!t.dataset || t.dataset.f !== 'dAddSel' || !t.value) return;
+  var dc = t.closest('[data-dphase]'), ph = dc ? phaseById(dc.dataset.dphase) : null;
+  if(!ph) return;
+  var nd, custom = t.value === 'custom';
+  if(custom){ nd = {id:uid(),name:'',mode:'hours',value:0,kind:'external'}; }
+  else {
+    var sid = t.value.slice(4);
+    var sd = stdList(ph.type).filter(function(x){ return x.id === sid; })[0];
+    if(!sd) return;
+    nd = {id:uid(),name:sd.name,mode:'hours',value:0,stdId:sd.id,kind:sd.kind === 'internal' ? 'internal' : 'external'};
+  }
+  ph.deliverables.push(nd);
+  renderDeliver(); renderSidebar(); save();
+  var inp = document.querySelector('#dl-' + ph.id + ' [data-del="' + nd.id + '"] [data-f=' + (custom ? 'dName' : 'dVal') + ']');
+  if(inp) inp.focus();
+});
+
 /* ---------- boot ---------- */
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+processPending();
 renderAll();
 save();
 })();
