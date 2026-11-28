@@ -232,6 +232,7 @@ dialog.wide{width:min(820px,94vw)}
 .pi-field label{display:block;font-weight:500;margin-bottom:4px}
 .pi-field .tok{color:var(--muted);font-size:12px;font-weight:400;margin-left:8px}
 .pi-field input{width:100%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:4px;padding:7px 10px}
+.reduce{display:block;margin-top:6px;font-size:13px;text-align:left}
 @media (max-width:900px){
   .wrap{padding:0 16px}
   .summary{grid-template-columns:1fr 1fr}
@@ -717,6 +718,16 @@ function refresh(){
   $('#sumPct').classList.toggle('bad', apct > 100);
   $('#sumPct').classList.toggle('warn', apct > 80 && apct <= 100);
   $('#sumPct').title = apct > 100 ? 'Phase fees exceed the service fees' : (apct > 80 ? 'Over 80% of the service fees is allocated' : '');
+  var margin = 100 - apct;
+  $('#sumMargin').textContent = svc > 0 ? trim(margin, 1) + '%' : '\u2014';
+  $('#sumMargin').classList.toggle('bad', svc > 0 && margin < 0);
+  var tgtFee = feesTotal > 0 ? r2(feesTotal / ALLOC_TARGET) : 0;
+  var rb = $('#reduceFees');
+  if(rb){
+    var canReduce = feesTotal > 0 && svc - tgtFee > 0.005;
+    rb.hidden = !canReduce;
+    if(canReduce) rb.textContent = 'Reduce to ' + money(tgtFee) + ' (' + Math.round(ALLOC_TARGET * 100) + '% allocated)';
+  }
   $('#sumHours').textContent = trim(hoursTotal, 2);
   var left = svc * ALLOC_TARGET - feesTotal;
   if(Math.abs(left) < 0.005) left = 0;
@@ -1130,9 +1141,10 @@ function renderSummary(){
       client;
   } else {
     el.innerHTML = total +
-      '<div class="metric edit"><div class="hero"><span class="pre-h">CA$</span><input id="svcFees" data-f="svcFees" data-nav="svc" inputmode="decimal" class="num-hero" aria-label="Service fees" autocomplete="off"></div><label class="ml" for="svcFees">Service fees</label></div>' +
+      '<div class="metric edit"><div class="hero"><span class="pre-h">CA$</span><input id="svcFees" data-f="svcFees" data-nav="svc" inputmode="decimal" class="num-hero" aria-label="Service fees" autocomplete="off"></div><label class="ml" for="svcFees">Service fees</label><button class="link reduce" id="reduceFees" data-act="reduceFees" hidden></button></div>' +
       '<div class="metric"><div class="hv" id="sumUnalloc"></div><span class="ml" id="unallocLabel">Unallocated</span></div>' +
       '<div class="metric"><div class="hv" id="sumPct"></div><span class="ml">Allocated</span></div>' +
+      '<div class="metric"><div class="hv" id="sumMargin"></div><span class="ml">Margin</span></div>' +
       '<div class="metric"><div class="hv" id="sumHours"></div><span class="ml">Hours assigned</span></div>' +
       '<div class="metric"><div class="hv" id="sumLeft"></div><span class="ml" id="leftLabel"></span></div>' +
       '<div class="metric"><div class="hv" id="sumLeftH"></div><span class="ml" id="leftHLabel"></span></div>' +
@@ -1263,6 +1275,18 @@ function handleExtra(act, b){
       return true;
     }
     case 'dExport': copyDeliverables(); return true;
+    case 'reduceFees': {
+      var rf = 0;
+      state.phases.forEach(function(p){ rf += p.fee; });
+      var rnf = r2(rf / ALLOC_TARGET);
+      if(!(rf > 0) || (state.project.serviceFees || 0) - rnf <= 0.005) return true;
+      pushUndo();
+      state.project.serviceFees = rnf;
+      var rsi = $('#svcFees'); if(rsi) rsi.value = plain(rnf);
+      refresh(); save();
+      toast('Service fees reduced to ' + money(rnf) + ', so ' + Math.round(ALLOC_TARGET * 100) + '% is allocated.', true);
+      return true;
+    }
     case 'dExportMilestone': copyMilestone(); return true;
     case 'closeProblems': $('#problemDlg').close(); return true;
     case 'jumpPhase': { var jc = document.getElementById('dl-' + b.dataset.id); if(jc) flash(jc); return true; }
